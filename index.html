@@ -28,8 +28,12 @@
     background:var(--ground);color:var(--ink);
     font-family:"Karla","Helvetica Neue",Arial,sans-serif;
     font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;
-    overflow-x:hidden;margin:0;padding:0;min-height:100vh;
+    overflow-x:hidden;margin:0;padding:0;min-height:100vh;min-height:100dvh;
+    -webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;
   }
+  button,select,label{touch-action:manipulation;}
+  /* iOS amplía la pantalla al enfocar cualquier campo con letra menor de 16 px */
+  select,input[type=text],textarea{font-size:16px!important;font-family:inherit;max-width:100%;border-radius:0;-webkit-appearance:none;appearance:none;}
   h1,h2,h3{font-family:"Fraunces",Georgia,serif;margin:0;text-wrap:balance;}
   p{margin:0;}
   button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none;cursor:pointer;}
@@ -38,7 +42,7 @@
   .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;}
   .eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
 
-  #app{min-height:100vh;display:flex;flex-direction:column;}
+  #app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);}
   .screen{display:none;flex-direction:column;flex:1;padding-inline:20px;max-width:620px;width:100%;margin:0 auto;}
   .screen.on{display:flex;}
 
@@ -63,8 +67,8 @@
   .pause{border:1px dashed var(--line);padding:18px 20px;display:flex;flex-direction:column;gap:12px;margin-top:6px;}
   .pause p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.5;}
   .pause .row{display:flex;gap:10px;}
-  .pause select{flex:0 0 auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:0 12px;font-size:.95rem;}
-  .pause .btn{flex:1;}
+  .pause select{flex:0 0 96px;min-width:0;background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:0 10px;}
+  .pause .btn{flex:1;min-width:0;}
   .card{border:1px solid var(--line);background:var(--surface);padding:30px 26px;display:flex;flex-direction:column;gap:20px;}
   .cat{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);}
   .ptitle{font-size:clamp(2rem,8vw,2.9rem);font-weight:900;line-height:1.02;letter-spacing:-.035em;}
@@ -73,17 +77,19 @@
   .pmeta span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
 
   .ramp-selector{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
-    background:var(--surface-2);border:1px solid var(--line);padding:10px 14px;margin-top:4px;
+    display:flex;flex-direction:column;align-items:stretch;gap:8px;
+    background:var(--surface-2);border:1px solid var(--line);padding:12px 14px;margin-top:4px;
   }
   .ramp-selector label{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
   .ramp-selector select{
     background:var(--ground);color:var(--ink);border:1px solid var(--line);
-    padding:6px 10px;font-family:inherit;font-size:.84rem;
+    padding:11px 12px;width:100%;min-width:0;
+    background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+    background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat;padding-right:36px;
   }
 
   .btn{
-    border:1px solid var(--amber);color:var(--amber);padding:16px 22px;text-align:center;width:100%;
+    border:1px solid var(--amber);color:var(--amber);padding:17px 18px;text-align:center;width:100%;
     font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;
     transition:background .15s ease,color .15s ease;
   }
@@ -123,7 +129,7 @@
   }
   .nb-btn{
     font-family:"IBM Plex Mono",monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;
-    border:1px solid var(--line);color:var(--muted);padding:8px 12px;background:var(--surface);
+    border:1px solid var(--line);color:var(--muted);padding:11px 13px;background:var(--surface);
   }
   .nb-btn:hover{color:var(--ink);border-color:var(--amber);}
 
@@ -150,12 +156,19 @@
   .conn .again:hover{color:var(--amber);border-color:var(--amber);}
 
   nav{position:sticky;bottom:0;margin-top:auto;display:flex;border-top:1px solid var(--line);background:var(--ground);padding-bottom:env(safe-area-inset-bottom, 0px);z-index:20;}
-  nav button{flex:1;padding:17px 8px;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
+  nav button{flex:1;padding:18px 4px;min-width:0;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
   nav button.on{color:var(--amber);}
   nav button:hover{color:var(--ink);}
   .navwrap{max-width:620px;margin:0 auto;width:100%;display:flex;}
 
   .pad{padding-bottom:40px;}
+  .seed{border:1px solid var(--amber-dim);background:rgba(228,172,63,.06);padding:20px 20px;display:flex;flex-direction:column;gap:12px;margin-top:6px;}
+  .seed .sx{font-family:"Fraunces",Georgia,serif;font-size:1.12rem;line-height:1.35;font-weight:600;letter-spacing:-.01em;overflow-wrap:break-word;}
+  .seed .btn{padding:14px 12px;}
+  .tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:6px;}
+  .nudge{border:1px solid var(--amber-dim);padding:14px 16px;font-size:.92rem;color:var(--muted);display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+  .toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--amber);color:var(--ground);padding:11px 18px;font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s;}
+  .toast.on{opacity:1;}
   .hd2{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
   .hd2 h2{font-size:1.9rem;font-weight:900;letter-spacing:-.03em;line-height:1;}
   .hd2 p{font-size:.9rem;color:var(--faint);}
@@ -209,6 +222,18 @@
     <div class="pad"></div>
   </section>
 
+  <section class="screen" id="quick">
+    <div class="top"><span class="wordmark" data-wm>Deriva</span><span class="daycount">Apuntar</span></div>
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <p class="prompt">Lo que se te ocurra, antes de que se vaya.</p>
+      <textarea id="qText" placeholder="Una frase basta."></textarea>
+      <label class="ideaflag"><input type="checkbox" id="qIdea" checked> Es una idea para algo mío</label>
+      <button class="btn solid" id="qSave">Apuntar</button>
+      <p class="note">Sin tiempo ni pregunta. No cuenta como práctica: solo queda guardado en el cuaderno.</p>
+    </div>
+    <div class="pad"></div>
+  </section>
+
   <section class="screen" id="notebook">
     <div class="top"><span class="wordmark" data-wm>Deriva</span><span class="daycount" id="nbCount"></span></div>
     <div class="hd2"><h2>El cuaderno</h2><p id="nbSub"></p></div>
@@ -231,10 +256,12 @@
   <nav>
     <div class="navwrap">
       <button data-go="today" class="on">Hoy</button>
+      <button data-go="quick">Apuntar</button>
       <button data-go="notebook">Cuaderno</button>
     </div>
   </nav>
 </div>
+<div class="toast" id="toast"></div>
 
 <script>
 /* ============================================================
@@ -351,7 +378,7 @@ function persist(entry){
   syncBackend(S.entries);
 }
 
-function practiceEntries(){ return S.entries.filter(e => e.kind !== "pausa"); }
+function practiceEntries(){ return S.entries.filter(e => e.kind !== "pausa" && e.kind !== "nota"); }
 function currentIndex(){ return practiceEntries().length % PRACTICES.length; }
 function practiceNumber(){ return practiceEntries().length + 1; }
 function doneToday(){
@@ -394,6 +421,28 @@ function playChime(){
   }catch(e){}
 }
 
+function pickSeed(){
+  const old = S.entries.filter(e => e.idea && e.text && Date.now() - e.ts > 2 * 86400000);
+  if(!old.length) return null;
+  const d = new Date(); const day = d.getFullYear() * 400 + d.getMonth() * 32 + d.getDate();
+  return old[day % old.length];
+}
+function seedHTML(){
+  const e = pickSeed(); if(!e) return "";
+  const days = Math.max(2, Math.round((Date.now() - e.ts) / 86400000));
+  return '<div class="seed"><span class="eyebrow" style="color:var(--amber);">Una idea tuya de hace ' + days + ' días</span>' +
+         '<p class="sx">' + esc(trim(e.text)) + '</p>' +
+         '<button class="btn ghost" id="seedBtn">Volver a ella · 10 min</button></div>';
+}
+function bindSeed(){
+  const b = document.getElementById("seedBtn"); if(!b) return;
+  b.onclick = () => startSeed(pickSeed());
+}
+function startSeed(e){
+  if(!e) return;
+  S.kind = "pausa"; S.seed = e;
+  startTimer("Volver a una idea", 10, "«" + trim(e.text) + "»  Dale vueltas sin objetivo. " + HINT_BASE);
+}
 const PAUSE_HTML =
   '<div class="pause">' +
     '<p><b style="color:var(--ink);font-weight:500;">Solo parar.</b> Sin tarea y sin pregunta: aburrirte un rato, mirar por la ventana, dejar que los pensamientos broten solos.</p>' +
@@ -403,8 +452,13 @@ const PAUSE_HTML =
     '</div>' +
   '</div>';
 function bindPause(){
-  const b = document.getElementById("pauseBtn");
-  if(b) b.onclick = () => startPause(parseInt(document.getElementById("pauseMins").value, 10));
+  const b = document.getElementById("pauseBtn"), sel = document.getElementById("pauseMins");
+  if(!b || !sel) return;
+  try{ const m = localStorage.getItem("deriva.pauseMins"); if(m && [...sel.options].some(o => o.value === m)) sel.value = m; }catch(e){}
+  b.onclick = () => {
+    try{ localStorage.setItem("deriva.pauseMins", sel.value); }catch(e){}
+    startPause(parseInt(sel.value, 10));
+  };
 }
 
 function render(){
@@ -426,7 +480,8 @@ function render(){
         '<button class="btn ghost" id="goNb">Abrir el cuaderno</button>' +
         '<button class="btn ghost" id="againBtn">Hacer otra igualmente</button>' +
       '</div>';
-    host.insertAdjacentHTML("beforeend", PAUSE_HTML);
+    host.insertAdjacentHTML("beforeend", seedHTML() + PAUSE_HTML);
+    bindSeed();
     document.getElementById("goNb").onclick = () => go("notebook");
     document.getElementById("againBtn").onclick = () => startPractice();
     bindPause();
@@ -440,10 +495,10 @@ function render(){
         '<div class="ramp-selector">' +
           '<label for="durSelect">Duración hoy</label>' +
           '<select id="durSelect">' +
-            '<option value="' + stdMins + '" selected>Estándar (' + stdMins + ' min)</option>' +
-            '<option value="3">Micro-deriva (3 min de mesa o ventana)</option>' +
-            '<option value="5">Rampa rápida (5 min de portal)</option>' +
-            '<option value="15">Larga (15 min)</option>' +
+            '<option value="' + stdMins + '" selected>Estándar · ' + stdMins + ' min</option>' +
+            '<option value="3">Corta · 3 min</option>' +
+            '<option value="5">Rápida · 5 min</option>' +
+            '<option value="15">Larga · 15 min</option>' +
           '</select>' +
         '</div>' +
         '<div class="pmeta"><span>Móvil guardado</span><span>Bajo estímulo</span></div>' +
@@ -457,7 +512,8 @@ function render(){
       const chosen = sel ? parseInt(sel.value, 10) : stdMins;
       startPractice(chosen);
     };
-    host.insertAdjacentHTML("beforeend", PAUSE_HTML);
+    host.insertAdjacentHTML("beforeend", seedHTML() + PAUSE_HTML);
+    bindSeed();
     bindPause();
   }
   renderNotebook();
@@ -476,6 +532,12 @@ function renderNotebook(){
     : base;
 
   let html = "";
+
+  let last = 0; try{ last = parseInt(localStorage.getItem("deriva.lastBackup") || "0", 10); }catch(e){}
+  if(count >= 5 && Date.now() - last > 14 * 86400000){
+    html += '<div class="nudge"><span>' + (last ? 'Hace más de dos semanas de tu última copia.' : 'Todavía no has hecho ninguna copia.') +
+            ' Si borras la app o cambias de móvil, el cuaderno se pierde.</span><button class="nb-btn" onclick="backupJson()">Hacer copia ahora</button></div>';
+  }
 
   if(count >= 4 && !query && !S.onlyIdeas){
     const pair = pickPair();
@@ -508,8 +570,10 @@ function renderNotebook(){
           (e.text ? '<p class="ex">' + esc(e.text) + '</p>'
                   : '<p class="ex" style="color:var(--faint);font-style:italic;">Salió. No vino nada. Apuntado igual.</p>') +
           (e.photo ? '<img src="' + e.photo + '" alt="">' : '') +
-          '<div style="display:flex;justify-content:flex-end;margin-top:6px;">' +
-            '<button class="nb-btn" onclick="exportEntryCard(\'' + e.id + '\')">Exportar tarjeta (PNG)</button>' +
+          '<div class="tools">' +
+            '<button class="nb-btn" onclick="toggleIdea(\'' + e.id + '\')">' + (e.idea ? 'Quitar idea' : 'Marcar idea') + '</button>' +
+            '<button class="nb-btn" onclick="exportEntryCard(\'' + e.id + '\')">Tarjeta</button>' +
+            '<button class="nb-btn" onclick="delEntry(\'' + e.id + '\')">Borrar</button>' +
           '</div>' +
         '</article>';
     });
@@ -535,8 +599,15 @@ function pickPair(){
   return [withText[a], withText[b]];
 }
 
+let toastT = null;
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("on");
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 1800);
+}
 function go(name){
   S.screen = name;
+  if(name === "quick") setTimeout(() => document.getElementById("qText").focus(), 80);
   document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === name));
   document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.go === name));
   window.scrollTo(0,0);
@@ -556,12 +627,12 @@ function startTimer(label, mins, hint){
   requestWake();
 }
 function startPractice(customMins){
-  S.kind = "practica";
+  S.kind = "practica"; S.seed = null;
   S.practiceIdx = currentIndex();
   startTimer(PRACTICES[S.practiceIdx].t, customMins || minutesFor(practiceNumber()), HINT_BASE);
 }
 function startPause(mins){
-  S.kind = "pausa";
+  S.kind = "pausa"; S.seed = null;
   startTimer("Pausa libre", mins, "No hay nada que hacer. Mira por la ventana, aburrete. Lo que venga, viene. " + HINT_BASE);
 }
 let wake = null;
@@ -591,7 +662,7 @@ document.getElementById("tCancel").onclick = () => { stopTimer(); go("today"); }
 
 function openCapture(){
   const p = PRACTICES[S.practiceIdx];
-  document.getElementById("cPrompt").textContent = S.kind === "pausa" ? "¿Qué ha brotado? Aunque sea una cosa suelta." : p.q;
+  document.getElementById("cPrompt").textContent = S.seed ? "¿Qué se te ocurre ahora sobre esto?" : S.kind === "pausa" ? "¿Qué ha brotado? Aunque sea una cosa suelta." : p.q;
   document.getElementById("cSkip").textContent = S.kind === "pausa" ? "No ha brotado nada. Apuntar la pausa igual" : "No salió nada. Apuntar el paseo igual";
   document.getElementById("cIdea").checked = false;
   document.getElementById("cText").value = "";
@@ -635,8 +706,9 @@ function saveEntry(text){
     id: "e" + Date.now() + Math.random().toString(36).slice(2,7),
     ts: Date.now(),
     kind: S.kind,
-    title: pausa ? "Pausa libre" : p.t,
+    title: S.seed ? "Sobre: " + trim(S.seed.text).slice(0, 38) : pausa ? "Pausa libre" : p.t,
     category: pausa ? "Pausa" : p.c,
+    from: S.seed ? S.seed.id : undefined,
     text: (text || "").trim(),
     idea: document.getElementById("cIdea").checked,
     photo: S.photo || null
@@ -644,20 +716,49 @@ function saveEntry(text){
   clearPhoto();
   go("notebook");
 }
+document.getElementById("qSave").onclick = () => {
+  const text = document.getElementById("qText").value.trim();
+  if(!text){ toast("Escribe algo primero"); return; }
+  persist({
+    id: "e" + Date.now() + Math.random().toString(36).slice(2,7),
+    ts: Date.now(),
+    kind: "nota",
+    title: "Apuntado",
+    category: "Nota",
+    text,
+    idea: document.getElementById("qIdea").checked,
+    photo: null
+  });
+  document.getElementById("qText").value = "";
+  toast("Guardado");
+  document.getElementById("qText").focus();
+};
 document.getElementById("cSave").onclick = () => saveEntry(document.getElementById("cText").value);
 document.getElementById("cSkip").onclick = () => saveEntry("");
 
-/* Exportación e importación de seguridad */
-document.getElementById("btnExportJson").onclick = () => {
-  const data = JSON.stringify(S.entries, null, 2);
-  const blob = new Blob([data], { type:"application/json" });
+/* En iPhone las descargas de una web instalada son torpes: se usa la hoja de compartir */
+async function saveFile(name, blob){
+  try{
+    const file = new File([blob], name, { type: blob.type });
+    if(navigator.canShare && navigator.canShare({ files:[file] })){
+      await navigator.share({ files:[file], title: name });
+      return true;
+    }
+  }catch(err){ if(err && err.name === "AbortError") return false; }
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url;
-  a.download = `deriva-copia-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-};
+  a.href = url; a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  return true;
+}
+function markBackup(){ try{ localStorage.setItem("deriva.lastBackup", String(Date.now())); }catch(e){} }
+
+/* Exportación e importación de seguridad */
+async function backupJson(){
+  const blob = new Blob([JSON.stringify(S.entries, null, 2)], { type:"application/json" });
+  if(await saveFile(`deriva-copia-${new Date().toISOString().slice(0,10)}.json`, blob)){ markBackup(); renderNotebook(); }
+}
+document.getElementById("btnExportJson").onclick = backupJson;
 
 document.getElementById("btnExportMd").onclick = () => {
   if(!S.entries.length){ alert("Todavía no tienes entradas guardadas."); return; }
@@ -670,12 +771,7 @@ document.getElementById("btnExportMd").onclick = () => {
     md += "---\n\n";
   });
   const blob = new Blob([md], { type:"text/markdown;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `deriva-cuaderno-${new Date().toISOString().slice(0,10)}.md`;
-  a.click();
-  URL.revokeObjectURL(url);
+  saveFile(`deriva-cuaderno-${new Date().toISOString().slice(0,10)}.md`, blob);
 };
 
 document.getElementById("importJsonFile").onchange = (ev) => {
@@ -764,6 +860,15 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
+window.toggleIdea = function(id){
+  const e = S.entries.find(x => x.id === id); if(!e) return;
+  e.idea = !e.idea; writeLocal(S.entries); renderNotebook(); render();
+};
+window.delEntry = function(id){
+  if(!confirm("¿Borrar esta nota? No se puede deshacer.")) return;
+  S.entries = S.entries.filter(x => x.id !== id);
+  writeLocal(S.entries); render();
+};
 window.exportEntryCard = function(id) {
   const e = S.entries.find(x => x.id === id);
   if (!e) return;
@@ -818,16 +923,8 @@ window.exportEntryCard = function(id) {
   ctx.fillText("DERIVA · " + new Date(e.ts).toLocaleDateString("es-ES"), 100, 960);
 
   ctx.fillStyle = "#5B6280";
-  ctx.textAlign = "right";
-  ctx.fillText("deriva.es", 980, 960);
 
-  cv.toBlob(blob => {
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `deriva-tarjeta-${e.id}.png`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  });
+  cv.toBlob(blob => saveFile(`deriva-tarjeta-${e.id}.png`, blob));
 };
 
 const tPocket = document.getElementById("tPocket");
