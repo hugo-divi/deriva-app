@@ -1,0 +1,19 @@
+{
+  "id": "./index.html",
+  "name": "Deriva · Práctica diaria",
+  "short_name": "Deriva",
+  "description": "Una práctica diaria de diez minutos para gente que vive de tener ideas y ha dejado de tenerlas.",
+  "lang": "es",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0C1020",
+  "theme_color": "#0C1020",
+  "orientation": "portrait",
+  "categories": ["lifestyle", "productivity"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

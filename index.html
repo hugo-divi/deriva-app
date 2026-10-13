@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Deriva</title>
+<meta name="theme-color" content="#0C1020">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Deriva">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Karla:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Compromiso deliberado con un solo mundo oscuro: es un producto de
+     atardecer, de poco estímulo, para guardar el móvil en el bolsillo. */
+  :root{
+    color-scheme:dark;
+    --ground:#0C1020;--surface:#151B2E;--surface-2:#1C2340;
+    --ink:#E9E6DD;--muted:#8B92A8;--faint:#5B6280;--line:#252D4A;
+    --amber:#E4AC3F;--amber-dim:#8A6B23;--moss:#7FA98D;
+  }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--ground);color:var(--ink);
+    font-family:"Karla","Helvetica Neue",Arial,sans-serif;
+    font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;
+    overflow-x:hidden;margin:0;padding:0;min-height:100vh;
+  }
+  h1,h2,h3{font-family:"Fraunces",Georgia,serif;margin:0;text-wrap:balance;}
+  p{margin:0;}
+  button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+  button:focus-visible,textarea:focus-visible,label:focus-within,select:focus-visible{outline:2px solid var(--amber);outline-offset:3px;}
+
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;}
+  .eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
+
+  #app{min-height:100vh;display:flex;flex-direction:column;}
+  .screen{display:none;flex-direction:column;flex:1;padding-inline:20px;max-width:620px;width:100%;margin:0 auto;}
+  .screen.on{display:flex;}
+
+  .top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding-block:26px 30px;}
+  .wordmark{font-family:"Fraunces",Georgia,serif;font-size:1.3rem;font-weight:900;letter-spacing:-.03em;}
+  .daycount{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-variant-numeric:tabular-nums;}
+
+  .install-banner{
+    display:none;align-items:center;justify-content:space-between;gap:12px;
+    background:rgba(228,172,63,.08);border:1px solid var(--amber-dim);
+    padding:10px 14px;margin-bottom:18px;font-size:.85rem;color:var(--ink);
+  }
+  .install-banner.show{display:flex;}
+  .install-banner button{
+    border:1px solid var(--amber);color:var(--amber);padding:6px 12px;
+    font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+  }
+
+  .ideaflag{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.95rem;cursor:pointer;}
+  .ideaflag input{width:20px;height:20px;accent-color:var(--amber);}
+  .tag-idea{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);border:1px solid var(--amber-dim);padding:2px 7px;margin-left:8px;}
+  .pause{border:1px dashed var(--line);padding:18px 20px;display:flex;flex-direction:column;gap:12px;margin-top:6px;}
+  .pause p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.5;}
+  .pause .row{display:flex;gap:10px;}
+  .pause select{flex:0 0 auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:0 12px;font-size:.95rem;}
+  .pause .btn{flex:1;}
+  .card{border:1px solid var(--line);background:var(--surface);padding:30px 26px;display:flex;flex-direction:column;gap:20px;}
+  .cat{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);}
+  .ptitle{font-size:clamp(2rem,8vw,2.9rem);font-weight:900;line-height:1.02;letter-spacing:-.035em;}
+  .pbody{font-size:1.09rem;line-height:1.56;color:var(--ink);}
+  .pmeta{display:flex;gap:18px;align-items:center;padding-top:4px;border-top:1px solid var(--line);flex-wrap:wrap;}
+  .pmeta span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
+
+  .ramp-selector{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:var(--surface-2);border:1px solid var(--line);padding:10px 14px;margin-top:4px;
+  }
+  .ramp-selector label{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+  .ramp-selector select{
+    background:var(--ground);color:var(--ink);border:1px solid var(--line);
+    padding:6px 10px;font-family:inherit;font-size:.84rem;
+  }
+
+  .btn{
+    border:1px solid var(--amber);color:var(--amber);padding:16px 22px;text-align:center;width:100%;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;
+    transition:background .15s ease,color .15s ease;
+  }
+  .btn:hover{background:var(--amber);color:var(--ground);}
+  .btn.solid{background:var(--amber);color:var(--ground);}
+  .btn.solid:hover{background:var(--ink);border-color:var(--ink);}
+  .btn.ghost{border-color:var(--line);color:var(--muted);}
+  .btn.ghost:hover{background:var(--surface-2);color:var(--ink);}
+
+  .stackv{display:flex;flex-direction:column;gap:12px;margin-top:22px;}
+  .note{font-size:.88rem;color:var(--faint);line-height:1.5;text-align:center;padding-block:6px;}
+
+  .done-today{border:1px solid var(--line);background:var(--surface);padding:26px 24px;display:flex;flex-direction:column;gap:14px;text-align:center;}
+  .done-today .mark{font-family:"Fraunces",Georgia,serif;font-size:1.5rem;font-weight:600;color:var(--moss);letter-spacing:-.02em;}
+
+  #timer{justify-content:center;align-items:center;gap:0;background:var(--ground);text-align:center;transition:background .2s;}
+  #timer.pocket{background:#000!important;}
+  #timer.pocket .t-clock{color:#1c2238!important;}
+  #timer.pocket .t-label,#timer.pocket .t-hint{color:#121626!important;}
+  #timer.pocket .t-actions{opacity:.18;}
+  .t-label{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:34px;}
+  .t-clock{font-family:"Fraunces",Georgia,serif;font-size:clamp(4.5rem,24vw,8rem);font-weight:400;line-height:1;letter-spacing:-.05em;font-variant-numeric:tabular-nums;color:var(--amber);}
+  .t-hint{font-size:1rem;color:var(--muted);margin-top:34px;max-width:28ch;line-height:1.5;}
+  .t-actions{display:flex;flex-direction:column;gap:10px;margin-top:48px;width:100%;max-width:300px;}
+
+  .prompt{font-family:"Fraunces",Georgia,serif;font-size:1.5rem;font-weight:600;line-height:1.24;letter-spacing:-.02em;}
+  textarea{width:100%;min-height:190px;resize:vertical;background:var(--surface);border:1px solid var(--line);color:var(--ink);font-family:inherit;font-size:1.05rem;line-height:1.55;padding:16px;}
+  textarea::placeholder{color:var(--faint);}
+  .photo-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .filelabel{border:1px solid var(--line);color:var(--muted);padding:11px 16px;cursor:pointer;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;}
+  .filelabel:hover{background:var(--surface-2);color:var(--ink);}
+  .filelabel input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
+  .thumb{width:54px;height:54px;object-fit:cover;border:1px solid var(--line);display:block;}
+
+  .nb-toolbar{
+    display:flex;gap:8px;flex-wrap:wrap;padding:12px 0 20px 0;border-bottom:1px solid var(--line);margin-bottom:20px;
+  }
+  .nb-btn{
+    font-family:"IBM Plex Mono",monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;
+    border:1px solid var(--line);color:var(--muted);padding:8px 12px;background:var(--surface);
+  }
+  .nb-btn:hover{color:var(--ink);border-color:var(--amber);}
+
+  .entry{border-top:1px solid var(--line);padding-block:24px;display:flex;flex-direction:column;gap:11px;}
+  .entry:last-child{border-bottom:1px solid var(--line);}
+  .entry .hd{display:flex;justify-content:space-between;gap:14px;align-items:baseline;}
+  .entry .et{font-family:"Fraunces",Georgia,serif;font-size:1.13rem;font-weight:600;letter-spacing:-.015em;line-height:1.25;}
+  .entry .ed{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.1em;color:var(--faint);white-space:nowrap;}
+  .entry .ex{font-size:1rem;line-height:1.58;color:var(--ink);white-space:pre-wrap;overflow-wrap:break-word;}
+  .entry img{max-width:min(100%,260px);border:1px solid var(--line);display:block;}
+
+  .empty{border:1px dashed var(--line);padding:44px 24px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;}
+  .empty .eh{font-family:"Fraunces",Georgia,serif;font-size:1.3rem;font-weight:600;letter-spacing:-.02em;}
+  .empty p{font-size:.94rem;color:var(--muted);max-width:32ch;line-height:1.55;}
+
+  .conn{border:1px solid var(--amber-dim);background:rgba(228,172,63,.07);padding:24px 22px;display:flex;flex-direction:column;gap:18px;margin-bottom:8px;}
+  .conn .ch{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);}
+  .conn .pair{display:flex;flex-direction:column;gap:16px;}
+  .conn .side{display:flex;flex-direction:column;gap:6px;}
+  .conn .sd{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.1em;color:var(--faint);}
+  .conn .sx{font-size:1rem;line-height:1.55;overflow-wrap:break-word;}
+  .conn .ask{font-family:"Fraunces",Georgia,serif;font-size:1.13rem;font-weight:600;line-height:1.3;letter-spacing:-.015em;padding-top:14px;border-top:1px solid var(--amber-dim);}
+  .conn .again{align-self:flex-start;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:2px;}
+  .conn .again:hover{color:var(--amber);border-color:var(--amber);}
+
+  nav{position:sticky;bottom:0;margin-top:auto;display:flex;border-top:1px solid var(--line);background:var(--ground);padding-bottom:env(safe-area-inset-bottom, 0px);z-index:20;}
+  nav button{flex:1;padding:17px 8px;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
+  nav button.on{color:var(--amber);}
+  nav button:hover{color:var(--ink);}
+  .navwrap{max-width:620px;margin:0 auto;width:100%;display:flex;}
+
+  .pad{padding-bottom:40px;}
+  .hd2{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
+  .hd2 h2{font-size:1.9rem;font-weight:900;letter-spacing:-.03em;line-height:1;}
+  .hd2 p{font-size:.9rem;color:var(--faint);}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;}}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <section class="screen on" id="today">
+    <div class="top"><span class="wordmark" data-wm>Deriva</span><span class="daycount" id="dc"></span></div>
+    
+    <div id="pwaBanner" class="install-banner">
+      <span id="pwaMsg">Instala Deriva en tu pantalla de inicio</span>
+      <button id="pwaInstallBtn">Instalar</button>
+    </div>
+
+    <div id="todayBody"></div>
+    <div class="pad"></div>
+  </section>
+
+  <section class="screen" id="timer">
+    <div class="t-label" id="tLabel"></div>
+    <div class="t-clock" id="tClock">00:00</div>
+    <p class="t-hint" id="tHint">Deja la pantalla encendida y el móvil boca abajo. Si lo bloqueas, el tiempo sigue contando pero la campana no suena.</p>
+    <div class="t-actions">
+      <button class="btn solid" id="tDone">Ya he vuelto</button>
+      <button class="btn ghost" id="tPocket">Modo bolsillo (atenuar)</button>
+      <button class="btn ghost" id="tCancel">Dejarlo</button>
+    </div>
+  </section>
+
+  <section class="screen" id="capture">
+    <div class="top"><span class="wordmark" data-wm>Deriva</span><span class="daycount">Captura</span></div>
+    <div style="display:flex;flex-direction:column;gap:20px;">
+      <p class="prompt" id="cPrompt"></p>
+      <textarea id="cText" placeholder="Como salga. Tres palabras es una respuesta de verdad."></textarea>
+      <div class="photo-row">
+        <label class="filelabel" tabindex="0">Añadir foto<input type="file" id="cPhoto" accept="image/*"></label>
+        <img class="thumb" id="cThumb" alt="" hidden>
+        <button class="btn ghost" id="cRmPhoto" style="width:auto;padding:11px 16px;" hidden>Quitar</button>
+      </div>
+      <label class="ideaflag"><input type="checkbox" id="cIdea"> Es una idea para algo mío</label>
+      <div class="stackv" style="margin-top:4px;">
+        <button class="btn solid" id="cSave">Guardarlo</button>
+        <button class="btn ghost" id="cSkip">No salió nada. Apuntar el paseo igual</button>
+      </div>
+      <p class="note">Aquí nada se puntúa, nada se comparte y nada cuenta en tu contra.</p>
+    </div>
+    <div class="pad"></div>
+  </section>
+
+  <section class="screen" id="notebook">
+    <div class="top"><span class="wordmark" data-wm>Deriva</span><span class="daycount" id="nbCount"></span></div>
+    <div class="hd2"><h2>El cuaderno</h2><p id="nbSub"></p></div>
+    
+    <div class="nb-toolbar">
+      <button class="nb-btn" id="btnExportMd">Exportar Markdown</button>
+      <button class="nb-btn" id="btnExportJson">Copia .JSON</button>
+      <label class="nb-btn" style="cursor:pointer;">Restaurar .JSON<input type="file" id="importJsonFile" accept=".json" style="display:none;"></label>
+      <button class="nb-btn" id="btnIdeas">Solo ideas</button>
+      <button class="nb-btn" id="btnReminder">Recordatorio</button>
+      <button class="nb-btn" id="btnTestChime">Probar campana</button>
+    </div>
+
+    <input type="text" id="nbSearch" placeholder="Buscar en tus notas de campo..." style="width:100%;box-sizing:border-box;margin-bottom:16px;background:var(--surface);border:1px solid var(--line);color:var(--ink);padding:11px 14px;font-size:.9rem;font-family:inherit;">
+
+    <div id="nbBody"></div>
+    <div class="pad"></div>
+  </section>
+
+  <nav>
+    <div class="navwrap">
+      <button data-go="today" class="on">Hoy</button>
+      <button data-go="notebook">Cuaderno</button>
+    </div>
+  </nav>
+</div>
+
+<script>
+/* ============================================================
+   Deriva · Práctica diaria PWA
+   Sin rachas, sin recompensas variables. Con copia de seguridad real.
+   ============================================================ */
+const MARCA = "Deriva";
+const PRACTICA = "deriva";
+
+const PRACTICES = [
+  {c:"Notar", t:"Un objeto", b:"Elige algo tuyo que hayas dejado de ver. Una taza, el marco de una puerta, tus propios zapatos. Siéntate con ello. No lo fotografíes, no lo muevas, no busques nada sobre ello.", q:"¿Qué encontraste que habías olvidado que estaba ahí?"},
+  {c:"Derivar", t:"Giro equivocado", b:"Camina una ruta que te sepas de memoria y tuerce mal a propósito. Luego otra vez. Quédate perdido un poco más de lo cómodo antes de volver.", q:"Lo único que no habrías visto por el camino de siempre."},
+  {c:"Escuchar", t:"Oreja", b:"Siéntate en una terraza. No mires nada en concreto. Busca una conversación de la que no formas parte y síguela hasta el final.", q:"La mejor frase que oíste, literal."},
+  {c:"Hacer", t:"Diez títulos", b:"Busca una ventana y quédate en ella. Lo que hay fuera es una película. Tu trabajo es el título, y necesitas diez.", q:"Los diez. Los malos cuentan."},
+  {c:"Notar", t:"Manos", b:"Ve donde haya gente. Mira solo manos. Nunca caras: si te pillas en una cara, vuelve abajo.", q:"¿Qué manos te contaron más, y qué te contaron?"},
+  {c:"Derivar", t:"Cuesta abajo", b:"Sal de casa y en cada cruce coge la opción que baja. Camina hacia fuera la mitad del tiempo y luego búscate la vuelta.", q:"¿Dónde acabaste?"},
+  {c:"Recordar", t:"La primera vez", b:"Siéntate quieto. Sin música. Ve a buscar la primera vez que recuerdes haberte aburrido de verdad: el aburrimiento de la infancia, sin nada que viniera a salvarte.", q:"¿Dónde estabas y qué acabaste haciendo?"},
+  {c:"Notar", t:"La luz ahora", b:"Busca dónde cae la luz en la habitación en la que estés. Sigue esa mancha toda la sesión. Se mueve más de lo que crees.", q:"¿Dónde estaba al empezar y dónde al terminar?"},
+  {c:"Hacer", t:"Dibujo a ciegas", b:"Dibuja algo que tengas delante, en papel de verdad, sin mirar el papel ni una sola vez. Ni para comprobar. Sobre todo para comprobar no.", q:"Fotografíalo. Sin arreglarlo antes."},
+  {c:"Escuchar", t:"Capas", b:"Cierra los ojos donde estés y cuenta los sonidos distintos. Sigue contando pasado el punto en que estés seguro de haberlos encontrado todos: siempre hay cuatro más.", q:"¿Cuántos, y cuál fue el último en aparecer?"},
+  {c:"Derivar", t:"Dos calles más allá", b:"Hay una calle cerca de ti por la que nunca has tenido un motivo para pasar. Recórrela despacio, hasta el final.", q:"¿Qué hay en ella?"},
+  {c:"Notar", t:"Segunda mirada", b:"Busca algo genuinamente feo. Un cuarto de basuras, una caja de contadores, un edificio malo. Quédate con ello hasta que deje de ser feo. Va a dejar de serlo.", q:"¿Qué cambió: ello o tú?"},
+  {c:"Hacer", t:"Instrucciones", b:"Coge algo que hagas sin pensar: atarte un cordón, hacer café, abrir tu puerta. Escribe las instrucciones, absurdamente precisas, para alguien que nunca ha tenido manos.", q:"Las instrucciones."},
+  {c:"Recordar", t:"La cocina de otro", b:"Trae a la cabeza una cocina que nunca fue tuya: la de un abuelo, la de un amigo del colegio, la de un piso de alquiler. Recórrela despacio. Abre los cajones.", q:"Tres objetos que había en ella."},
+  {c:"Derivar", t:"El camino largo", b:"Ibas a ir a algún sitio de todas formas. Coge la peor ruta posible: la más larga, la menos directa, la que no elegiría nadie.", q:"¿Qué había en ella?"},
+  {c:"Notar", t:"Siéntate en el suelo", b:"Siéntate en el suelo de una habitación que usas a diario. Quédate ahí abajo. Toda habitación tiene una segunda versión de sí misma a esa altura.", q:"¿Qué hay ahí abajo?"},
+  {c:"Escuchar", t:"El sonido de la sala", b:"Toda habitación tiene un sonido cuando no pasa absolutamente nada en ella. Encuentra el de la tuya.", q:"Descríbelo sin usar la palabra silencio."},
+  {c:"Hacer", t:"Seis climas", b:"Describe el tiempo que hace hoy en una frase. Y luego otra vez, cinco veces más, y cada una tiene que ser distinta de la anterior.", q:"Las seis frases."},
+  {c:"Derivar", t:"Un color", b:"Elige un color antes de salir de casa. Ahora sal y deja que tire de ti: vas donde esté él.", q:"Todos los sitios donde lo encontraste, en orden."},
+  {c:"Notar", t:"Quieto", b:"Párate en un sitio con mucha gente y no te muevas en toda la sesión. Ni a un lado, ni para dejar pasar. Que el sitio te rodee.", q:"¿Qué viste que andando se te habría escapado?"},
+  {c:"Recordar", t:"Una ruta vieja", b:"Un paseo que hiciste todos los días durante años y no has vuelto a hacer. Hazlo en la cabeza, paso a paso, en orden. No te saltes nada.", q:"¿Dónde se acaba el recuerdo?"},
+  {c:"Notar", t:"La comida más lenta", b:"Come algo solo, sin ninguna pantalla cerca, tardando por lo menos el doble de lo normal. Suelta el tenedor entre bocado y bocado.", q:"¿Qué sabor notaste que normalmente se te escapa?"},
+  {c:"Derivar", t:"Seguir", b:"Elige a un desconocido que camine delante de ti y síguelo a distancia cómoda durante tres calles. Luego déjalo ir y tuerce hacia el otro lado.", q:"¿A dónde iba, hasta donde pudiste deducir?"},
+  {c:"Hacer", t:"La frase siguiente", b:"Coge algo que hayas oído decir a alguien hoy de verdad y escribe la frase que tendría que haber venido después y no vino.", q:"Las dos frases."},
+  {c:"Notar", t:"Donde nadie mira", b:"Busca un sitio que no esté diseñado para ser mirado: una puerta de servicio, un muro trasero, el hueco entre dos edificios. Dale toda tu atención igualmente.", q:"¿Qué hay ahí?"},
+  {c:"Escuchar", t:"Un instrumento", b:"Pon una canción que te sepas de memoria y sigue solo un instrumento de principio a fin. El bajo, o lo que esté más al fondo. Pierde la canción.", q:"¿Qué estaba haciendo mientras tú no lo escuchabas?"},
+  {c:"Derivar", t:"El tiempo en la piel", b:"Sal sin destino y atiende únicamente a lo que notes en la piel. Viento, sol, humedad, la temperatura cambiando de una calle a otra.", q:"Descríbelo."},
+  {c:"Recordar", t:"La espera", b:"La próxima vez que tengas que esperar por algo hoy, no la rellenes. Sin móvil, sin podcast, sin ordenar nada. Espera, y ya está.", q:"¿Cuánto duró en realidad?"},
+  {c:"Notar", t:"El techo", b:"Túmbate y mira hacia arriba, estés donde estés. Nadie mira hacia arriba. Hay una superficie entera ahí que no has examinado nunca.", q:"Descríbele lo que tienes encima a alguien que no lo va a ver nunca."},
+  {c:"Derivar", t:"Antes de dormir", b:"Esta noche, al meterte en la cama, deja el móvil en otra habitación. Quédate despierto y deja que tu cabeza haga lo que haga.", q:"Lo que hiciera."},
+  {c:"Hablar", t:"Pregúntale a un desconocido", b:"Hazle a alguien que no conoces una pregunta cuya respuesta quieras de verdad. No una dirección, no la hora: algo que te dé curiosidad de verdad.", q:"Lo que te contestó."},
+  {c:"Notar", t:"Bordes", b:"Busca dónde se encuentran dos materiales. Baldosa contra moqueta, ladrillo contra cristal, acera contra hierba. Elige un borde y síguelo hasta donde llegue.", q:"¿Dónde terminó?"},
+  {c:"Derivar", t:"Solo cuesta arriba", b:"Al revés que la otra. En cada cruce, la opción más dura. La mitad del tiempo hacia fuera, la mitad de vuelta.", q:"¿Qué había arriba?"},
+  {c:"Hacer", t:"Rebautiza cinco cosas", b:"Cinco objetos a tu alcance. Cada uno tiene un nombre que le puso alguien que no estaba prestando atención. Ponle uno mejor.", q:"Los cinco."},
+  {c:"Escuchar", t:"Pasos", b:"Siéntate en un sitio con suelo duro y escucha solo pies. Voces no: si te vas a una conversación, vuelve al suelo.", q:"¿Qué podías saber de la gente por cómo andaba?"},
+  {c:"Recordar", t:"Una habitación a la que no puedes volver", b:"Una habitación que ya no existe, o a la que no puedes volver. Amuéblala despacio. No corras a la parte que mejor recuerdas.", q:"¿Qué hay en la esquina que habías olvidado?"},
+  {c:"Notar", t:"Lo más viejo", b:"Encuentra lo más viejo que haya en la habitación en la que estás. No lo más valioso ni lo más gastado: lo más viejo.", q:"¿Cómo lo supiste?"},
+  {c:"Derivar", t:"Al revés", b:"Coge una ruta que conozcas bien y hazla del revés, del final al principio. Es otra calle en ese sentido.", q:"¿Qué llevabas todo este tiempo a la espalda?"},
+  {c:"Hacer", t:"Un minuto a mano", b:"Sesenta segundos escribiendo a mano sin parar. Si no te viene nada, escribe que no te viene nada hasta que venga algo.", q:"Lo que acabara en el papel."},
+  {c:"Hablar", t:"La respuesta larga", b:"Hazle a alguien que conoces bien una pregunta que no le hayas hecho nunca. Y después no digas absolutamente nada hasta que haya terminado del todo.", q:"Lo que no sabías."},
+  {c:"Notar", t:"Alguien hizo esto", b:"Coge un objeto fabricado que tengas cerca y reconstruye las decisiones que hay detrás. Por qué ese ángulo, ese grosor, ese color, ese peso.", q:"Tres decisiones, y si te parecen acertadas."},
+  {c:"Escuchar", t:"El silencio más ruidoso", b:"Busca el sitio más silencioso al que puedas llegar en diez minutos. Siéntate en él y quédate.", q:"¿Qué seguía haciendo ruido?"},
+  {c:"Derivar", t:"Diez minutos al norte", b:"Camina diez minutos hacia el norte sin que te importe lo que haya en medio. Luego búscate la vuelta.", q:"¿Qué tuviste que rodear?"},
+  {c:"Hacer", t:"Mapa malo", b:"Dibuja de memoria el mapa de un sitio que conozcas muchísimo, sin consultar nada. Calles, puertas, todo.", q:"Fotografíalo. Mira mañana en qué te equivocaste, hoy no."},
+  {c:"Recordar", t:"Las manos de alguien", b:"Trae a la cabeza las manos de una persona concreta que no esté aquí. No su cara. Sus manos.", q:"¿Qué estaban haciendo?"},
+  {c:"Notar", t:"Repetido", b:"Elige una forma antes de empezar. Un círculo, un ángulo recto, un triángulo. Ahora cuenta cuántas veces aparece donde estás.", q:"El número, y la que casi se te escapa."},
+  {c:"Derivar", t:"Antes de que abran", b:"Sal lo bastante temprano como para que la calle sea de los repartidores y los que limpian y de nadie más. Es otro sitio con los mismos edificios.", q:"¿Quién anda por ahí?"},
+  {c:"Escuchar", t:"Una palabra", b:"Elige una palabra bastante corriente antes de salir. Ahora siéntate en un sitio público y espera a oír que alguien la dice.", q:"Cuánto tardó y quién la dijo."},
+  {c:"Hacer", t:"La historia del objeto", b:"Busca algo con desgaste: un escalón gastado, un picaporte rayado, una esquina pulida. Escribe cómo llegó a estar así.", q:"La historia. Invéntala sin reparos."},
+  {c:"Notar", t:"El olor de aquí", b:"Casi todos los sitios tienen un olor que dejaste de registrar el segundo día. Encuentra el del sitio en el que estás.", q:"Descríbelo sin nombrar ningún producto."},
+  {c:"Hablar", t:"Un elogio concreto", b:"Dile a alguien algo cierto y preciso sobre su trabajo que no le hayas dicho nunca en voz alta. No «qué bien te ha quedado»: la cosa exacta.", q:"Su cara."},
+  {c:"Derivar", t:"El banco donde nunca te sientas", b:"Hay un sitio por el que pasas constantemente y donde no te has parado jamás. Un muro, un escalón, un banco. Párate ahí.", q:"¿Cómo es desde sentado?"},
+  {c:"Recordar", t:"Lo primero que hiciste", b:"Lo primero que recuerdas haber hecho y de lo que estuviste de verdad orgulloso. Antes de que nadie te pagara.", q:"¿Qué era y dónde acabó?"},
+  {c:"Hacer", t:"El color de hoy", b:"Encuentra, mezcla o elige un color que sea hoy. No un estado de ánimo ni una metáfora: un color que puedas señalar.", q:"Cuál, y por qué."},
+  {c:"Notar", t:"Eso que llevas evitando mirar", b:"Hay algo en tu casa o en tu mesa que llevas meses sin mirar. Sabes perfectamente qué es. Míralo.", q:"Qué es, y por qué justo eso."},
+  {c:"Escuchar", t:"Un instrumento, otra vez", b:"Igual que antes pero con una pieza que no hayas oído nunca. Sigue un instrumento de principio a fin, a la primera, sin repetir.", q:"¿Qué estaba haciendo?"},
+  {c:"Hacer", t:"Título oído", b:"Coge lo mejor que hayas oído decir a alguien esta semana y conviértelo en el título de algo: una película, un grupo, un capítulo.", q:"El título, y de qué sería."},
+  {c:"Derivar", t:"No fotografíes nada", b:"Sal con la intención de fotografiar algo y luego no fotografíes absolutamente nada. Cada vez que vayas a por el móvil, mira en su lugar.", q:"Lo que habrías fotografiado, en palabras."},
+  {c:"Notar", t:"Veinte minutos, una ventana", b:"Una ventana, veinte minutos, nada más. Es la más larga hasta ahora y es a propósito.", q:"Todo lo que cambió."},
+  {c:"Derivar", t:"El mismo paseo otra vez", b:"Vuelve a la segunda práctica, Giro equivocado. La misma ruta que te sabes de memoria, otro desvío a propósito. Dos meses después.", q:"Qué ha cambiado. De la calle, o de ti."}
+];
+
+function minutesFor(n){
+  if(n <= 5)  return 7;
+  if(n <= 12) return 10;
+  if(n <= 21) return 14;
+  if(n <= 35) return 18;
+  return 22;
+}
+
+const S = { onlyIdeas:false, kind:"practica", entries:[], photo:null, practiceIdx:0, screen:"today", timerId:null, endsAt:0, selectedMinutes:0 };
+const LS = "deriva.entries.v1";
+
+function readLocal(){ try{ const r = localStorage.getItem(LS); return r ? JSON.parse(r) : []; }catch(e){ return []; } }
+function writeLocal(list){
+  try{ localStorage.setItem(LS, JSON.stringify(list)); return true; }
+  catch(e){
+    alert("No he podido guardar: el móvil se ha quedado sin espacio para el cuaderno. Pulsa «Copia .JSON» para no perder nada y quita fotos antiguas.");
+    return false;
+  }
+}
+
+function syncBackend(list){
+  if(!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return;
+  try {
+    fetch("http://localhost:3000/api/sync-notebook", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ entries: list })
+    }).catch(()=>{});
+  } catch(e){}
+}
+
+function initStore(){
+  S.entries = readLocal();
+  render();
+  syncBackend(S.entries);
+}
+
+function persist(entry){
+  S.entries.unshift(entry);
+  writeLocal(S.entries);
+  render();
+  syncBackend(S.entries);
+}
+
+function practiceEntries(){ return S.entries.filter(e => e.kind !== "pausa"); }
+function currentIndex(){ return practiceEntries().length % PRACTICES.length; }
+function practiceNumber(){ return practiceEntries().length + 1; }
+function doneToday(){
+  const pe = practiceEntries();
+  if(!pe.length) return false;
+  const d = new Date(pe[0].ts), n = new Date();
+  return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth() && d.getDate()===n.getDate();
+}
+
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+let AC = null;
+function unlockAudio(){
+  try{
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    if(AC.state === "suspended") AC.resume();
+  }catch(e){}
+}
+/* Sonido tibio de campana / cuenco tibetano sintetizado (cero dependencias de audio) */
+function playChime(){
+  try{
+    unlockAudio();
+    const ctx = AC;
+    if(!ctx) return;
+    const freqs = [432, 864, 1296];
+    freqs.forEach((f, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(f, ctx.currentTime);
+      const amp = (0.35 / (i + 1));
+      gain.gain.setValueAtTime(amp, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 3.8);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 4.0);
+    });
+    if(navigator.vibrate) navigator.vibrate([250, 150, 300]);
+  }catch(e){}
+}
+
+const PAUSE_HTML =
+  '<div class="pause">' +
+    '<p><b style="color:var(--ink);font-weight:500;">Solo parar.</b> Sin tarea y sin pregunta: aburrirte un rato, mirar por la ventana, dejar que los pensamientos broten solos.</p>' +
+    '<div class="row">' +
+      '<select id="pauseMins"><option value="5">5 min</option><option value="10" selected>10 min</option><option value="15">15 min</option><option value="20">20 min</option></select>' +
+      '<button class="btn ghost" id="pauseBtn">Parar</button>' +
+    '</div>' +
+  '</div>';
+function bindPause(){
+  const b = document.getElementById("pauseBtn");
+  if(b) b.onclick = () => startPause(parseInt(document.getElementById("pauseMins").value, 10));
+}
+
+function render(){
+  const n = practiceNumber();
+  const p = PRACTICES[currentIndex()];
+  document.getElementById("dc").textContent = "Práctica " + n;
+
+  const host = document.getElementById("todayBody");
+  if(doneToday()){
+    const nx = PRACTICES[currentIndex()];
+    host.innerHTML =
+      '<div class="done-today">' +
+        '<span class="eyebrow">Hoy</span>' +
+        '<span class="mark">Hecho.</span>' +
+        '<p style="color:var(--muted);font-size:.97rem;line-height:1.55;">Saliste y algo se vino contigo. Eso es todo lo que hay que hacer.</p>' +
+        '<p style="color:var(--faint);font-size:.88rem;">Mañana: ' + esc(nx.t) + '</p>' +
+      '</div>' +
+      '<div class="stackv">' +
+        '<button class="btn ghost" id="goNb">Abrir el cuaderno</button>' +
+        '<button class="btn ghost" id="againBtn">Hacer otra igualmente</button>' +
+      '</div>';
+    host.insertAdjacentHTML("beforeend", PAUSE_HTML);
+    document.getElementById("goNb").onclick = () => go("notebook");
+    document.getElementById("againBtn").onclick = () => startPractice();
+    bindPause();
+  } else {
+    const stdMins = minutesFor(n);
+    host.innerHTML =
+      '<div class="card">' +
+        '<span class="cat">' + esc(p.c) + '</span>' +
+        '<h1 class="ptitle">' + esc(p.t) + '</h1>' +
+        '<p class="pbody">' + esc(p.b) + '</p>' +
+        '<div class="ramp-selector">' +
+          '<label for="durSelect">Duración hoy</label>' +
+          '<select id="durSelect">' +
+            '<option value="' + stdMins + '" selected>Estándar (' + stdMins + ' min)</option>' +
+            '<option value="3">Micro-deriva (3 min de mesa o ventana)</option>' +
+            '<option value="5">Rampa rápida (5 min de portal)</option>' +
+            '<option value="15">Larga (15 min)</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="pmeta"><span>Móvil guardado</span><span>Bajo estímulo</span></div>' +
+      '</div>' +
+      '<div class="stackv">' +
+        '<button class="btn solid" id="beginBtn">Empezar</button>' +
+      '</div>' +
+      '<p class="note">Léela una vez y sal. No hace falta que la recuerdes exacta.</p>';
+    document.getElementById("beginBtn").onclick = () => {
+      const sel = document.getElementById("durSelect");
+      const chosen = sel ? parseInt(sel.value, 10) : stdMins;
+      startPractice(chosen);
+    };
+    host.insertAdjacentHTML("beforeend", PAUSE_HTML);
+    bindPause();
+  }
+  renderNotebook();
+}
+
+function renderNotebook(){
+  const body = document.getElementById("nbBody");
+  const count = S.entries.length;
+  document.getElementById("nbCount").textContent = count ? count + " guardadas" : "";
+  document.getElementById("nbSub").textContent = count ? "Todo lo que te has traído, lo último arriba." : "";
+
+  const query = (document.getElementById("nbSearch")?.value || "").toLowerCase().trim();
+  const base = S.onlyIdeas ? S.entries.filter(e => e.idea) : S.entries;
+  const visibleEntries = query
+    ? base.filter(e => (e.title || "").toLowerCase().includes(query) || (e.text || "").toLowerCase().includes(query))
+    : base;
+
+  let html = "";
+
+  if(count >= 4 && !query && !S.onlyIdeas){
+    const pair = pickPair();
+    if(pair){
+      const days = Math.max(1, Math.round(Math.abs(pair[0].ts - pair[1].ts) / 86400000));
+      html +=
+        '<div class="conn">' +
+          '<span class="ch">Dos tuyas</span>' +
+          '<div class="pair">' +
+            '<div class="side"><span class="sd">' + esc(pair[0].title) + ' · ' + fmt(pair[0].ts) + '</span><span class="sx">' + esc(trim(pair[0].text)) + '</span></div>' +
+            '<div class="side"><span class="sd">' + esc(pair[1].title) + ' · ' + fmt(pair[1].ts) + '</span><span class="sx">' + esc(trim(pair[1].text)) + '</span></div>' +
+          '</div>' +
+          '<p class="ask">Escribiste estas dos con ' + days + ' día' + (days===1?"":"s") + ' de diferencia. ¿Qué tienen en común?</p>' +
+          '<button class="again" id="pairAgain">Otro par</button>' +
+        '</div>';
+    }
+  }
+
+  if(!visibleEntries.length){
+    html +=
+      '<div class="empty">' +
+        '<span class="eh">' + (query ? 'Sin resultados para "' + esc(query) + '"' : S.onlyIdeas ? 'Aún no has marcado ninguna idea' : 'Aquí todavía no hay nada') + '</span>' +
+        '<p>' + (query || S.onlyIdeas ? 'Prueba con otra palabra o quita el filtro.' : 'Esto se llena solo. En un mes es lo más interesante que tienes en el móvil, y es enteramente tuyo.') + '</p>' +
+      '</div>';
+  } else {
+    visibleEntries.forEach(e => {
+      html +=
+        '<article class="entry">' +
+          '<div class="hd"><span class="et">' + esc(e.title) + (e.idea ? '<span class="tag-idea">Idea</span>' : '') + '</span><span class="ed">' + fmt(e.ts) + '</span></div>' +
+          (e.text ? '<p class="ex">' + esc(e.text) + '</p>'
+                  : '<p class="ex" style="color:var(--faint);font-style:italic;">Salió. No vino nada. Apuntado igual.</p>') +
+          (e.photo ? '<img src="' + e.photo + '" alt="">' : '') +
+          '<div style="display:flex;justify-content:flex-end;margin-top:6px;">' +
+            '<button class="nb-btn" onclick="exportEntryCard(\'' + e.id + '\')">Exportar tarjeta (PNG)</button>' +
+          '</div>' +
+        '</article>';
+    });
+  }
+  body.innerHTML = html;
+  const again = document.getElementById("pairAgain");
+  if(again) again.onclick = renderNotebook;
+}
+
+function trim(t){
+  if(!t) return "(salió, no vino nada)";
+  return t.length > 190 ? t.slice(0,190).trimEnd() + "…" : t;
+}
+function fmt(ts){ return new Date(ts).toLocaleDateString("es-ES",{day:"numeric",month:"short"}); }
+
+function pickPair(){
+  const withText = S.entries.filter(e => e.text && e.text.trim().length > 12);
+  if(withText.length < 2) return null;
+  const a = Math.floor(Math.random() * withText.length);
+  let b = Math.floor(Math.random() * withText.length), guard = 0;
+  while(b === a && guard++ < 20) b = Math.floor(Math.random() * withText.length);
+  if(b === a) return null;
+  return [withText[a], withText[b]];
+}
+
+function go(name){
+  S.screen = name;
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === name));
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.go === name));
+  window.scrollTo(0,0);
+}
+document.querySelectorAll("nav button").forEach(b => { b.onclick = () => { stopTimer(); go(b.dataset.go); }; });
+
+const HINT_BASE = "Deja la pantalla encendida y el móvil boca abajo. Si lo bloqueas, el tiempo sigue contando pero la campana no suena.";
+function startTimer(label, mins, hint){
+  unlockAudio();
+  S.endsAt = Date.now() + mins * 60000;
+  document.getElementById("tLabel").textContent = label + " · " + mins + " min";
+  document.getElementById("tHint").textContent = hint;
+  go("timer");
+  stopTimer();
+  tick();
+  S.timerId = setInterval(tick, 500);
+  requestWake();
+}
+function startPractice(customMins){
+  S.kind = "practica";
+  S.practiceIdx = currentIndex();
+  startTimer(PRACTICES[S.practiceIdx].t, customMins || minutesFor(practiceNumber()), HINT_BASE);
+}
+function startPause(mins){
+  S.kind = "pausa";
+  startTimer("Pausa libre", mins, "No hay nada que hacer. Mira por la ventana, aburrete. Lo que venga, viene. " + HINT_BASE);
+}
+let wake = null;
+function requestWake(){
+  try{ if(navigator.wakeLock) navigator.wakeLock.request("screen").then(w => { wake = w; }).catch(()=>{}); }catch(e){}
+}
+document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "visible" && S.timerId){ tick(); requestWake(); }
+});
+function tick(){
+  const left = S.endsAt - Date.now();
+  const clock = document.getElementById("tClock");
+  if(left <= 0){
+    clock.textContent = "00:00";
+    document.getElementById("tHint").textContent = "Se acabó el tiempo. Vuelve cuando quieras: no hay prisa y no se acaba nada.";
+    playChime();
+    stopTimer();
+    return;
+  }
+  const s = Math.ceil(left / 1000);
+  clock.textContent = String(Math.floor(s/60)).padStart(2,"0") + ":" + String(s%60).padStart(2,"0");
+}
+function stopTimer(){ if(S.timerId){ clearInterval(S.timerId); S.timerId = null; } try{ if(wake){ wake.release(); wake = null; } }catch(e){} }
+
+document.getElementById("tDone").onclick = () => { stopTimer(); openCapture(); };
+document.getElementById("tCancel").onclick = () => { stopTimer(); go("today"); };
+
+function openCapture(){
+  const p = PRACTICES[S.practiceIdx];
+  document.getElementById("cPrompt").textContent = S.kind === "pausa" ? "¿Qué ha brotado? Aunque sea una cosa suelta." : p.q;
+  document.getElementById("cSkip").textContent = S.kind === "pausa" ? "No ha brotado nada. Apuntar la pausa igual" : "No salió nada. Apuntar el paseo igual";
+  document.getElementById("cIdea").checked = false;
+  document.getElementById("cText").value = "";
+  clearPhoto();
+  go("capture");
+  setTimeout(() => document.getElementById("cText").focus(), 80);
+}
+function clearPhoto(){
+  S.photo = null;
+  const t = document.getElementById("cThumb");
+  t.hidden = true; t.removeAttribute("src");
+  document.getElementById("cRmPhoto").hidden = true;
+  document.getElementById("cPhoto").value = "";
+}
+document.getElementById("cRmPhoto").onclick = clearPhoto;
+document.getElementById("cPhoto").onchange = ev => {
+  const f = ev.target.files && ev.target.files[0];
+  if(!f) return;
+  const img = new Image(), rd = new FileReader();
+  rd.onload = () => {
+    img.onload = () => {
+      const max = 800, sc = Math.min(1, max / Math.max(img.width, img.height));
+      const cv = document.createElement("canvas");
+      cv.width = Math.round(img.width * sc);
+      cv.height = Math.round(img.height * sc);
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+      S.photo = cv.toDataURL("image/jpeg", 0.65);
+      const t = document.getElementById("cThumb");
+      t.src = S.photo; t.hidden = false;
+      document.getElementById("cRmPhoto").hidden = false;
+    };
+    img.src = rd.result;
+  };
+  rd.readAsDataURL(f);
+};
+
+function saveEntry(text){
+  const p = PRACTICES[S.practiceIdx];
+  const pausa = S.kind === "pausa";
+  persist({
+    id: "e" + Date.now() + Math.random().toString(36).slice(2,7),
+    ts: Date.now(),
+    kind: S.kind,
+    title: pausa ? "Pausa libre" : p.t,
+    category: pausa ? "Pausa" : p.c,
+    text: (text || "").trim(),
+    idea: document.getElementById("cIdea").checked,
+    photo: S.photo || null
+  });
+  clearPhoto();
+  go("notebook");
+}
+document.getElementById("cSave").onclick = () => saveEntry(document.getElementById("cText").value);
+document.getElementById("cSkip").onclick = () => saveEntry("");
+
+/* Exportación e importación de seguridad */
+document.getElementById("btnExportJson").onclick = () => {
+  const data = JSON.stringify(S.entries, null, 2);
+  const blob = new Blob([data], { type:"application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `deriva-copia-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+document.getElementById("btnExportMd").onclick = () => {
+  if(!S.entries.length){ alert("Todavía no tienes entradas guardadas."); return; }
+  let md = "# Cuaderno de Campo · Deriva\n\n*Exportado el " + new Date().toLocaleDateString("es-ES") + "*\n\n---\n\n";
+  S.entries.forEach(e => {
+    md += `## ${e.title} (${e.category || "Práctica"})${e.idea ? " · IDEA" : ""}\n`;
+    md += `*Fecha: ${new Date(e.ts).toLocaleString("es-ES")}*\n\n`;
+    md += (e.text || "*(Salí, no vino nada)*") + "\n\n";
+    if(e.photo) md += `*(Foto adjuntada en copia digital)*\n\n`;
+    md += "---\n\n";
+  });
+  const blob = new Blob([md], { type:"text/markdown;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `deriva-cuaderno-${new Date().toISOString().slice(0,10)}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+document.getElementById("importJsonFile").onchange = (ev) => {
+  const file = ev.target.files && ev.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try{
+      const imported = JSON.parse(e.target.result);
+      if(Array.isArray(imported)){
+        const seen = new Set(S.entries.map(x => x.id));
+        imported.forEach(item => { if(item && item.id && !seen.has(item.id)) S.entries.push(item); });
+        S.entries.sort((a,b) => b.ts - a.ts);
+        writeLocal(S.entries);
+        render();
+        alert("Copia restaurada correctamente: " + S.entries.length + " entradas en total.");
+      }
+    }catch(err){
+      alert("Error al leer el archivo JSON de copia de seguridad.");
+    }
+  };
+  reader.readAsText(file);
+};
+
+/* Recordatorio diario: una web instalada en iPhone no puede avisarte sola a una hora
+   sin un servidor de notificaciones push, así que se delega en Atajos de iOS. */
+document.getElementById("btnReminder").onclick = () => {
+  alert("Una web instalada en iPhone no puede avisarte sola a una hora.\n\nLo que sí funciona: app Atajos → Automatización → Nueva → Hora del día → Abrir app → Deriva. Te la abre cada día a la hora que elijas.");
+};
+document.getElementById("btnIdeas").onclick = () => {
+  S.onlyIdeas = !S.onlyIdeas;
+  document.getElementById("btnIdeas").style.color = S.onlyIdeas ? "var(--amber)" : "";
+  renderNotebook();
+};
+
+/* PWA Install Prompt */
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const banner = document.getElementById("pwaBanner");
+  if(banner) banner.classList.add("show");
+});
+
+(function(){
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const standalone = window.navigator.standalone === true || matchMedia("(display-mode: standalone)").matches;
+  if(ios && !standalone){
+    document.getElementById("pwaMsg").textContent = "Para instalarla: botón Compartir → «Añadir a pantalla de inicio»";
+    document.getElementById("pwaInstallBtn").style.display = "none";
+    document.getElementById("pwaBanner").classList.add("show");
+  }
+})();
+const pwaInstallBtn = document.getElementById("pwaInstallBtn");
+if(pwaInstallBtn){
+  pwaInstallBtn.onclick = async () => {
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      if(choice.outcome === "accepted"){
+        document.getElementById("pwaBanner").classList.remove("show");
+      }
+      deferredPrompt = null;
+    }
+  };
+}
+
+/* Service Worker Registration */
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  });
+}
+
+const btnTestChime = document.getElementById("btnTestChime");
+if(btnTestChime) btnTestChime.onclick = playChime;
+
+const nbSearchInput = document.getElementById("nbSearch");
+if(nbSearchInput) nbSearchInput.oninput = renderNotebook;
+
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && S.screen === "timer") {
+    stopTimer(); go("today");
+  } else if (e.key === "Enter" && (e.metaKey || e.ctrlKey) && S.screen === "capture") {
+    saveEntry(document.getElementById("cText").value);
+  }
+});
+
+window.exportEntryCard = function(id) {
+  const e = S.entries.find(x => x.id === id);
+  if (!e) return;
+  const cv = document.createElement("canvas");
+  cv.width = 1080; cv.height = 1080;
+  const ctx = cv.getContext("2d");
+
+  ctx.fillStyle = "#0C1020";
+  ctx.fillRect(0, 0, 1080, 1080);
+
+  ctx.strokeStyle = "#252D4A";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(50, 50, 980, 980);
+
+  ctx.fillStyle = "#E4AC3F";
+  ctx.font = "900 84px 'Fraunces', Georgia, serif";
+  ctx.fillText("d", 100, 160);
+
+  ctx.fillStyle = "#8B92A8";
+  ctx.font = "500 24px 'IBM Plex Mono', monospace";
+  ctx.fillText((e.category || "PRÁCTICA").toUpperCase(), 100, 230);
+
+  ctx.fillStyle = "#E9E6DD";
+  ctx.font = "900 60px 'Fraunces', Georgia, serif";
+  ctx.fillText(e.title || "Deriva", 100, 310);
+
+  ctx.strokeStyle = "#252D4A";
+  ctx.beginPath();
+  ctx.moveTo(100, 360);
+  ctx.lineTo(980, 360);
+  ctx.stroke();
+
+  ctx.fillStyle = "#E9E6DD";
+  ctx.font = "400 36px 'Karla', sans-serif";
+  const words = (e.text || "(Salió, no vino nada)").split(" ");
+  let line = "", y = 450;
+  for (let n = 0; n < words.length; n++) {
+    const testLine = line + words[n] + " ";
+    if (ctx.measureText(testLine).width > 860 && n > 0) {
+      ctx.fillText(line, 100, y);
+      line = words[n] + " ";
+      y += 54;
+      if (y > 860) { line += "…"; break; }
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line, 100, y);
+
+  ctx.fillStyle = "#E4AC3F";
+  ctx.font = "500 22px 'IBM Plex Mono', monospace";
+  ctx.fillText("DERIVA · " + new Date(e.ts).toLocaleDateString("es-ES"), 100, 960);
+
+  ctx.fillStyle = "#5B6280";
+  ctx.textAlign = "right";
+  ctx.fillText("deriva.es", 980, 960);
+
+  cv.toBlob(blob => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `deriva-tarjeta-${e.id}.png`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+};
+
+const tPocket = document.getElementById("tPocket");
+if (tPocket) {
+  tPocket.onclick = (e) => {
+    e.stopPropagation();
+    document.getElementById("timer").classList.toggle("pocket");
+  };
+}
+document.getElementById("timer").addEventListener("click", () => {
+  document.getElementById("timer").classList.remove("pocket");
+});
+
+document.querySelectorAll("[data-wm]").forEach(el => el.textContent = MARCA);
+document.title = MARCA;
+initStore();
+</script>
+</body>
+</html>
