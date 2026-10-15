@@ -63,6 +63,11 @@
 
   .ideaflag{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.95rem;cursor:pointer;}
   .ideaflag input{width:20px;height:20px;accent-color:var(--amber);}
+  .microw{display:flex;align-items:center;gap:12px;margin-top:-6px;}
+  .mic{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);color:var(--muted);padding:11px 16px;font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;background:var(--surface);flex:0 0 auto;}
+  .mic svg{width:16px;height:16px;fill:currentColor;}
+  .mic.rec{background:var(--amber);color:var(--ground);border-color:var(--amber);}
+  .microw .note{padding:0;text-align:left;flex:1;font-size:.84rem;}
   .tag-idea{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);border:1px solid var(--amber-dim);padding:2px 7px;margin-left:8px;}
   .pause{border:1px dashed var(--line);padding:18px 20px;display:flex;flex-direction:column;gap:12px;margin-top:6px;}
   .pause p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.5;}
@@ -206,7 +211,8 @@
     <div class="top"><span class="wordmark" data-wm>Deriva</span><span class="daycount">Captura</span></div>
     <div style="display:flex;flex-direction:column;gap:20px;">
       <p class="prompt" id="cPrompt"></p>
-      <textarea id="cText" placeholder="Como salga. Tres palabras es una respuesta de verdad."></textarea>
+      <textarea id="cText" placeholder="Como salga. Tres palabras es una respuesta de verdad." enterkeyhint="done"></textarea>
+      <div class="microw"><button class="mic" id="cMic" type="button"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2z"/></svg><span>Hablar</span></button><span class="note" id="cMicMsg"></span></div>
       <div class="photo-row">
         <label class="filelabel" tabindex="0">Añadir foto<input type="file" id="cPhoto" accept="image/*"></label>
         <img class="thumb" id="cThumb" alt="" hidden>
@@ -226,7 +232,8 @@
     <div class="top"><span class="wordmark" data-wm>Deriva</span><span class="daycount">Apuntar</span></div>
     <div style="display:flex;flex-direction:column;gap:18px;">
       <p class="prompt">Lo que se te ocurra, antes de que se vaya.</p>
-      <textarea id="qText" placeholder="Una frase basta."></textarea>
+      <textarea id="qText" placeholder="Una frase basta." enterkeyhint="done"></textarea>
+      <div class="microw"><button class="mic" id="qMic" type="button"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2z"/></svg><span>Hablar</span></button><span class="note" id="qMicMsg"></span></div>
       <label class="ideaflag"><input type="checkbox" id="qIdea" checked> Es una idea para algo mío</label>
       <button class="btn solid" id="qSave">Apuntar</button>
       <p class="note">Sin tiempo ni pregunta. No cuenta como práctica: solo queda guardado en el cuaderno.</p>
@@ -379,7 +386,40 @@ function persist(entry){
 }
 
 function practiceEntries(){ return S.entries.filter(e => e.kind !== "pausa" && e.kind !== "nota"); }
-function currentIndex(){ return practiceEntries().length % PRACTICES.length; }
+/* Orden de la práctica: cambia cada día y no repite hasta haber hecho las 60.
+   Estas tres dependen de otras («igual que antes», «la más larga hasta ahora»,
+   «vuelve a la segunda»), así que solo salen cuando no queda nada más. */
+const LOCKED = ["Un instrumento, otra vez", "Veinte minutos, una ventana", "El mismo paseo otra vez"];
+function dayNum(){ const d = new Date(); return d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate(); }
+function seenTitles(){
+  const pe = practiceEntries();
+  return new Set(pe.slice(0, pe.length % PRACTICES.length).map(e => e.title));
+}
+function swapN(){
+  try{ const o = JSON.parse(localStorage.getItem("deriva.swap") || "{}"); return o.day === dayNum() ? (o.n || 0) : 0; }
+  catch(e){ return 0; }
+}
+function practicePool(){
+  const seen = seenTitles();
+  const free = PRACTICES.map((q, i) => i).filter(i => !seen.has(PRACTICES[i].t));
+  const open = free.filter(i => LOCKED.indexOf(PRACTICES[i].t) < 0);
+  return open.length ? { list: open, ordered: false } : { list: free, ordered: true };
+}
+function currentIndex(){
+  const pool = practicePool();
+  if(pool.ordered) return pool.list[0];
+  // mezcla de bits: días seguidos dan prácticas sin relación entre sí
+  let x = (dayNum() * 7919 + swapN() * 104729 + 12345) >>> 0;
+  x ^= x >>> 15; x = Math.imul(x, 2246822519) >>> 0;
+  x ^= x >>> 13; x = Math.imul(x, 3266489917) >>> 0;
+  x ^= x >>> 16; x >>>= 0;
+  return pool.list[x % pool.list.length];
+}
+function canSwap(){ const pl = practicePool(); return !pl.ordered && pl.list.length > 1; }
+function swapPractice(){
+  try{ localStorage.setItem("deriva.swap", JSON.stringify({ day: dayNum(), n: swapN() + 1 })); }catch(e){}
+  render();
+}
 function practiceNumber(){ return practiceEntries().length + 1; }
 function doneToday(){
   const pe = practiceEntries();
@@ -468,13 +508,12 @@ function render(){
 
   const host = document.getElementById("todayBody");
   if(doneToday()){
-    const nx = PRACTICES[currentIndex()];
     host.innerHTML =
       '<div class="done-today">' +
         '<span class="eyebrow">Hoy</span>' +
         '<span class="mark">Hecho.</span>' +
         '<p style="color:var(--muted);font-size:.97rem;line-height:1.55;">Saliste y algo se vino contigo. Eso es todo lo que hay que hacer.</p>' +
-        '<p style="color:var(--faint);font-size:.88rem;">Mañana: ' + esc(nx.t) + '</p>' +
+        '<p style="color:var(--faint);font-size:.88rem;">Mañana, otra distinta.</p>' +
       '</div>' +
       '<div class="stackv">' +
         '<button class="btn ghost" id="goNb">Abrir el cuaderno</button>' +
@@ -505,8 +544,11 @@ function render(){
       '</div>' +
       '<div class="stackv">' +
         '<button class="btn solid" id="beginBtn">Empezar</button>' +
+        (canSwap() ? '<button class="btn ghost" id="swapBtn">Otra práctica</button>' : '') +
       '</div>' +
       '<p class="note">Léela una vez y sal. No hace falta que la recuerdes exacta.</p>';
+    const swapBtn = document.getElementById("swapBtn");
+    if(swapBtn) swapBtn.onclick = swapPractice;
     document.getElementById("beginBtn").onclick = () => {
       const sel = document.getElementById("durSelect");
       const chosen = sel ? parseInt(sel.value, 10) : stdMins;
@@ -612,7 +654,7 @@ function go(name){
   document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.go === name));
   window.scrollTo(0,0);
 }
-document.querySelectorAll("nav button").forEach(b => { b.onclick = () => { stopTimer(); go(b.dataset.go); }; });
+document.querySelectorAll("nav button").forEach(b => { b.onclick = () => { stopTimer(); stopDictation(); go(b.dataset.go); }; });
 
 const HINT_BASE = "Deja la pantalla encendida y el móvil boca abajo. Si lo bloqueas, el tiempo sigue contando pero la campana no suena.";
 function startTimer(label, mins, hint){
@@ -717,6 +759,7 @@ function saveEntry(text){
   go("notebook");
 }
 document.getElementById("qSave").onclick = () => {
+  stopDictation();
   const text = document.getElementById("qText").value.trim();
   if(!text){ toast("Escribe algo primero"); return; }
   persist({
@@ -752,6 +795,42 @@ async function saveFile(name, blob){
   return true;
 }
 function markBackup(){ try{ localStorage.setItem("deriva.lastBackup", String(Date.now())); }catch(e){} }
+
+/* Dictado por voz. En iPhone el reconocimiento de una web instalada puede no estar
+   disponible; en ese caso se manda al micrófono del teclado, que funciona siempre. */
+function getSR(){ return window.SpeechRecognition || window.webkitSpeechRecognition; }
+const TIP_TECLADO = "Si no te deja, usa el micrófono del teclado (abajo a la derecha): hace lo mismo.";
+function setupMic(prefix, taId){
+  const btn = document.getElementById(prefix + "Mic"), msg = document.getElementById(prefix + "MicMsg"), ta = document.getElementById(taId);
+  let rec = null, on = false, base = "", heard = false, guard = null;
+  const ui = () => { btn.classList.toggle("rec", on); btn.querySelector("span").textContent = on ? "Parar" : "Hablar"; };
+  const fail = (m) => { on = false; ui(); clearTimeout(guard); msg.textContent = m; };
+  btn.onclick = () => {
+    if(on){ try{ rec.stop(); }catch(e){} return; }
+    const SR = getSR();
+    if(!SR){ msg.textContent = "Aquí no hay dictado. " + TIP_TECLADO; ta.focus(); return; }
+    rec = new SR(); rec.lang = "es-ES"; rec.interimResults = true; rec.continuous = true;
+    base = ta.value ? ta.value.replace(/\s*$/, " ") : ""; heard = false;
+    rec.onresult = ev => {
+      heard = true;
+      let t = ""; for(let i = 0; i < ev.results.length; i++) t += ev.results[i][0].transcript;
+      ta.value = base + t.trim();
+    };
+    rec.onerror = ev => {
+      if(ev.error === "not-allowed" || ev.error === "service-not-allowed") fail("No tengo permiso para el micrófono. " + TIP_TECLADO);
+      else if(ev.error === "no-speech") fail("No he oído nada.");
+      else if(ev.error !== "aborted") fail("Ha fallado el dictado. " + TIP_TECLADO);
+    };
+    rec.onend = () => { on = false; ui(); clearTimeout(guard); if(msg.textContent.indexOf("Escuchando") === 0) msg.textContent = ""; };
+    try{
+      rec.start(); on = true; ui(); msg.textContent = "Escuchando… pulsa otra vez para parar.";
+      guard = setTimeout(() => { if(on && !heard){ try{ rec.stop(); }catch(e){} fail("No he recibido nada. " + TIP_TECLADO); } }, 8000);
+    }catch(e){ fail(TIP_TECLADO); }
+  };
+}
+setupMic("c", "cText");
+setupMic("q", "qText");
+function stopDictation(){ document.querySelectorAll(".mic.rec").forEach(b => b.click()); }
 
 /* Exportación e importación de seguridad */
 async function backupJson(){
