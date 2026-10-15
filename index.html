@@ -63,6 +63,35 @@
 
   .ideaflag{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.95rem;cursor:pointer;}
   .ideaflag input{width:20px;height:20px;accent-color:var(--amber);}
+  [hidden]{display:none!important;}
+  body.onb nav{display:none;}
+  .wq{font-size:1.9rem;font-weight:900;letter-spacing:-.03em;line-height:1.08;margin:10px 0 12px;}
+  .wsub{font-size:.98rem;color:var(--muted);line-height:1.5;margin-bottom:22px;}
+  .wfields{display:flex;flex-direction:column;gap:10px;margin-bottom:6px;}
+  .wfields input{width:100%;background:var(--surface);border:1px solid var(--line);color:var(--ink);padding:14px 14px;}
+  .opts{display:flex;flex-direction:column;gap:10px;}
+  .opt{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:16px 16px;text-align:left;display:flex;flex-direction:column;gap:4px;}
+  .opt b{font-weight:500;font-size:1.05rem;}
+  .opt span{font-size:.88rem;color:var(--muted);line-height:1.4;}
+  .opt.sel{border-color:var(--amber);background:rgba(228,172,63,.08);}
+  .linkbtn{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding:4px 0 3px;align-self:flex-start;}
+  .linkbtn:hover{color:var(--amber);border-color:var(--amber);}
+  .wnav{display:flex;justify-content:space-between;align-items:center;margin-top:22px;}
+  .togrow{display:flex;justify-content:center;padding-top:2px;}
+  .projrow{display:flex;align-items:center;gap:12px;}
+  .projrow label{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);flex:0 0 auto;}
+  .projrow select{flex:1;min-width:0;background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:11px 12px;}
+  .projsel{background:var(--surface);color:var(--muted);border:1px solid var(--line);padding:9px 8px;max-width:150px;font-size:16px;}
+  .tag-proj{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--moss);border:1px solid var(--line);padding:2px 7px;margin-left:8px;}
+  .urge{display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px;margin:0 auto;text-align:center;}
+  .urge .uq{font-family:"Fraunces",Georgia,serif;font-size:1.3rem;font-weight:600;line-height:1.25;letter-spacing:-.02em;}
+  .urge .scale{display:flex;gap:8px;}
+  .urge .scale button{flex:1;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:16px 0;font-size:1.1rem;}
+  .urge .scale button.sel{border-color:var(--amber);background:var(--amber);color:var(--ground);}
+  .urge .ends{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
+  #timer.pre .t-clock,#timer.pre .t-hint,#timer.pre .t-actions{display:none;}
+  #timer:not(.pre) #urgePre{display:none;}
+  .ganas{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.08em;color:var(--faint);}
   .microw{display:flex;align-items:center;gap:12px;margin-top:-6px;}
   .mic{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);color:var(--muted);padding:11px 16px;font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;background:var(--surface);flex:0 0 auto;}
   .mic svg{width:16px;height:16px;fill:currentColor;}
@@ -198,6 +227,13 @@
 
   <section class="screen" id="timer">
     <div class="t-label" id="tLabel"></div>
+    <div class="urge" id="urgePre">
+      <p class="uq">Antes de empezar: ¿cuántas ganas tienes de coger el móvil?</p>
+      <div class="scale" data-scale="pre"></div>
+      <div class="ends"><span>ninguna</span><span>muchísimas</span></div>
+      <button class="btn ghost" id="urgeSkip" style="margin-top:14px;">Empezar sin contestar</button>
+      <button class="linkbtn" id="urgeBack" style="align-self:center;margin-top:6px;">Atrás</button>
+    </div>
     <div class="t-clock" id="tClock">00:00</div>
     <p class="t-hint" id="tHint">Deja la pantalla encendida y el móvil boca abajo. Si lo bloqueas, el tiempo sigue contando pero la campana no suena.</p>
     <div class="t-actions">
@@ -218,6 +254,12 @@
         <img class="thumb" id="cThumb" alt="" hidden>
         <button class="btn ghost" id="cRmPhoto" style="width:auto;padding:11px 16px;" hidden>Quitar</button>
       </div>
+      <div class="urge" id="urgePost" hidden>
+        <p class="uq" style="font-size:1.1rem;">¿Y ahora? Ganas de coger el móvil</p>
+        <div class="scale" data-scale="post"></div>
+        <div class="ends"><span>ninguna</span><span>muchísimas</span></div>
+      </div>
+      <div class="projrow"><label for="cProj">Proyecto</label><select id="cProj"></select></div>
       <label class="ideaflag"><input type="checkbox" id="cIdea"> Es una idea para algo mío</label>
       <div class="stackv" style="margin-top:4px;">
         <button class="btn solid" id="cSave">Guardarlo</button>
@@ -228,12 +270,19 @@
     <div class="pad"></div>
   </section>
 
+  <section class="screen" id="welcome">
+    <div class="top"><span class="wordmark" data-wm>Deriva</span><span class="daycount" id="wStep"></span></div>
+    <div id="wBody"></div>
+    <div class="pad"></div>
+  </section>
+
   <section class="screen" id="quick">
     <div class="top"><span class="wordmark" data-wm>Deriva</span><span class="daycount">Apuntar</span></div>
     <div style="display:flex;flex-direction:column;gap:18px;">
       <p class="prompt">Lo que se te ocurra, antes de que se vaya.</p>
       <textarea id="qText" placeholder="Una frase basta." enterkeyhint="done"></textarea>
       <div class="microw"><button class="mic" id="qMic" type="button"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2z"/></svg><span>Hablar</span></button><span class="note" id="qMicMsg"></span></div>
+      <div class="projrow"><label for="qProj">Proyecto</label><select id="qProj"></select></div>
       <label class="ideaflag"><input type="checkbox" id="qIdea" checked> Es una idea para algo mío</label>
       <button class="btn solid" id="qSave">Apuntar</button>
       <p class="note">Sin tiempo ni pregunta. No cuenta como práctica: solo queda guardado en el cuaderno.</p>
@@ -250,11 +299,14 @@
       <button class="nb-btn" id="btnExportJson">Copia .JSON</button>
       <label class="nb-btn" style="cursor:pointer;">Restaurar .JSON<input type="file" id="importJsonFile" accept=".json" style="display:none;"></label>
       <button class="nb-btn" id="btnIdeas">Solo ideas</button>
+      <button class="nb-btn" id="btnCtx">Tu contexto</button>
       <button class="nb-btn" id="btnReminder">Recordatorio</button>
       <button class="nb-btn" id="btnTestChime">Probar campana</button>
     </div>
 
     <input type="text" id="nbSearch" placeholder="Buscar en tus notas de campo..." style="width:100%;box-sizing:border-box;margin-bottom:16px;background:var(--surface);border:1px solid var(--line);color:var(--ink);padding:11px 14px;font-size:.9rem;font-family:inherit;">
+
+    <select id="nbProj" class="projsel" style="max-width:100%;width:100%;margin-bottom:16px;padding:11px 12px;" hidden></select>
 
     <div id="nbBody"></div>
     <div class="pad"></div>
@@ -349,7 +401,26 @@ function minutesFor(n){
   return 22;
 }
 
-const S = { onlyIdeas:false, kind:"practica", entries:[], photo:null, practiceIdx:0, screen:"today", timerId:null, endsAt:0, selectedMinutes:0 };
+const PK = "deriva.profile.v1";
+function loadProfile(){
+  try{ const o = JSON.parse(localStorage.getItem(PK) || "null"); if(o && typeof o === "object") return Object.assign({ projects:[], mins:0, outdoor:"dia", goal:"", done:false }, o); }catch(e){}
+  return { projects:[], mins:0, outdoor:"dia", goal:"", done:false };
+}
+let PROFILE = loadProfile();
+function saveProfile(){ try{ localStorage.setItem(PK, JSON.stringify(PROFILE)); }catch(e){} }
+function allProjects(){
+  const set = PROFILE.projects.slice();
+  S.entries.forEach(e => { if(e.project && set.indexOf(e.project) < 0) set.push(e.project); });
+  return set;
+}
+function addProject(name){
+  name = (name || "").trim().slice(0, 40);
+  if(!name) return "";
+  const hit = allProjects().find(x => x.toLowerCase() === name.toLowerCase());
+  if(hit){ if(PROFILE.projects.indexOf(hit) < 0){ PROFILE.projects.push(hit); saveProfile(); } return hit; }
+  PROFILE.projects.push(name); saveProfile(); return name;
+}
+const S = { onlyIdeas:false, proj:"", ganas0:null, ganas1:null, lastProject:"", kind:"practica", entries:[], photo:null, practiceIdx:0, screen:"today", timerId:null, endsAt:0, selectedMinutes:0 };
 const LS = "deriva.entries.v1";
 
 function readLocal(){ try{ const r = localStorage.getItem(LS); return r ? JSON.parse(r) : []; }catch(e){ return []; } }
@@ -376,6 +447,8 @@ function initStore(){
   S.entries = readLocal();
   render();
   syncBackend(S.entries);
+  allProjects().forEach(n => { if(PROFILE.projects.indexOf(n) < 0) PROFILE.projects.push(n); });
+  if(!PROFILE.done) openWelcome(false);
 }
 
 function persist(entry){
@@ -389,6 +462,21 @@ function practiceEntries(){ return S.entries.filter(e => e.kind !== "pausa" && e
 /* Orden de la práctica: cambia cada día y no repite hasta haber hecho las 60.
    Estas tres dependen de otras («igual que antes», «la más larga hasta ahora»,
    «vuelve a la segunda»), así que solo salen cuando no queda nada más. */
+/* Las que obligan a salir de casa o a estar con gente; el resto se pueden hacer dentro. */
+const OUT = ["Giro equivocado","Oreja","Manos","Cuesta abajo","Dos calles más allá","Segunda mirada","El camino largo","Un color","Quieto","Seguir","Donde nadie mira","El tiempo en la piel","Pregúntale a un desconocido","Solo cuesta arriba","Pasos","Al revés","El silencio más ruidoso","Diez minutos al norte","Antes de que abran","Una palabra","Un elogio concreto","El banco donde nunca te sientas","No fotografíes nada","El mismo paseo otra vez"];
+const GOALS = {
+  ideas:  { Hacer:3, Recordar:2 },
+  ruido:  { Notar:3, Escuchar:3 },
+  rutina: { Derivar:3, Hablar:3, Recordar:2 }
+};
+function insideToday(){
+  try{ const o = JSON.parse(localStorage.getItem("deriva.inside") || "null"); if(o && o.day === dayNum()) return !!o.v; }catch(e){}
+  return PROFILE.outdoor === "no";
+}
+function setInside(v){
+  try{ localStorage.setItem("deriva.inside", JSON.stringify({ day: dayNum(), v: !!v })); }catch(e){}
+  render();
+}
 const LOCKED = ["Un instrumento, otra vez", "Veinte minutos, una ventana", "El mismo paseo otra vez"];
 function dayNum(){ const d = new Date(); return d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate(); }
 function seenTitles(){
@@ -402,7 +490,11 @@ function swapN(){
 function practicePool(){
   const seen = seenTitles();
   const free = PRACTICES.map((q, i) => i).filter(i => !seen.has(PRACTICES[i].t));
-  const open = free.filter(i => LOCKED.indexOf(PRACTICES[i].t) < 0);
+  let open = free.filter(i => LOCKED.indexOf(PRACTICES[i].t) < 0);
+  if(insideToday()){
+    const dentro = open.filter(i => OUT.indexOf(PRACTICES[i].t) < 0);
+    if(dentro.length) open = dentro;
+  }
   return open.length ? { list: open, ordered: false } : { list: free, ordered: true };
 }
 function currentIndex(){
@@ -413,7 +505,11 @@ function currentIndex(){
   x ^= x >>> 15; x = Math.imul(x, 2246822519) >>> 0;
   x ^= x >>> 13; x = Math.imul(x, 3266489917) >>> 0;
   x ^= x >>> 16; x >>>= 0;
-  return pool.list[x % pool.list.length];
+  const W = GOALS[PROFILE.goal] || {};
+  const wt = pool.list.map(i => W[PRACTICES[i].c] || 1);
+  let r = x % wt.reduce((a, b) => a + b, 0);
+  for(let k = 0; k < wt.length; k++){ if(r < wt[k]) return pool.list[k]; r -= wt[k]; }
+  return pool.list[0];
 }
 function canSwap(){ const pl = practicePool(); return !pl.ordered && pl.list.length > 1; }
 function swapPractice(){
@@ -494,7 +590,7 @@ const PAUSE_HTML =
 function bindPause(){
   const b = document.getElementById("pauseBtn"), sel = document.getElementById("pauseMins");
   if(!b || !sel) return;
-  try{ const m = localStorage.getItem("deriva.pauseMins"); if(m && [...sel.options].some(o => o.value === m)) sel.value = m; }catch(e){}
+  try{ const m = localStorage.getItem("deriva.pauseMins") || String(PROFILE.mins || ""); if(m && [...sel.options].some(o => o.value === m)) sel.value = m; }catch(e){}
   b.onclick = () => {
     try{ localStorage.setItem("deriva.pauseMins", sel.value); }catch(e){}
     startPause(parseInt(sel.value, 10));
@@ -525,7 +621,8 @@ function render(){
     document.getElementById("againBtn").onclick = () => startPractice();
     bindPause();
   } else {
-    const stdMins = minutesFor(n);
+    const stdMins = PROFILE.mins || minutesFor(n);
+    const opts = [3,5,10,15,20]; if(opts.indexOf(stdMins) < 0){ opts.push(stdMins); opts.sort((a,b) => a-b); }
     host.innerHTML =
       '<div class="card">' +
         '<span class="cat">' + esc(p.c) + '</span>' +
@@ -534,10 +631,7 @@ function render(){
         '<div class="ramp-selector">' +
           '<label for="durSelect">Duración hoy</label>' +
           '<select id="durSelect">' +
-            '<option value="' + stdMins + '" selected>Estándar · ' + stdMins + ' min</option>' +
-            '<option value="3">Corta · 3 min</option>' +
-            '<option value="5">Rápida · 5 min</option>' +
-            '<option value="15">Larga · 15 min</option>' +
+            opts.map(m => '<option value="' + m + '"' + (m === stdMins ? ' selected' : '') + '>' + m + ' min' + (m === stdMins ? ' · tu tiempo' : '') + '</option>').join("") +
           '</select>' +
         '</div>' +
         '<div class="pmeta"><span>Móvil guardado</span><span>Bajo estímulo</span></div>' +
@@ -546,7 +640,10 @@ function render(){
         '<button class="btn solid" id="beginBtn">Empezar</button>' +
         (canSwap() ? '<button class="btn ghost" id="swapBtn">Otra práctica</button>' : '') +
       '</div>' +
-      '<p class="note">Léela una vez y sal. No hace falta que la recuerdes exacta.</p>';
+      '<div class="togrow"><button class="linkbtn" id="inBtn">' + (insideToday() ? 'Hoy sí puedo salir' : 'Hoy no salgo') + '</button></div>' +
+      '<p class="note">' + (insideToday() ? 'Léela una vez y hazla sin salir de casa.' : 'Léela una vez y sal. No hace falta que la recuerdes exacta.') + '</p>';
+    const inBtn = document.getElementById("inBtn");
+    if(inBtn) inBtn.onclick = () => setInside(!insideToday());
     const swapBtn = document.getElementById("swapBtn");
     if(swapBtn) swapBtn.onclick = swapPractice;
     document.getElementById("beginBtn").onclick = () => {
@@ -568,7 +665,15 @@ function renderNotebook(){
   document.getElementById("nbSub").textContent = count ? "Todo lo que te has traído, lo último arriba." : "";
 
   const query = (document.getElementById("nbSearch")?.value || "").toLowerCase().trim();
-  const base = S.onlyIdeas ? S.entries.filter(e => e.idea) : S.entries;
+  const projSel = document.getElementById("nbProj");
+  const projs = allProjects();
+  if(S.proj && projs.indexOf(S.proj) < 0) S.proj = "";
+  projSel.hidden = !projs.length;
+  projSel.innerHTML = '<option value="">Todos los proyectos</option>' + projs.map(n => '<option value="' + esc(n) + '">' + esc(n) + '</option>').join("");
+  projSel.value = S.proj;
+  projSel.onchange = () => { S.proj = projSel.value; renderNotebook(); };
+  const filtered = S.onlyIdeas || !!S.proj;
+  const base = S.entries.filter(e => (!S.onlyIdeas || e.idea) && (!S.proj || e.project === S.proj));
   const visibleEntries = query
     ? base.filter(e => (e.title || "").toLowerCase().includes(query) || (e.text || "").toLowerCase().includes(query))
     : base;
@@ -581,7 +686,10 @@ function renderNotebook(){
             ' Si borras la app o cambias de móvil, el cuaderno se pierde.</span><button class="nb-btn" onclick="backupJson()">Hacer copia ahora</button></div>';
   }
 
-  if(count >= 4 && !query && !S.onlyIdeas){
+  const sum = ganasSummary();
+  if(sum && !query && !filtered) html += '<div class="nudge"><span class="eyebrow" style="color:var(--amber);">Tus ganas</span><span>' + sum + '</span></div>';
+
+  if(count >= 4 && !query && !filtered){
     const pair = pickPair();
     if(pair){
       const days = Math.max(1, Math.round(Math.abs(pair[0].ts - pair[1].ts) / 86400000));
@@ -601,18 +709,20 @@ function renderNotebook(){
   if(!visibleEntries.length){
     html +=
       '<div class="empty">' +
-        '<span class="eh">' + (query ? 'Sin resultados para "' + esc(query) + '"' : S.onlyIdeas ? 'Aún no has marcado ninguna idea' : 'Aquí todavía no hay nada') + '</span>' +
-        '<p>' + (query || S.onlyIdeas ? 'Prueba con otra palabra o quita el filtro.' : 'Esto se llena solo. En un mes es lo más interesante que tienes en el móvil, y es enteramente tuyo.') + '</p>' +
+        '<span class="eh">' + (query ? 'Sin resultados para "' + esc(query) + '"' : filtered ? 'No hay nada con ese filtro' : 'Aquí todavía no hay nada') + '</span>' +
+        '<p>' + (query || filtered ? 'Prueba con otra palabra o quita el filtro.' : 'Esto se llena solo. En un mes es lo más interesante que tienes en el móvil, y es enteramente tuyo.') + '</p>' +
       '</div>';
   } else {
     visibleEntries.forEach(e => {
       html +=
         '<article class="entry">' +
-          '<div class="hd"><span class="et">' + esc(e.title) + (e.idea ? '<span class="tag-idea">Idea</span>' : '') + '</span><span class="ed">' + fmt(e.ts) + '</span></div>' +
+          '<div class="hd"><span class="et">' + esc(e.title) + (e.idea ? '<span class="tag-idea">Idea</span>' : '') + (e.project ? '<span class="tag-proj">' + esc(e.project) + '</span>' : '') + '</span><span class="ed">' + fmt(e.ts) + '</span></div>' +
           (e.text ? '<p class="ex">' + esc(e.text) + '</p>'
                   : '<p class="ex" style="color:var(--faint);font-style:italic;">Salió. No vino nada. Apuntado igual.</p>') +
           (e.photo ? '<img src="' + e.photo + '" alt="">' : '') +
+          (e.ganas0 && e.ganas1 ? '<p class="ganas">Ganas de coger el móvil: ' + GANAS[e.ganas0] + ' → ' + GANAS[e.ganas1] + '</p>' : '') +
           '<div class="tools">' +
+            '<select class="projsel" onchange="setProject(\'' + e.id + '\', this)">' + projOptions(e.project) + '</select>' +
             '<button class="nb-btn" onclick="toggleIdea(\'' + e.id + '\')">' + (e.idea ? 'Quitar idea' : 'Marcar idea') + '</button>' +
             '<button class="nb-btn" onclick="exportEntryCard(\'' + e.id + '\')">Tarjeta</button>' +
             '<button class="nb-btn" onclick="delEntry(\'' + e.id + '\')">Borrar</button>' +
@@ -625,6 +735,22 @@ function renderNotebook(){
   if(again) again.onclick = renderNotebook;
 }
 
+function projOptions(cur){
+  return '<option value="">Sin proyecto</option>' + allProjects().map(n => '<option value="' + esc(n) + '"' + (n === cur ? ' selected' : '') + '>' + esc(n) + '</option>').join("") + '<option value="__new">+ Nuevo…</option>';
+}
+window.setProject = function(id, sel){
+  const e = S.entries.find(x => x.id === id); if(!e) return;
+  let v = sel.value;
+  if(v === "__new") v = addProject(prompt("¿Cómo se llama el proyecto?") || "");
+  e.project = v || undefined;
+  writeLocal(S.entries); renderNotebook(); render();
+};
+function ganasSummary(){
+  const m = S.entries.filter(e => e.ganas0 && e.ganas1);
+  if(m.length < 3) return "";
+  const down = m.filter(e => e.ganas1 < e.ganas0).length, up = m.filter(e => e.ganas1 > e.ganas0).length, same = m.length - down - up;
+  return "Mediste las ganas de coger el móvil en " + m.length + " paradas. Bajaron en " + down + ", quedaron igual en " + same + " y subieron en " + up + ".";
+}
 function trim(t){
   if(!t) return "(salió, no vino nada)";
   return t.length > 190 ? t.slice(0,190).trimEnd() + "…" : t;
@@ -641,6 +767,20 @@ function pickPair(){
   return [withText[a], withText[b]];
 }
 
+function fillProj(selId, current){
+  const sel = document.getElementById(selId);
+  let h = '<option value="">Ninguno</option>';
+  allProjects().forEach(n => { h += '<option value="' + esc(n) + '">' + esc(n) + '</option>'; });
+  h += '<option value="__new">+ Nuevo proyecto…</option>';
+  sel.innerHTML = h;
+  sel.value = allProjects().indexOf(current) >= 0 ? current : "";
+  sel.onchange = () => {
+    if(sel.value !== "__new"){ if(selId === "qProj") S.lastProject = sel.value; return; }
+    const name = addProject(prompt("¿Cómo se llama el proyecto?") || "");
+    fillProj(selId, name);
+    if(selId === "qProj") S.lastProject = name;
+  };
+}
 let toastT = null;
 function toast(msg){
   const t = document.getElementById("toast");
@@ -649,7 +789,7 @@ function toast(msg){
 }
 function go(name){
   S.screen = name;
-  if(name === "quick") setTimeout(() => document.getElementById("qText").focus(), 80);
+  if(name === "quick"){ fillProj("qProj", S.lastProject); setTimeout(() => document.getElementById("qText").focus(), 80); }
   document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === name));
   document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.go === name));
   window.scrollTo(0,0);
@@ -657,17 +797,47 @@ function go(name){
 document.querySelectorAll("nav button").forEach(b => { b.onclick = () => { stopTimer(); stopDictation(); go(b.dataset.go); }; });
 
 const HINT_BASE = "Deja la pantalla encendida y el móvil boca abajo. Si lo bloqueas, el tiempo sigue contando pero la campana no suena.";
+const GANAS = ["", "ninguna", "pocas", "algunas", "bastantes", "muchísimas"];
+function buildScales(){
+  document.querySelectorAll(".scale").forEach(sc => {
+    if(sc.children.length) return;
+    for(let v = 1; v <= 5; v++){
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = v; b.dataset.v = v;
+      b.onclick = () => {
+        if(sc.dataset.scale === "pre"){ S.ganas0 = v; beginCount(); }
+        else { S.ganas1 = v; sc.querySelectorAll("button").forEach(x => x.classList.toggle("sel", x === b)); }
+      };
+      sc.appendChild(b);
+    }
+  });
+}
+buildScales();
+let pending = null;
 function startTimer(label, mins, hint){
   unlockAudio();
-  S.endsAt = Date.now() + mins * 60000;
+  stopTimer();
+  pending = { label, mins, hint };
+  S.ganas0 = null; S.ganas1 = null;
   document.getElementById("tLabel").textContent = label + " · " + mins + " min";
   document.getElementById("tHint").textContent = hint;
+  document.getElementById("tClock").textContent = String(mins).padStart(2, "0") + ":00";
+  document.getElementById("timer").classList.add("pre");
   go("timer");
+}
+function beginCount(){
+  if(!pending) return;
+  unlockAudio();
+  document.getElementById("timer").classList.remove("pre");
+  S.endsAt = Date.now() + pending.mins * 60000;
+  pending = null;
   stopTimer();
   tick();
   S.timerId = setInterval(tick, 500);
   requestWake();
 }
+document.getElementById("urgeSkip").onclick = beginCount;
+document.getElementById("urgeBack").onclick = () => { pending = null; document.getElementById("timer").classList.remove("pre"); go("today"); };
 function startPractice(customMins){
   S.kind = "practica"; S.seed = null;
   S.practiceIdx = currentIndex();
@@ -708,6 +878,10 @@ function openCapture(){
   document.getElementById("cSkip").textContent = S.kind === "pausa" ? "No ha brotado nada. Apuntar la pausa igual" : "No salió nada. Apuntar el paseo igual";
   document.getElementById("cIdea").checked = false;
   document.getElementById("cText").value = "";
+  const up = document.getElementById("urgePost");
+  up.hidden = S.ganas0 == null;
+  up.querySelectorAll("button").forEach(x => x.classList.remove("sel"));
+  fillProj("cProj", S.seed && S.seed.project ? S.seed.project : "");
   clearPhoto();
   go("capture");
   setTimeout(() => document.getElementById("cText").focus(), 80);
@@ -753,6 +927,9 @@ function saveEntry(text){
     from: S.seed ? S.seed.id : undefined,
     text: (text || "").trim(),
     idea: document.getElementById("cIdea").checked,
+    project: document.getElementById("cProj").value || undefined,
+    ganas0: S.ganas0 != null && S.ganas1 != null ? S.ganas0 : undefined,
+    ganas1: S.ganas0 != null && S.ganas1 != null ? S.ganas1 : undefined,
     photo: S.photo || null
   });
   clearPhoto();
@@ -770,6 +947,7 @@ document.getElementById("qSave").onclick = () => {
     category: "Nota",
     text,
     idea: document.getElementById("qIdea").checked,
+    project: document.getElementById("qProj").value || undefined,
     photo: null
   });
   document.getElementById("qText").value = "";
@@ -834,7 +1012,7 @@ function stopDictation(){ document.querySelectorAll(".mic.rec").forEach(b => b.c
 
 /* Exportación e importación de seguridad */
 async function backupJson(){
-  const blob = new Blob([JSON.stringify(S.entries, null, 2)], { type:"application/json" });
+  const blob = new Blob([JSON.stringify({ version: 2, entries: S.entries, profile: PROFILE }, null, 2)], { type:"application/json" });
   if(await saveFile(`deriva-copia-${new Date().toISOString().slice(0,10)}.json`, blob)){ markBackup(); renderNotebook(); }
 }
 document.getElementById("btnExportJson").onclick = backupJson;
@@ -843,7 +1021,7 @@ document.getElementById("btnExportMd").onclick = () => {
   if(!S.entries.length){ alert("Todavía no tienes entradas guardadas."); return; }
   let md = "# Cuaderno de Campo · Deriva\n\n*Exportado el " + new Date().toLocaleDateString("es-ES") + "*\n\n---\n\n";
   S.entries.forEach(e => {
-    md += `## ${e.title} (${e.category || "Práctica"})${e.idea ? " · IDEA" : ""}\n`;
+    md += `## ${e.title} (${e.category || "Práctica"})${e.idea ? " · IDEA" : ""}${e.project ? " · " + e.project : ""}\n`;
     md += `*Fecha: ${new Date(e.ts).toLocaleString("es-ES")}*\n\n`;
     md += (e.text || "*(Salí, no vino nada)*") + "\n\n";
     if(e.photo) md += `*(Foto adjuntada en copia digital)*\n\n`;
@@ -859,12 +1037,16 @@ document.getElementById("importJsonFile").onchange = (ev) => {
   const reader = new FileReader();
   reader.onload = (e) => {
     try{
-      const imported = JSON.parse(e.target.result);
-      if(Array.isArray(imported)){
+      const raw = JSON.parse(e.target.result);
+      const imported = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.entries) ? raw.entries : null);
+      if(raw && raw.profile && !PROFILE.done){ PROFILE = Object.assign(loadProfile(), raw.profile); saveProfile(); }
+      if(imported){
         const seen = new Set(S.entries.map(x => x.id));
         imported.forEach(item => { if(item && item.id && !seen.has(item.id)) S.entries.push(item); });
         S.entries.sort((a,b) => b.ts - a.ts);
         writeLocal(S.entries);
+        allProjects().forEach(n => { if(PROFILE.projects.indexOf(n) < 0) PROFILE.projects.push(n); });
+        saveProfile();
         render();
         alert("Copia restaurada correctamente: " + S.entries.length + " entradas en total.");
       }
@@ -874,6 +1056,93 @@ document.getElementById("importJsonFile").onchange = (ev) => {
   };
   reader.readAsText(file);
 };
+
+/* Bienvenida: cuatro preguntas, y cada una cambia algo de verdad en la app */
+const W = { i:0, d:null, editing:false };
+const STEPS = [
+  { k:"projects" },
+  { k:"mins", q:"¿Cuánto tiempo puedes parar al día?", sub:"Es la duración con la que empieza cada práctica. Siempre se puede cambiar en el momento.",
+    opts:[[5,"5 minutos","Una pausa corta, para días llenos."],[10,"10 minutos","El punto medio."],[20,"20 minutos","Para dejar que la cabeza se asiente de verdad."]] },
+  { k:"outdoor", q:"¿Puedes salir a la calle?", sub:"Más de la mitad de las prácticas piden salir. Si no puedes, la app te da las que se hacen dentro.",
+    opts:[["si","Casi siempre","Prácticas de calle y de casa."],["dia","Según el día","Empiezo con salir, y un botón me cambia a «hoy no salgo»."],["no","Casi nunca","Solo prácticas que se hacen dentro, salvo que lo cambie ese día."]] },
+  { k:"goal", q:"¿Qué quieres que te dé esto?", sub:"Cambia qué tipo de prácticas salen más a menudo. Todas acaban saliendo.",
+    opts:[["ideas","Más ideas","Más prácticas de hacer y de recordar."],["ruido","Parar el ruido","Más prácticas de notar y escuchar."],["rutina","Salir de la rutina","Más prácticas de derivar y de hablar con gente."]] }
+];
+function openWelcome(editing){
+  W.editing = !!editing; W.i = 0;
+  W.d = { projects: PROFILE.projects.map(n => ({ orig: n, v: n })), mins: PROFILE.mins || 0, outdoor: PROFILE.outdoor || "dia", goal: PROFILE.goal || "" };
+  document.body.classList.add("onb");
+  go("welcome");
+  renderWelcome();
+}
+function renderWelcome(){
+  const st = STEPS[W.i], host = document.getElementById("wBody");
+  document.getElementById("wStep").textContent = (W.i + 1) + " de " + STEPS.length;
+  let h = "";
+  if(st.k === "projects"){
+    const n = Math.max(3, W.d.projects.length + 1);
+    h += (W.editing ? "" : '<p class="wsub" style="margin-bottom:10px;">Cuatro preguntas para ajustar la app a ti. Todo se queda en tu móvil.</p>') +
+         '<h2 class="wq">¿En qué estás trabajando?</h2>' +
+         '<p class="wsub">Hasta tres proyectos para colgar de ellos tus ideas. Puedes dejarlo vacío y añadirlos más tarde.</p><div class="wfields">';
+    for(let k = 0; k < n; k++){
+      const p = W.d.projects[k] || { orig: "", v: "" };
+      h += '<input type="text" maxlength="40" placeholder="Un proyecto" data-orig="' + esc(p.orig) + '" value="' + esc(p.v) + '" autocomplete="off">';
+    }
+    h += '</div><div class="stackv"><button class="btn solid" id="wNext">Siguiente</button></div>';
+  } else {
+    h += '<h2 class="wq">' + st.q + '</h2><p class="wsub">' + st.sub + '</p><div class="opts">';
+    st.opts.forEach(o => { h += '<button class="opt' + (W.d[st.k] === o[0] ? ' sel' : '') + '" data-v="' + o[0] + '"><b>' + o[1] + '</b><span>' + o[2] + '</span></button>'; });
+    h += '</div>';
+  }
+  h += '<div class="wnav">' + (W.i ? '<button class="linkbtn" id="wBack">Atrás</button>' : (W.editing ? '<button class="linkbtn" id="wCancel">Cancelar</button>' : '<span></span>')) +
+       (st.k === "projects" ? '' : '<button class="linkbtn" id="wSkip">Saltar</button>') + '</div>';
+  host.innerHTML = h;
+  host.querySelectorAll(".opt").forEach(b => b.onclick = () => {
+    const v = b.dataset.v; W.d[st.k] = (st.k === "mins") ? parseInt(v, 10) : v;
+    wAdvance();
+  });
+  const nx = document.getElementById("wNext"); if(nx) nx.onclick = () => { readProjects(); wAdvance(); };
+  const sk = document.getElementById("wSkip"); if(sk) sk.onclick = wAdvance;
+  const bk = document.getElementById("wBack"); if(bk) bk.onclick = () => { W.i--; renderWelcome(); };
+  const cn = document.getElementById("wCancel"); if(cn) cn.onclick = () => { document.body.classList.remove("onb"); go("notebook"); };
+  window.scrollTo(0, 0);
+}
+function readProjects(){
+  W.d.projects = [...document.querySelectorAll("#wBody .wfields input")]
+    .map(i => ({ orig: i.dataset.orig, v: i.value.trim().slice(0, 40) }))
+    .filter(p => p.v || p.orig);
+}
+function wAdvance(){
+  if(W.i < STEPS.length - 1){ W.i++; renderWelcome(); } else finishWelcome();
+}
+function finishWelcome(){
+  const prev = PROFILE.projects.slice();
+  let next = [];
+  {
+    const renames = [], removed = [];
+    W.d.projects.forEach(p => {
+      if(p.v){ if(next.indexOf(p.v) < 0) next.push(p.v); if(p.orig && p.orig !== p.v) renames.push([p.orig, p.v]); }
+      else if(p.orig) removed.push(p.orig);
+    });
+    const used = removed.filter(n => S.entries.some(e => e.project === n));
+    if(used.length && !confirm("Quitar «" + used.join("», «") + "» también lo borra de las notas que lo tenían (las notas se quedan). ¿Seguir?")) { return; }
+    renames.forEach(([a, b]) => S.entries.forEach(e => { if(e.project === a) e.project = b; }));
+    removed.forEach(n => S.entries.forEach(e => { if(e.project === n) e.project = undefined; }));
+    if(renames.length || removed.length) writeLocal(S.entries);
+  }
+  PROFILE.projects = next;
+  PROFILE.mins = W.d.mins || 0;
+  PROFILE.outdoor = W.d.outdoor || "dia";
+  PROFILE.goal = W.d.goal || "";
+  PROFILE.done = true;
+  saveProfile();
+  try{ localStorage.removeItem("deriva.swap"); localStorage.removeItem("deriva.pauseMins"); }catch(e){}
+  document.body.classList.remove("onb");
+  render();
+  go(W.editing ? "notebook" : "today");
+  toast("Ajustado");
+}
+document.getElementById("btnCtx").onclick = () => openWelcome(true);
 
 /* Recordatorio diario: una web instalada en iPhone no puede avisarte sola a una hora
    sin un servidor de notificaciones push, así que se delega en Atajos de iOS. */
