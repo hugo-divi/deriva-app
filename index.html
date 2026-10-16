@@ -423,9 +423,64 @@ function addProject(name){
 const S = { onlyIdeas:false, proj:"", ganas0:null, ganas1:null, lastProject:"", kind:"practica", entries:[], photo:null, practiceIdx:0, screen:"today", timerId:null, endsAt:0, selectedMinutes:0 };
 const LS = "deriva.entries.v1";
 
+/* Las fotos viven en IndexedDB (sin el límite de ~5 MB de localStorage). */
+const IDB = { db: null };
+function idbOpen(){
+  return new Promise(res => {
+    try{
+      const r = indexedDB.open("deriva", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("photos");
+      r.onsuccess = () => { IDB.db = r.result; res(true); };
+      r.onerror = r.onblocked = () => res(false);
+    }catch(e){ res(false); }
+  });
+}
+function idbPut(id, data){
+  return new Promise(res => {
+    if(!IDB.db) return res(false);
+    try{
+      const tx = IDB.db.transaction("photos", "readwrite");
+      tx.objectStore("photos").put(data, id);
+      tx.oncomplete = () => res(true); tx.onerror = tx.onabort = () => res(false);
+    }catch(e){ res(false); }
+  });
+}
+function idbDel(id){
+  try{ if(IDB.db) IDB.db.transaction("photos", "readwrite").objectStore("photos").delete(id); }catch(e){}
+}
+function idbAll(){
+  return new Promise(res => {
+    const out = {};
+    if(!IDB.db) return res(out);
+    try{
+      const rq = IDB.db.transaction("photos").objectStore("photos").openCursor();
+      rq.onsuccess = () => { const c = rq.result; if(c){ out[c.key] = c.value; c.continue(); } else res(out); };
+      rq.onerror = () => res(out);
+    }catch(e){ res(out); }
+  });
+}
+/* Lo que se guarda en localStorage: la entrada sin la foto, salvo que IndexedDB no esté disponible */
+function lite(e){
+  const c = Object.assign({}, e); delete c._idb;
+  if(e._idb && e.photo){ c.photo = null; c.hasPhoto = true; }   // solo si ya está a salvo en IndexedDB
+  return c;
+}
+async function loadPhotos(){
+  const ok = await idbOpen();
+  try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+  if(!ok) return;
+  const all = await idbAll();
+  let moved = false;
+  for(const e of S.entries){
+    if(e.hasPhoto && !e.photo){ e.photo = all[e.id] || null; if(e.photo) e._idb = true; }
+    else if(e.photo){ if(all[e.id] || await idbPut(e.id, e.photo)){ e._idb = true; moved = true; } }
+  }
+  if(moved) writeLocal(S.entries);
+  renderNotebook();
+}
 function readLocal(){ try{ const r = localStorage.getItem(LS); return r ? JSON.parse(r) : []; }catch(e){ return []; } }
 function writeLocal(list){
-  try{ localStorage.setItem(LS, JSON.stringify(list)); return true; }
+  try{ localStorage.setItem(LS, JSON.stringify(list.map(lite))); return true; }
   catch(e){
     alert("No he podido guardar: el móvil se ha quedado sin espacio para el cuaderno. Pulsa «Copia .JSON» para no perder nada y quita fotos antiguas.");
     return false;
@@ -449,13 +504,16 @@ function initStore(){
   syncBackend(S.entries);
   allProjects().forEach(n => { if(PROFILE.projects.indexOf(n) < 0) PROFILE.projects.push(n); });
   if(!PROFILE.done) openWelcome(false);
+  loadPhotos();
 }
 
 function persist(entry){
   S.entries.unshift(entry);
-  writeLocal(S.entries);
-  render();
-  syncBackend(S.entries);
+  const done = () => { writeLocal(S.entries); render(); syncBackend(S.entries); };
+  if(entry.photo && IDB.db){
+    render();
+    idbPut(entry.id, entry.photo).then(ok => { if(ok) entry._idb = true; done(); });
+  } else done();
 }
 
 function practiceEntries(){ return S.entries.filter(e => e.kind !== "pausa" && e.kind !== "nota"); }
@@ -797,6 +855,57 @@ function go(name){
 document.querySelectorAll("nav button").forEach(b => { b.onclick = () => { stopTimer(); stopDictation(); go(b.dataset.go); }; });
 
 const HINT_BASE = "Deja la pantalla encendida y el móvil boca abajo. Si lo bloqueas, el tiempo sigue contando pero la campana no suena.";
+const HINT_AUDIO = "Puedes bloquear el móvil y guardarlo: la campana sonará al final. Si no la oyes, quita el modo silencio.";
+
+/* La campana va grabada dentro de un audio de la duración exacta (silencio + campana).
+   Un audio en reproducción sigue sonando con la pantalla bloqueada; un temporizador
+   de JavaScript, no. */
+const RATE = 8000;
+function bellInto(buf, startSample, gain, seconds){
+  const freqs = [432, 864, 1296];
+  const n = Math.min(buf.length - startSample, Math.floor(seconds * RATE));
+  for(let i = 0; i < n; i++){
+    const t = i / RATE; let v = 0;
+    for(let k = 0; k < 3; k++) v += Math.sin(2 * Math.PI * freqs[k] * t) / (k + 1);
+    buf[startSample + i] = Math.max(0, Math.min(255, 128 + 127 * gain * v * 0.45 * Math.exp(-t * 1.5)));
+  }
+}
+function buildTimerWav(seconds){
+  const tail = 5, total = Math.floor((seconds + tail) * RATE);
+  const buf = new Uint8Array(44 + total); buf.fill(128, 44);
+  const dv = new DataView(buf.buffer);
+  const str = (o, t) => { for(let i = 0; i < t.length; i++) buf[o + i] = t.charCodeAt(i); };
+  str(0, "RIFF"); dv.setUint32(4, 36 + total, true); str(8, "WAVE"); str(12, "fmt ");
+  dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
+  dv.setUint32(24, RATE, true); dv.setUint32(28, RATE, true); dv.setUint16(32, 1, true); dv.setUint16(34, 8, true);
+  str(36, "data"); dv.setUint32(40, total, true);
+  bellInto(buf.subarray(44), Math.floor(seconds * RATE), 1, tail);
+  return new Blob([buf], { type: "audio/wav" });
+}
+const TA = new Audio(); TA.preload = "auto"; TA.setAttribute("playsinline", "");
+let taUrl = null;
+function stopAudio(){
+  try{ TA.pause(); }catch(e){}
+  if(taUrl){ URL.revokeObjectURL(taUrl); taUrl = null; }
+  S.audioOn = false;
+}
+TA.addEventListener("ended", () => { if(taUrl){ URL.revokeObjectURL(taUrl); taUrl = null; } });
+function startAudio(seconds, title){
+  stopAudio();
+  try{
+    taUrl = URL.createObjectURL(buildTimerWav(seconds));
+    TA.src = taUrl; TA.volume = 1;
+    if("mediaSession" in navigator){
+      navigator.mediaSession.metadata = new MediaMetadata({ title: title, artist: "Deriva" });
+      ["play","pause","stop","seekbackward","seekforward","previoustrack","nexttrack"].forEach(a => { try{ navigator.mediaSession.setActionHandler(a, null); }catch(e){} });
+    }
+    const pr = TA.play();
+    if(pr && pr.then){
+      pr.then(() => { S.audioOn = true; const h = document.getElementById("tHint"); h.textContent = h.textContent.replace(HINT_BASE, HINT_AUDIO); })
+        .catch(() => { S.audioOn = false; });
+    } else { S.audioOn = true; }
+  }catch(e){ S.audioOn = false; }
+}
 const GANAS = ["", "ninguna", "pocas", "algunas", "bastantes", "muchísimas"];
 function buildScales(){
   document.querySelectorAll(".scale").forEach(sc => {
@@ -830,8 +939,10 @@ function beginCount(){
   unlockAudio();
   document.getElementById("timer").classList.remove("pre");
   S.endsAt = Date.now() + pending.mins * 60000;
+  const dur = pending.mins * 60, ttl = document.getElementById("tLabel").textContent;
   pending = null;
   stopTimer();
+  startAudio(dur, ttl);
   tick();
   S.timerId = setInterval(tick, 500);
   requestWake();
@@ -860,14 +971,14 @@ function tick(){
   if(left <= 0){
     clock.textContent = "00:00";
     document.getElementById("tHint").textContent = "Se acabó el tiempo. Vuelve cuando quieras: no hay prisa y no se acaba nada.";
-    playChime();
-    stopTimer();
+    if(!S.audioOn) playChime();
+    stopTimer(true);
     return;
   }
   const s = Math.ceil(left / 1000);
   clock.textContent = String(Math.floor(s/60)).padStart(2,"0") + ":" + String(s%60).padStart(2,"0");
 }
-function stopTimer(){ if(S.timerId){ clearInterval(S.timerId); S.timerId = null; } try{ if(wake){ wake.release(); wake = null; } }catch(e){} }
+function stopTimer(keepAudio){ if(S.timerId){ clearInterval(S.timerId); S.timerId = null; } try{ if(wake){ wake.release(); wake = null; } }catch(e){} if(!keepAudio) stopAudio(); }
 
 document.getElementById("tDone").onclick = () => { stopTimer(); openCapture(); };
 document.getElementById("tCancel").onclick = () => { stopTimer(); go("today"); };
@@ -1012,7 +1123,7 @@ function stopDictation(){ document.querySelectorAll(".mic.rec").forEach(b => b.c
 
 /* Exportación e importación de seguridad */
 async function backupJson(){
-  const blob = new Blob([JSON.stringify({ version: 2, entries: S.entries, profile: PROFILE }, null, 2)], { type:"application/json" });
+  const blob = new Blob([JSON.stringify({ version: 2, entries: S.entries.map(e => { const c = Object.assign({}, e); delete c._idb; return c; }), profile: PROFILE }, null, 2)], { type:"application/json" });
   if(await saveFile(`deriva-copia-${new Date().toISOString().slice(0,10)}.json`, blob)){ markBackup(); renderNotebook(); }
 }
 document.getElementById("btnExportJson").onclick = backupJson;
@@ -1042,7 +1153,7 @@ document.getElementById("importJsonFile").onchange = (ev) => {
       if(raw && raw.profile && !PROFILE.done){ PROFILE = Object.assign(loadProfile(), raw.profile); saveProfile(); }
       if(imported){
         const seen = new Set(S.entries.map(x => x.id));
-        imported.forEach(item => { if(item && item.id && !seen.has(item.id)) S.entries.push(item); });
+        imported.forEach(item => { if(item && item.id && !seen.has(item.id)){ S.entries.push(item); if(item.photo) idbPut(item.id, item.photo).then(ok => { if(ok) item._idb = true; }); } });
         S.entries.sort((a,b) => b.ts - a.ts);
         writeLocal(S.entries);
         allProjects().forEach(n => { if(PROFILE.projects.indexOf(n) < 0) PROFILE.projects.push(n); });
@@ -1195,7 +1306,10 @@ if("serviceWorker" in navigator){
 }
 
 const btnTestChime = document.getElementById("btnTestChime");
-if(btnTestChime) btnTestChime.onclick = playChime;
+if(btnTestChime) btnTestChime.onclick = () => {
+  startAudio(0.2, "Probar campana");
+  toast("Suena así. Si no oyes nada, quita el modo silencio");
+};
 
 const nbSearchInput = document.getElementById("nbSearch");
 if(nbSearchInput) nbSearchInput.oninput = renderNotebook;
@@ -1215,6 +1329,7 @@ window.toggleIdea = function(id){
 window.delEntry = function(id){
   if(!confirm("¿Borrar esta nota? No se puede deshacer.")) return;
   S.entries = S.entries.filter(x => x.id !== id);
+  idbDel(id);
   writeLocal(S.entries); render();
 };
 window.exportEntryCard = function(id) {
