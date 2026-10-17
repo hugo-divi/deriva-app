@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Deriva</title>
 <meta name="theme-color" content="#0C1020">
+<meta name="description" content="Una práctica de diez minutos al día sin el móvil. Sin rachas, ni puntos, ni avisos.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:title" content="Deriva · Diez minutos al día sin el móvil">
+<meta property="og:description" content="Cada día una cosa pequeña que hacer sin pantalla. Guardas el móvil, vuelves y apuntas lo que trajiste. Sin rachas, ni puntos, ni avisos.">
+<meta property="og:url" content="https://hugo-divi.github.io/deriva-app/">
+<meta property="og:image" content="https://hugo-divi.github.io/deriva-app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Deriva">
@@ -330,6 +340,11 @@
       <h3>Qué pantalla ve al abrirse</h3>
       <p>Si la abres tras más de dos minutos, empieza aquí. «Apuntar» sirve si la usas sobre todo para no perder ideas.</p>
       <select id="startScreen"><option value="">Donde la dejé</option><option value="today">Hoy</option><option value="quick">Apuntar</option></select>
+    </div>
+    <div class="helpblk">
+      <h3>Enviar Deriva a alguien</h3>
+      <p>Si le puede servir a alguien que conoces, mándale el enlace. No te pide nada a cambio ni a quien lo recibe.</p>
+      <button class="nb-btn" onclick="shareApp()" style="align-self:flex-start;">Enviar el enlace</button>
     </div>
     <div class="helpblk">
       <h3>Si algo no suena o no graba</h3>
@@ -769,11 +784,13 @@ function render(){
       '<div class="stackv">' +
         '<button class="btn ghost" id="goNb">Abrir el cuaderno</button>' +
         '<button class="btn ghost" id="againBtn">Hacer otra igualmente</button>' +
-      '</div>';
+      '</div>' +
+      '<div class="togrow" style="margin-top:2px;"><button class="linkbtn" id="shareApp">Mándasela a alguien</button></div>';
     host.insertAdjacentHTML("beforeend", PAUSE_HTML + seedHTML());
     bindSeed();
     document.getElementById("goNb").onclick = () => go("notebook");
     document.getElementById("againBtn").onclick = () => startPractice();
+    document.getElementById("shareApp").onclick = () => shareApp();
     bindPause();
   } else {
     const stdMins = PROFILE.mins || minutesFor(n);
@@ -887,8 +904,8 @@ function renderNotebook(){
           '<div class="tools">' +
             '<select class="projsel" onchange="setProject(\'' + e.id + '\', this)">' + projOptions(e.project) + '</select>' +
             '<button class="nb-btn" onclick="toggleIdea(\'' + e.id + '\')">' + (e.idea ? 'Quitar idea' : 'Marcar idea') + '</button>' +
-            '<button class="nb-btn" onclick="shareEntry(\'' + e.id + '\')">Texto</button>' +
-            '<button class="nb-btn" onclick="exportEntryCard(\'' + e.id + '\')">Tarjeta</button>' +
+            (e.text ? '<button class="nb-btn" onclick="shareEntry(\'' + e.id + '\')">Texto</button>' +
+            '<button class="nb-btn" onclick="exportEntryCard(\'' + e.id + '\')">Tarjeta</button>' : '') +
             '<button class="nb-btn" onclick="delEntry(\'' + e.id + '\')">Borrar</button>' +
           '</div>' +
         '</article>';
@@ -1679,62 +1696,71 @@ window.delEntry = function(id){
   idbDel(id); idbDelS("audio", id);
   writeLocal(S.entries); render();
 };
-window.exportEntryCard = function(id) {
+window.exportEntryCard = async function(id) {
   const e = S.entries.find(x => x.id === id);
-  if (!e) return;
-  const cv = document.createElement("canvas");
-  cv.width = 1080; cv.height = 1080;
+  if (!e || !e.text) return;
+  try{
+    await Promise.all([document.fonts.load('600 60px Fraunces'), document.fonts.load('900 44px Fraunces'), document.fonts.load('500 24px "IBM Plex Mono"')]);
+  }catch(err){}
+  const W = 1080, H = 1350, M = 96;
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
   const ctx = cv.getContext("2d");
+  ctx.fillStyle = "#0C1020"; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = "#252D4A"; ctx.lineWidth = 3; ctx.strokeRect(48, 48, W - 96, H - 96);
 
-  ctx.fillStyle = "#0C1020";
-  ctx.fillRect(0, 0, 1080, 1080);
+  // cabecera: nombre y etiqueta
+  ctx.textBaseline = "alphabetic"; ctx.textAlign = "left";
+  ctx.fillStyle = "#E9E6DD"; ctx.font = "900 46px Fraunces, Georgia, serif";
+  ctx.fillText(MARCA, M, 150);
+  const tag = [(e.category || "").toUpperCase(), e.project ? e.project.toUpperCase() : "", e.idea ? "IDEA" : ""].filter(Boolean).join("  ·  ");
+  ctx.fillStyle = "#E4AC3F"; ctx.font = "500 24px 'IBM Plex Mono', monospace";
+  ctx.fillText(tag.slice(0, 48), M, 210);
 
-  ctx.strokeStyle = "#252D4A";
-  ctx.lineWidth = 3;
-  ctx.strokeRect(50, 50, 980, 980);
+  // título pequeño
+  ctx.fillStyle = "#A3A9BF"; ctx.font = "500 26px 'IBM Plex Mono', monospace";
+  ctx.fillText((e.title || "").toUpperCase().slice(0, 44), M, 262);
 
-  ctx.fillStyle = "#E4AC3F";
-  ctx.font = "900 84px 'Fraunces', Georgia, serif";
-  ctx.fillText("d", 100, 160);
-
-  ctx.fillStyle = "#8B92A8";
-  ctx.font = "500 24px 'IBM Plex Mono', monospace";
-  ctx.fillText((e.category || "PRÁCTICA").toUpperCase(), 100, 230);
-
-  ctx.fillStyle = "#E9E6DD";
-  ctx.font = "900 60px 'Fraunces', Georgia, serif";
-  ctx.fillText(e.title || "Deriva", 100, 310);
-
-  ctx.strokeStyle = "#252D4A";
-  ctx.beginPath();
-  ctx.moveTo(100, 360);
-  ctx.lineTo(980, 360);
-  ctx.stroke();
-
-  ctx.fillStyle = "#E9E6DD";
-  ctx.font = "400 36px 'Karla', sans-serif";
-  const words = (e.text || "(Salió, no vino nada)").split(" ");
-  let line = "", y = 450;
-  for (let n = 0; n < words.length; n++) {
-    const testLine = line + words[n] + " ";
-    if (ctx.measureText(testLine).width > 860 && n > 0) {
-      ctx.fillText(line, 100, y);
-      line = words[n] + " ";
-      y += 54;
-      if (y > 860) { line += "…"; break; }
-    } else {
-      line = testLine;
-    }
+  // texto: se ajusta el tamaño para que quepa entero, respetando saltos de línea
+  const maxW = W - 2 * M, top = 360, bottom = H - 230;
+  function layout(size){
+    ctx.font = "600 " + size + "px Fraunces, Georgia, serif";
+    const lh = Math.round(size * 1.3), lines = [];
+    String(e.text).split("\n").forEach(par => {
+      if(!par.trim()){ lines.push(""); return; }
+      let line = "";
+      par.split(/\s+/).forEach(w => {
+        const t = line ? line + " " + w : w;
+        if(ctx.measureText(t).width > maxW && line){ lines.push(line); line = w; } else line = t;
+      });
+      lines.push(line);
+    });
+    return { lines, lh };
   }
-  ctx.fillText(line, 100, y);
+  let size = 66, L = layout(size);
+  while(L.lines.length * L.lh > bottom - top && size > 30){ size -= 2; L = layout(size); }
+  let maxLines = Math.floor((bottom - top) / L.lh), lines = L.lines;
+  if(lines.length > maxLines){ lines = lines.slice(0, maxLines); lines[maxLines - 1] = lines[maxLines - 1].replace(/\s*\S*$/, "") + "…"; }
+  ctx.fillStyle = "#E9E6DD"; ctx.font = "600 " + size + "px Fraunces, Georgia, serif";
+  lines.forEach((ln, i) => ctx.fillText(ln, M, top + (i + 1) * L.lh - 12));
 
-  ctx.fillStyle = "#E4AC3F";
-  ctx.font = "500 22px 'IBM Plex Mono', monospace";
-  ctx.fillText("DERIVA · " + new Date(e.ts).toLocaleDateString("es-ES"), 100, 960);
+  // pie
+  ctx.strokeStyle = "#E4AC3F"; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(M, H - 190); ctx.lineTo(M + 90, H - 190); ctx.stroke();
+  ctx.fillStyle = "#A3A9BF"; ctx.font = "500 24px 'IBM Plex Mono', monospace";
+  ctx.fillText(new Date(e.ts).toLocaleDateString("es-ES", { day:"numeric", month:"long", year:"numeric" }).toUpperCase(), M, H - 130);
+  ctx.textAlign = "right"; ctx.fillStyle = "#838AA6";
+  ctx.fillText("DIEZ MINUTOS SIN EL MÓVIL", W - M, H - 130);
 
-  ctx.fillStyle = "#5B6280";
+  cv.toBlob(blob => saveFile("deriva-" + new Date(e.ts).toISOString().slice(0, 10) + ".png", blob));
+};
 
-  cv.toBlob(blob => saveFile(`deriva-tarjeta-${e.id}.png`, blob));
+const APP_URL = "https://hugo-divi.github.io/deriva-app/";
+window.shareApp = async function(){
+  const data = { title: "Deriva", text: "Una práctica de diez minutos al día sin el móvil. Sin rachas, ni puntos, ni avisos. Pruébala:", url: APP_URL };
+  try{
+    if(navigator.share){ await navigator.share(data); return; }
+    await navigator.clipboard.writeText(data.text + " " + data.url); toast("Enlace copiado");
+  }catch(err){ if(!err || err.name !== "AbortError") toast("No se pudo compartir"); }
 };
 
 const tPocket = document.getElementById("tPocket");
