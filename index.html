@@ -20,7 +20,7 @@
   :root{
     color-scheme:dark;
     --ground:#0C1020;--surface:#151B2E;--surface-2:#1C2340;
-    --ink:#E9E6DD;--muted:#8B92A8;--faint:#5B6280;--line:#252D4A;
+    --ink:#E9E6DD;--muted:#A3A9BF;--faint:#838AA6;--line:#252D4A;
     --amber:#E4AC3F;--amber-dim:#8A6B23;--moss:#7FA98D;
   }
   *{box-sizing:border-box;}
@@ -40,7 +40,7 @@
   button:focus-visible,textarea:focus-visible,label:focus-within,select:focus-visible{outline:2px solid var(--amber);outline-offset:3px;}
 
   .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;}
-  .eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
+  .eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
 
   #app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);}
   .screen{display:none;flex-direction:column;flex:1;padding-inline:20px;max-width:620px;width:100%;margin:0 auto;}
@@ -48,7 +48,7 @@
 
   .top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding-block:26px 30px;}
   .wordmark{font-family:"Fraunces",Georgia,serif;font-size:1.3rem;font-weight:900;letter-spacing:-.03em;}
-  .daycount{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-variant-numeric:tabular-nums;}
+  .daycount{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-variant-numeric:tabular-nums;}
 
   .install-banner{
     display:none;align-items:center;justify-content:space-between;gap:12px;
@@ -58,12 +58,34 @@
   .install-banner.show{display:flex;}
   .install-banner button{
     border:1px solid var(--amber);color:var(--amber);padding:6px 12px;
-    font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+    font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;
   }
 
   .ideaflag{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.95rem;cursor:pointer;}
   .ideaflag input{width:20px;height:20px;accent-color:var(--amber);}
   [hidden]{display:none!important;}
+  .more{margin-top:14px;border:1px solid var(--line);background:var(--surface);}
+  .more summary{list-style:none;cursor:pointer;padding:14px 16px;font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;}
+  .more summary::-webkit-details-marker{display:none;}
+  .more summary::after{content:"+";font-size:1rem;line-height:1;}
+  .more[open] summary::after{content:"–";}
+  .morebody{padding:0 16px 16px;display:flex;flex-direction:column;gap:12px;}
+  .morebody .ramp-selector{margin-top:0;}
+  .row2{display:flex;gap:8px;flex-wrap:wrap;}
+  .helpblk{border-top:1px solid var(--line);padding:22px 0;display:flex;flex-direction:column;gap:10px;}
+  .helpblk h3{font-size:1.15rem;font-weight:600;letter-spacing:-.015em;}
+  .helpblk ol{margin:0;padding-left:20px;color:var(--muted);font-size:.97rem;line-height:1.55;display:flex;flex-direction:column;gap:6px;}
+  .helpblk p{color:var(--muted);font-size:.95rem;line-height:1.5;}
+  .helpblk select{width:100%;background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:12px;}
+  .ring{position:relative;width:min(68vw,250px);aspect-ratio:1/1;display:block;margin:0 auto;padding:0;background:none;border:0;border-radius:50%;}
+  .ring svg{width:100%;height:100%;display:block;}
+  .ring .rt{fill:none;stroke:var(--line);stroke-width:3;}
+  .ring .rp{fill:none;stroke:var(--amber);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .5s linear;}
+  .ring:focus-visible{outline:2px solid var(--amber);outline-offset:6px;}
+  .ring .t-clock{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;}
+  .ring.show .t-clock,body.clock .ring .t-clock{opacity:1;}
+  #timer.pocket .rp{stroke:#1c2238;}
+  #timer.pocket .rt{stroke:#0a0d18;}
   body.onb nav{display:none;}
   .wq{font-size:1.9rem;font-weight:900;letter-spacing:-.03em;line-height:1.08;margin:10px 0 12px;}
   .wsub{font-size:.98rem;color:var(--muted);line-height:1.5;margin-bottom:22px;}
@@ -74,47 +96,47 @@
   .opt b{font-weight:500;font-size:1.05rem;}
   .opt span{font-size:.88rem;color:var(--muted);line-height:1.4;}
   .opt.sel{border-color:var(--amber);background:rgba(228,172,63,.08);}
-  .linkbtn{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding:4px 0 3px;align-self:flex-start;}
+  .linkbtn{font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding:4px 0 3px;align-self:flex-start;}
   .linkbtn:hover{color:var(--amber);border-color:var(--amber);}
   .wnav{display:flex;justify-content:space-between;align-items:center;margin-top:22px;}
   .togrow{display:flex;justify-content:center;padding-top:2px;}
   .projrow{display:flex;align-items:center;gap:12px;}
-  .projrow label{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);flex:0 0 auto;}
+  .projrow label{font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);flex:0 0 auto;}
   .projrow select{flex:1;min-width:0;background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:11px 12px;}
   .projsel{background:var(--surface);color:var(--muted);border:1px solid var(--line);padding:9px 8px;max-width:150px;font-size:16px;}
-  .tag-proj{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--moss);border:1px solid var(--line);padding:2px 7px;margin-left:8px;}
+  .tag-proj{font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--moss);border:1px solid var(--line);padding:2px 7px;margin-left:8px;}
   .urge{display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px;margin:0 auto;text-align:center;}
   .urge .uq{font-family:"Fraunces",Georgia,serif;font-size:1.3rem;font-weight:600;line-height:1.25;letter-spacing:-.02em;}
   .urge .scale{display:flex;gap:8px;}
   .urge .scale button{flex:1;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:16px 0;font-size:1.1rem;}
   .urge .scale button.sel{border-color:var(--amber);background:var(--amber);color:var(--ground);}
-  .urge .ends{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
-  #timer.pre .t-clock,#timer.pre .t-hint,#timer.pre .t-actions{display:none;}
+  .urge .ends{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
+  #timer.pre .ring,#timer.pre .t-hint,#timer.pre .t-actions,#timer.pre #tClockPref{display:none;}
   #timer:not(.pre) #urgePre{display:none;}
-  .ganas{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.08em;color:var(--faint);}
+  .ganas{font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.08em;color:var(--faint);}
   .microw{display:flex;align-items:center;gap:12px;margin-top:-6px;}
-  .mic{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);color:var(--muted);padding:11px 16px;font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;background:var(--surface);flex:0 0 auto;}
+  .mic{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);color:var(--muted);padding:11px 16px;font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;background:var(--surface);flex:0 0 auto;}
   .mic svg{width:16px;height:16px;fill:currentColor;}
   .mic.rec{background:var(--amber);color:var(--ground);border-color:var(--amber);}
   .microw .note{padding:0;text-align:left;flex:1;font-size:.84rem;}
-  .tag-idea{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);border:1px solid var(--amber-dim);padding:2px 7px;margin-left:8px;}
+  .tag-idea{font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);border:1px solid var(--amber-dim);padding:2px 7px;margin-left:8px;}
   .pause{border:1px dashed var(--line);padding:18px 20px;display:flex;flex-direction:column;gap:12px;margin-top:6px;}
   .pause p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.5;}
   .pause .row{display:flex;gap:10px;}
   .pause select{flex:0 0 96px;min-width:0;background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:0 10px;}
   .pause .btn{flex:1;min-width:0;}
-  .card{border:1px solid var(--line);background:var(--surface);padding:30px 26px;display:flex;flex-direction:column;gap:20px;}
-  .cat{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);}
+  .card{border:1px solid var(--line);background:var(--surface);padding:24px 22px;display:flex;flex-direction:column;gap:14px;}
+  .cat{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);}
   .ptitle{font-size:clamp(2rem,8vw,2.9rem);font-weight:900;line-height:1.02;letter-spacing:-.035em;}
-  .pbody{font-size:1.09rem;line-height:1.56;color:var(--ink);}
+  .pbody{font-size:1.04rem;line-height:1.55;color:var(--ink);}
   .pmeta{display:flex;gap:18px;align-items:center;padding-top:4px;border-top:1px solid var(--line);flex-wrap:wrap;}
-  .pmeta span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
+  .pmeta span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
 
   .ramp-selector{
     display:flex;flex-direction:column;align-items:stretch;gap:8px;
     background:var(--surface-2);border:1px solid var(--line);padding:12px 14px;margin-top:4px;
   }
-  .ramp-selector label{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+  .ramp-selector label{font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
   .ramp-selector select{
     background:var(--ground);color:var(--ink);border:1px solid var(--line);
     padding:11px 12px;width:100%;min-width:0;
@@ -144,8 +166,8 @@
   #timer.pocket .t-clock{color:#1c2238!important;}
   #timer.pocket .t-label,#timer.pocket .t-hint{color:#121626!important;}
   #timer.pocket .t-actions{opacity:.18;}
-  .t-label{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:34px;}
-  .t-clock{font-family:"Fraunces",Georgia,serif;font-size:clamp(4.5rem,24vw,8rem);font-weight:400;line-height:1;letter-spacing:-.05em;font-variant-numeric:tabular-nums;color:var(--amber);}
+  .t-label{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:34px;}
+  .t-clock{font-family:"Fraunces",Georgia,serif;font-size:clamp(2.4rem,13vw,3.4rem);font-weight:400;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:var(--amber);}
   .t-hint{font-size:1rem;color:var(--muted);margin-top:34px;max-width:28ch;line-height:1.5;}
   .t-actions{display:flex;flex-direction:column;gap:10px;margin-top:48px;width:100%;max-width:300px;}
 
@@ -153,7 +175,7 @@
   textarea{width:100%;min-height:190px;resize:vertical;background:var(--surface);border:1px solid var(--line);color:var(--ink);font-family:inherit;font-size:1.05rem;line-height:1.55;padding:16px;}
   textarea::placeholder{color:var(--faint);}
   .photo-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-  .filelabel{border:1px solid var(--line);color:var(--muted);padding:11px 16px;cursor:pointer;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;}
+  .filelabel{border:1px solid var(--line);color:var(--muted);padding:11px 16px;cursor:pointer;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;}
   .filelabel:hover{background:var(--surface-2);color:var(--ink);}
   .filelabel input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
   .thumb{width:54px;height:54px;object-fit:cover;border:1px solid var(--line);display:block;}
@@ -162,7 +184,7 @@
     display:flex;gap:8px;flex-wrap:wrap;padding:12px 0 20px 0;border-bottom:1px solid var(--line);margin-bottom:20px;
   }
   .nb-btn{
-    font-family:"IBM Plex Mono",monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;
+    font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;
     border:1px solid var(--line);color:var(--muted);padding:11px 13px;background:var(--surface);
   }
   .nb-btn:hover{color:var(--ink);border-color:var(--amber);}
@@ -171,7 +193,7 @@
   .entry:last-child{border-bottom:1px solid var(--line);}
   .entry .hd{display:flex;justify-content:space-between;gap:14px;align-items:baseline;}
   .entry .et{font-family:"Fraunces",Georgia,serif;font-size:1.13rem;font-weight:600;letter-spacing:-.015em;line-height:1.25;}
-  .entry .ed{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.1em;color:var(--faint);white-space:nowrap;}
+  .entry .ed{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.1em;color:var(--faint);white-space:nowrap;}
   .entry .ex{font-size:1rem;line-height:1.58;color:var(--ink);white-space:pre-wrap;overflow-wrap:break-word;}
   .entry img{max-width:min(100%,260px);border:1px solid var(--line);display:block;}
 
@@ -180,17 +202,17 @@
   .empty p{font-size:.94rem;color:var(--muted);max-width:32ch;line-height:1.55;}
 
   .conn{border:1px solid var(--amber-dim);background:rgba(228,172,63,.07);padding:24px 22px;display:flex;flex-direction:column;gap:18px;margin-bottom:8px;}
-  .conn .ch{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);}
+  .conn .ch{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);}
   .conn .pair{display:flex;flex-direction:column;gap:16px;}
   .conn .side{display:flex;flex-direction:column;gap:6px;}
-  .conn .sd{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.1em;color:var(--faint);}
+  .conn .sd{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.1em;color:var(--faint);}
   .conn .sx{font-size:1rem;line-height:1.55;overflow-wrap:break-word;}
   .conn .ask{font-family:"Fraunces",Georgia,serif;font-size:1.13rem;font-weight:600;line-height:1.3;letter-spacing:-.015em;padding-top:14px;border-top:1px solid var(--amber-dim);}
-  .conn .again{align-self:flex-start;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:2px;}
+  .conn .again{align-self:flex-start;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:2px;}
   .conn .again:hover{color:var(--amber);border-color:var(--amber);}
 
   nav{position:sticky;bottom:0;margin-top:auto;display:flex;border-top:1px solid var(--line);background:var(--ground);padding-bottom:env(safe-area-inset-bottom, 0px);z-index:20;}
-  nav button{flex:1;padding:18px 4px;min-width:0;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
+  nav button{flex:1;padding:18px 4px;min-width:0;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
   nav button.on{color:var(--amber);}
   nav button:hover{color:var(--ink);}
   .navwrap{max-width:620px;margin:0 auto;width:100%;display:flex;}
@@ -201,7 +223,7 @@
   .seed .btn{padding:14px 12px;}
   .tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:6px;}
   .nudge{border:1px solid var(--amber-dim);padding:14px 16px;font-size:.92rem;color:var(--muted);display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
-  .toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--amber);color:var(--ground);padding:11px 18px;font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s;}
+  .toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--amber);color:var(--ground);padding:11px 18px;font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s;}
   .toast.on{opacity:1;}
   .hd2{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
   .hd2 h2{font-size:1.9rem;font-weight:900;letter-spacing:-.03em;line-height:1;}
@@ -234,8 +256,12 @@
       <button class="btn ghost" id="urgeSkip" style="margin-top:14px;">Empezar sin contestar</button>
       <button class="linkbtn" id="urgeBack" style="align-self:center;margin-top:6px;">Atrás</button>
     </div>
-    <div class="t-clock" id="tClock">00:00</div>
+    <button class="ring" id="tRing" type="button" aria-label="Mostrar el tiempo que queda">
+      <svg viewBox="0 0 240 240" aria-hidden="true"><circle class="rt" cx="120" cy="120" r="108"/><circle class="rp" id="tArc" cx="120" cy="120" r="108" transform="rotate(-90 120 120)"/></svg>
+      <span class="t-clock" id="tClock">00:00</span>
+    </button>
     <p class="t-hint" id="tHint">Deja la pantalla encendida y el móvil boca abajo. Si lo bloqueas, el tiempo sigue contando pero la campana no suena.</p>
+    <button class="linkbtn" id="tClockPref" style="align-self:center;margin-top:18px;"></button>
     <div class="t-actions">
       <button class="btn solid" id="tDone">Ya he vuelto</button>
       <button class="btn ghost" id="tPocket">Modo bolsillo (atenuar)</button>
@@ -270,6 +296,41 @@
     <div class="pad"></div>
   </section>
 
+  <section class="screen" id="help">
+    <div class="top"><span class="wordmark" data-wm>Deriva</span><span class="daycount">Atajos</span></div>
+    <div class="hd2"><h2>Abrirla rápido</h2><p>Para apuntar una idea antes de que se vaya.</p></div>
+    <div class="helpblk" style="margin-top:14px;">
+      <h3>Dos toques en la espalda del móvil</h3>
+      <ol>
+        <li>En la app Atajos, crea un atajo con una sola acción: «Abrir app» → Deriva.</li>
+        <li>Ajustes → Accesibilidad → Tocar → Tocar atrás → Doble toque.</li>
+        <li>Elige tu atajo al final de la lista.</li>
+      </ol>
+    </div>
+    <div class="helpblk">
+      <h3>Un aviso diario que decides tú</h3>
+      <p>Deriva nunca te avisa por su cuenta. Si quieres un recordatorio, lo pones tú:</p>
+      <ol>
+        <li>Atajos → Automatización → + → Hora del día.</li>
+        <li>Elige la hora y «Diariamente».</li>
+        <li>Acción: «Abrir app» → Deriva. Marca «Ejecutar inmediatamente» para que no pregunte.</li>
+      </ol>
+      <p>iOS puede enseñar un aviso de Atajos al ejecutarla; eso lo decide Apple.</p>
+    </div>
+    <div class="helpblk">
+      <h3>Botón de acción</h3>
+      <p>En iPhone 15 Pro o posterior: Ajustes → Botón de acción → Atajo, y elige el mismo atajo.</p>
+    </div>
+    <div class="helpblk">
+      <h3>Qué pantalla ve al abrirse</h3>
+      <p>Si la abres tras más de dos minutos, empieza aquí. «Apuntar» sirve si la usas sobre todo para no perder ideas.</p>
+      <select id="startScreen"><option value="">Donde la dejé</option><option value="today">Hoy</option><option value="quick">Apuntar</option></select>
+    </div>
+    <p class="note">Los nombres de los menús pueden variar un poco según tu versión de iOS.</p>
+    <div class="stackv"><button class="btn ghost" id="helpBack">Volver al cuaderno</button></div>
+    <div class="pad"></div>
+  </section>
+
   <section class="screen" id="welcome">
     <div class="top"><span class="wordmark" data-wm>Deriva</span><span class="daycount" id="wStep"></span></div>
     <div id="wBody"></div>
@@ -300,7 +361,7 @@
       <label class="nb-btn" style="cursor:pointer;">Restaurar .JSON<input type="file" id="importJsonFile" accept=".json" style="display:none;"></label>
       <button class="nb-btn" id="btnIdeas">Solo ideas</button>
       <button class="nb-btn" id="btnCtx">Tu contexto</button>
-      <button class="nb-btn" id="btnReminder">Recordatorio</button>
+      <button class="nb-btn" id="btnReminder">Atajos</button>
       <button class="nb-btn" id="btnTestChime">Probar campana</button>
     </div>
 
@@ -504,6 +565,7 @@ function initStore(){
   syncBackend(S.entries);
   allProjects().forEach(n => { if(PROFILE.projects.indexOf(n) < 0) PROFILE.projects.push(n); });
   if(!PROFILE.done) openWelcome(false);
+  else if(startPref()) go(startPref());
   loadPhotos();
 }
 
@@ -673,7 +735,7 @@ function render(){
         '<button class="btn ghost" id="goNb">Abrir el cuaderno</button>' +
         '<button class="btn ghost" id="againBtn">Hacer otra igualmente</button>' +
       '</div>';
-    host.insertAdjacentHTML("beforeend", seedHTML() + PAUSE_HTML);
+    host.insertAdjacentHTML("beforeend", PAUSE_HTML + seedHTML());
     bindSeed();
     document.getElementById("goNb").onclick = () => go("notebook");
     document.getElementById("againBtn").onclick = () => startPractice();
@@ -686,20 +748,27 @@ function render(){
         '<span class="cat">' + esc(p.c) + '</span>' +
         '<h1 class="ptitle">' + esc(p.t) + '</h1>' +
         '<p class="pbody">' + esc(p.b) + '</p>' +
+      '</div>' +
+      '<div class="stackv" style="margin-top:14px;">' +
+        '<button class="btn solid" id="beginBtn">Empezar · <span id="beginMins">' + stdMins + '</span> min</button>' +
+      '</div>' +
+      '<p class="note">' + (insideToday() ? 'Léela una vez y hazla sin salir de casa.' : 'Léela una vez y sal. No hace falta que la recuerdes exacta.') + '</p>' +
+      '<details class="more" id="moreBox"><summary>Ajustar hoy</summary><div class="morebody">' +
         '<div class="ramp-selector">' +
-          '<label for="durSelect">Duración hoy</label>' +
+          '<label for="durSelect">Duración</label>' +
           '<select id="durSelect">' +
             opts.map(m => '<option value="' + m + '"' + (m === stdMins ? ' selected' : '') + '>' + m + ' min' + (m === stdMins ? ' · tu tiempo' : '') + '</option>').join("") +
           '</select>' +
         '</div>' +
-        '<div class="pmeta"><span>Móvil guardado</span><span>Bajo estímulo</span></div>' +
-      '</div>' +
-      '<div class="stackv">' +
-        '<button class="btn solid" id="beginBtn">Empezar</button>' +
-        (canSwap() ? '<button class="btn ghost" id="swapBtn">Otra práctica</button>' : '') +
-      '</div>' +
-      '<div class="togrow"><button class="linkbtn" id="inBtn">' + (insideToday() ? 'Hoy sí puedo salir' : 'Hoy no salgo') + '</button></div>' +
-      '<p class="note">' + (insideToday() ? 'Léela una vez y hazla sin salir de casa.' : 'Léela una vez y sal. No hace falta que la recuerdes exacta.') + '</p>';
+        '<div class="row2">' +
+          (canSwap() ? '<button class="nb-btn" id="swapBtn">Otra práctica</button>' : '') +
+          '<button class="nb-btn" id="inBtn">' + (insideToday() ? 'Hoy sí puedo salir' : 'Hoy no salgo') + '</button>' +
+        '</div>' +
+      '</div></details>';
+    const moreBox = document.getElementById("moreBox");
+    moreBox.open = !!S.moreOpen;
+    moreBox.ontoggle = () => { S.moreOpen = moreBox.open; };
+    document.getElementById("durSelect").onchange = ev => { document.getElementById("beginMins").textContent = ev.target.value; };
     const inBtn = document.getElementById("inBtn");
     if(inBtn) inBtn.onclick = () => setInside(!insideToday());
     const swapBtn = document.getElementById("swapBtn");
@@ -709,7 +778,7 @@ function render(){
       const chosen = sel ? parseInt(sel.value, 10) : stdMins;
       startPractice(chosen);
     };
-    host.insertAdjacentHTML("beforeend", seedHTML() + PAUSE_HTML);
+    host.insertAdjacentHTML("beforeend", PAUSE_HTML + seedHTML());
     bindSeed();
     bindPause();
   }
@@ -782,6 +851,7 @@ function renderNotebook(){
           '<div class="tools">' +
             '<select class="projsel" onchange="setProject(\'' + e.id + '\', this)">' + projOptions(e.project) + '</select>' +
             '<button class="nb-btn" onclick="toggleIdea(\'' + e.id + '\')">' + (e.idea ? 'Quitar idea' : 'Marcar idea') + '</button>' +
+            '<button class="nb-btn" onclick="shareEntry(\'' + e.id + '\')">Texto</button>' +
             '<button class="nb-btn" onclick="exportEntryCard(\'' + e.id + '\')">Tarjeta</button>' +
             '<button class="nb-btn" onclick="delEntry(\'' + e.id + '\')">Borrar</button>' +
           '</div>' +
@@ -912,7 +982,7 @@ function buildScales(){
     if(sc.children.length) return;
     for(let v = 1; v <= 5; v++){
       const b = document.createElement("button");
-      b.type = "button"; b.textContent = v; b.dataset.v = v;
+      b.type = "button"; b.textContent = v; b.dataset.v = v; b.setAttribute("aria-label", v + " de 5");
       b.onclick = () => {
         if(sc.dataset.scale === "pre"){ S.ganas0 = v; beginCount(); }
         else { S.ganas1 = v; sc.querySelectorAll("button").forEach(x => x.classList.toggle("sel", x === b)); }
@@ -932,6 +1002,7 @@ function startTimer(label, mins, hint){
   document.getElementById("tHint").textContent = hint;
   document.getElementById("tClock").textContent = String(mins).padStart(2, "0") + ":00";
   document.getElementById("timer").classList.add("pre");
+  tArc.style.strokeDashoffset = RING_C; document.getElementById("tRing").classList.remove("show");
   go("timer");
 }
 function beginCount(){
@@ -940,6 +1011,7 @@ function beginCount(){
   document.getElementById("timer").classList.remove("pre");
   S.endsAt = Date.now() + pending.mins * 60000;
   const dur = pending.mins * 60, ttl = document.getElementById("tLabel").textContent;
+  S.totalMs = pending.mins * 60000;
   pending = null;
   stopTimer();
   startAudio(dur, ttl);
@@ -965,10 +1037,31 @@ function requestWake(){
 document.addEventListener("visibilitychange", () => {
   if(document.visibilityState === "visible" && S.timerId){ tick(); requestWake(); }
 });
+const RING_C = 2 * Math.PI * 108;
+const tArc = document.getElementById("tArc");
+tArc.style.strokeDasharray = RING_C; tArc.style.strokeDashoffset = RING_C;
+let ringT = null;
+document.getElementById("tRing").onclick = () => {
+  const r = document.getElementById("tRing"); r.classList.add("show");
+  clearTimeout(ringT); ringT = setTimeout(() => r.classList.remove("show"), 5000);
+};
+function applyClockPref(){
+  let on = false; try{ on = localStorage.getItem("deriva.showClock") === "1"; }catch(e){}
+  document.body.classList.toggle("clock", on);
+  document.getElementById("tClockPref").textContent = on ? "Ocultar el tiempo" : "Mostrar siempre el tiempo";
+}
+document.getElementById("tClockPref").onclick = () => {
+  let on = false; try{ on = localStorage.getItem("deriva.showClock") === "1"; localStorage.setItem("deriva.showClock", on ? "0" : "1"); }catch(e){}
+  applyClockPref();
+};
+applyClockPref();
 function tick(){
   const left = S.endsAt - Date.now();
   const clock = document.getElementById("tClock");
+  if(left > 0 && S.totalMs) tArc.style.strokeDashoffset = RING_C * (left / S.totalMs);
   if(left <= 0){
+    tArc.style.strokeDashoffset = 0;
+    document.getElementById("tRing").classList.add("show");
     clock.textContent = "00:00";
     document.getElementById("tHint").textContent = "Se acabó el tiempo. Vuelve cuando quieras: no hay prisa y no se acaba nada.";
     if(!S.audioOn) playChime();
@@ -1169,8 +1262,9 @@ document.getElementById("importJsonFile").onchange = (ev) => {
 };
 
 /* Bienvenida: cuatro preguntas, y cada una cambia algo de verdad en la app */
-const W = { i:0, d:null, editing:false };
+const W = { i:0, min:0, d:null, editing:false };
 const STEPS = [
+  { k:"intro" },
   { k:"projects" },
   { k:"mins", q:"¿Cuánto tiempo puedes parar al día?", sub:"Es la duración con la que empieza cada práctica. Siempre se puede cambiar en el momento.",
     opts:[[5,"5 minutos","Una pausa corta, para días llenos."],[10,"10 minutos","El punto medio."],[20,"20 minutos","Para dejar que la cabeza se asiente de verdad."]] },
@@ -1180,7 +1274,7 @@ const STEPS = [
     opts:[["ideas","Más ideas","Más prácticas de hacer y de recordar."],["ruido","Parar el ruido","Más prácticas de notar y escuchar."],["rutina","Salir de la rutina","Más prácticas de derivar y de hablar con gente."]] }
 ];
 function openWelcome(editing){
-  W.editing = !!editing; W.i = 0;
+  W.editing = !!editing; W.i = editing ? 1 : 0; W.min = W.i;
   W.d = { projects: PROFILE.projects.map(n => ({ orig: n, v: n })), mins: PROFILE.mins || 0, outdoor: PROFILE.outdoor || "dia", goal: PROFILE.goal || "" };
   document.body.classList.add("onb");
   go("welcome");
@@ -1188,12 +1282,18 @@ function openWelcome(editing){
 }
 function renderWelcome(){
   const st = STEPS[W.i], host = document.getElementById("wBody");
-  document.getElementById("wStep").textContent = (W.i + 1) + " de " + STEPS.length;
+  document.getElementById("wStep").textContent = W.i ? W.i + " de " + (STEPS.length - 1) : "";
   let h = "";
-  if(st.k === "projects"){
+  if(st.k === "intro"){
+    h += '<h2 class="wq">Diez minutos al día sin el móvil.</h2>' +
+         '<p class="wsub">Cada día te damos una cosa pequeña que hacer sin pantalla: mirar, escuchar, caminar, recordar. Guardas el móvil, vuelves y apuntas lo que trajiste.</p>' +
+         '<p class="wsub">No hay rachas, ni puntos, ni avisos. Solo se queda tu cuaderno, y es tuyo: no sale de este móvil.</p>' +
+         '<p class="wsub" style="color:var(--faint);">Si prefieres solo parar un rato, sin tarea, también se puede.</p>' +
+         '<div class="stackv"><button class="btn solid" id="wStart">Empezar</button></div>' +
+         '<p class="note" style="margin-top:10px;">Antes, cuatro preguntas rápidas para ajustarla a ti.</p>';
+  } else if(st.k === "projects"){
     const n = Math.max(3, W.d.projects.length + 1);
-    h += (W.editing ? "" : '<p class="wsub" style="margin-bottom:10px;">Cuatro preguntas para ajustar la app a ti. Todo se queda en tu móvil.</p>') +
-         '<h2 class="wq">¿En qué estás trabajando?</h2>' +
+    h += '<h2 class="wq">¿En qué estás trabajando?</h2>' +
          '<p class="wsub">Hasta tres proyectos para colgar de ellos tus ideas. Puedes dejarlo vacío y añadirlos más tarde.</p><div class="wfields">';
     for(let k = 0; k < n; k++){
       const p = W.d.projects[k] || { orig: "", v: "" };
@@ -1205,13 +1305,14 @@ function renderWelcome(){
     st.opts.forEach(o => { h += '<button class="opt' + (W.d[st.k] === o[0] ? ' sel' : '') + '" data-v="' + o[0] + '"><b>' + o[1] + '</b><span>' + o[2] + '</span></button>'; });
     h += '</div>';
   }
-  h += '<div class="wnav">' + (W.i ? '<button class="linkbtn" id="wBack">Atrás</button>' : (W.editing ? '<button class="linkbtn" id="wCancel">Cancelar</button>' : '<span></span>')) +
-       (st.k === "projects" ? '' : '<button class="linkbtn" id="wSkip">Saltar</button>') + '</div>';
+  h += '<div class="wnav">' + (W.i > W.min ? '<button class="linkbtn" id="wBack">Atrás</button>' : (W.editing ? '<button class="linkbtn" id="wCancel">Cancelar</button>' : '<span></span>')) +
+       (st.k === "projects" || st.k === "intro" ? '' : '<button class="linkbtn" id="wSkip">Saltar</button>') + '</div>';
   host.innerHTML = h;
   host.querySelectorAll(".opt").forEach(b => b.onclick = () => {
     const v = b.dataset.v; W.d[st.k] = (st.k === "mins") ? parseInt(v, 10) : v;
     wAdvance();
   });
+  const ws = document.getElementById("wStart"); if(ws) ws.onclick = wAdvance;
   const nx = document.getElementById("wNext"); if(nx) nx.onclick = () => { readProjects(); wAdvance(); };
   const sk = document.getElementById("wSkip"); if(sk) sk.onclick = wAdvance;
   const bk = document.getElementById("wBack"); if(bk) bk.onclick = () => { W.i--; renderWelcome(); };
@@ -1257,8 +1358,25 @@ document.getElementById("btnCtx").onclick = () => openWelcome(true);
 
 /* Recordatorio diario: una web instalada en iPhone no puede avisarte sola a una hora
    sin un servidor de notificaciones push, así que se delega en Atajos de iOS. */
-document.getElementById("btnReminder").onclick = () => {
-  alert("Una web instalada en iPhone no puede avisarte sola a una hora.\n\nLo que sí funciona: app Atajos → Automatización → Nueva → Hora del día → Abrir app → Deriva. Te la abre cada día a la hora que elijas.");
+document.getElementById("btnReminder").onclick = () => go("help");
+document.getElementById("helpBack").onclick = () => go("notebook");
+const startSel = document.getElementById("startScreen");
+try{ startSel.value = localStorage.getItem("deriva.startScreen") || ""; }catch(e){}
+startSel.onchange = () => { try{ localStorage.setItem("deriva.startScreen", startSel.value); }catch(e){} };
+function startPref(){ try{ return localStorage.getItem("deriva.startScreen") || ""; }catch(e){ return ""; } }
+let hiddenAt = 0;
+document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "hidden"){ hiddenAt = Date.now(); return; }
+  const pref = startPref();
+  if(pref && hiddenAt && Date.now() - hiddenAt > 120000 && ["today","quick","notebook","help"].indexOf(S.screen) >= 0) go(pref);
+});
+window.shareEntry = async function(id){
+  const e = S.entries.find(x => x.id === id); if(!e) return;
+  const text = e.title + (e.project ? " · " + e.project : "") + "\n" + new Date(e.ts).toLocaleDateString("es-ES") + "\n\n" + (e.text || "(salió, no vino nada)");
+  try{
+    if(navigator.share){ await navigator.share({ text }); return; }
+    await navigator.clipboard.writeText(text); toast("Copiado");
+  }catch(err){ if(!err || err.name !== "AbortError") toast("No se pudo compartir"); }
 };
 document.getElementById("btnIdeas").onclick = () => {
   S.onlyIdeas = !S.onlyIdeas;
