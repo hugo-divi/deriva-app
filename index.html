@@ -118,7 +118,11 @@
   .mic{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);color:var(--muted);padding:11px 16px;font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;background:var(--surface);flex:0 0 auto;}
   .mic svg{width:16px;height:16px;fill:currentColor;}
   .mic.rec{background:var(--amber);color:var(--ground);border-color:var(--amber);}
-  .microw .note{padding:0;text-align:left;flex:1;font-size:.84rem;}
+  .microw{flex-wrap:wrap;}
+  .microw .note{padding:0;text-align:left;flex:1 0 100%;font-size:.84rem;}
+  .clip{display:flex;align-items:center;gap:12px;}
+  .clip audio{flex:1;min-width:0;height:40px;}
+  .diag{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;margin:0;}
   .tag-idea{font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);border:1px solid var(--amber-dim);padding:2px 7px;margin-left:8px;}
   .pause{border:1px dashed var(--line);padding:18px 20px;display:flex;flex-direction:column;gap:12px;margin-top:6px;}
   .pause p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.5;}
@@ -274,7 +278,8 @@
     <div style="display:flex;flex-direction:column;gap:20px;">
       <p class="prompt" id="cPrompt"></p>
       <textarea id="cText" placeholder="Como salga. Tres palabras es una respuesta de verdad." enterkeyhint="done"></textarea>
-      <div class="microw"><button class="mic" id="cMic" type="button"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2z"/></svg><span>Hablar</span></button><span class="note" id="cMicMsg"></span></div>
+      <div class="microw"><button class="mic" id="cRec" type="button"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2z"/></svg><span>Grabar voz</span></button><button class="mic" id="cMic" type="button"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2z"/></svg><span>Dictar</span></button><p class="note" id="cMicMsg"></p></div>
+      <div class="clip" id="cClip" hidden><audio controls playsinline></audio><button class="linkbtn" id="cClipX" type="button">Quitar</button></div>
       <div class="photo-row">
         <label class="filelabel" tabindex="0">Añadir foto<input type="file" id="cPhoto" accept="image/*"></label>
         <img class="thumb" id="cThumb" alt="" hidden>
@@ -326,6 +331,13 @@
       <p>Si la abres tras más de dos minutos, empieza aquí. «Apuntar» sirve si la usas sobre todo para no perder ideas.</p>
       <select id="startScreen"><option value="">Donde la dejé</option><option value="today">Hoy</option><option value="quick">Apuntar</option></select>
     </div>
+    <div class="helpblk">
+      <h3>Si algo no suena o no graba</h3>
+      <p>Pulsa cada prueba y dime qué pone debajo. Con eso sé qué le pasa a tu móvil.</p>
+      <div class="row2"><button class="nb-btn" id="dgBell">1 · Campana</button><button class="nb-btn" id="dgLock">2 · Campana con pantalla bloqueada</button><button class="nb-btn" id="dgMic">3 · Micrófono (3 s)</button></div>
+      <p class="diag" id="dgOut">Aún no has probado nada.</p>
+      <p class="diag" id="dgInfo"></p>
+    </div>
     <p class="note">Los nombres de los menús pueden variar un poco según tu versión de iOS.</p>
     <div class="stackv"><button class="btn ghost" id="helpBack">Volver al cuaderno</button></div>
     <div class="pad"></div>
@@ -342,7 +354,8 @@
     <div style="display:flex;flex-direction:column;gap:18px;">
       <p class="prompt">Lo que se te ocurra, antes de que se vaya.</p>
       <textarea id="qText" placeholder="Una frase basta." enterkeyhint="done"></textarea>
-      <div class="microw"><button class="mic" id="qMic" type="button"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2z"/></svg><span>Hablar</span></button><span class="note" id="qMicMsg"></span></div>
+      <div class="microw"><button class="mic" id="qRec" type="button"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2z"/></svg><span>Grabar voz</span></button><button class="mic" id="qMic" type="button"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2z"/></svg><span>Dictar</span></button><p class="note" id="qMicMsg"></p></div>
+      <div class="clip" id="qClip" hidden><audio controls playsinline></audio><button class="linkbtn" id="qClipX" type="button">Quitar</button></div>
       <div class="projrow"><label for="qProj">Proyecto</label><select id="qProj"></select></div>
       <label class="ideaflag"><input type="checkbox" id="qIdea" checked> Es una idea para algo mío</label>
       <button class="btn solid" id="qSave">Apuntar</button>
@@ -489,8 +502,8 @@ const IDB = { db: null };
 function idbOpen(){
   return new Promise(res => {
     try{
-      const r = indexedDB.open("deriva", 1);
-      r.onupgradeneeded = () => r.result.createObjectStore("photos");
+      const r = indexedDB.open("deriva", 2);
+      r.onupgradeneeded = () => { ["photos", "audio"].forEach(n => { if(!r.result.objectStoreNames.contains(n)) r.result.createObjectStore(n); }); };
       r.onsuccess = () => { IDB.db = r.result; res(true); };
       r.onerror = r.onblocked = () => res(false);
     }catch(e){ res(false); }
@@ -519,6 +532,28 @@ function idbAll(){
       rq.onerror = () => res(out);
     }catch(e){ res(out); }
   });
+}
+function idbSetS(store, id, data){
+  return new Promise(res => {
+    if(!IDB.db) return res(false);
+    try{
+      const tx = IDB.db.transaction(store, "readwrite");
+      tx.objectStore(store).put(data, id);
+      tx.oncomplete = () => res(true); tx.onerror = tx.onabort = () => res(false);
+    }catch(e){ res(false); }
+  });
+}
+function idbGetS(store, id){
+  return new Promise(res => {
+    if(!IDB.db) return res(null);
+    try{
+      const rq = IDB.db.transaction(store).objectStore(store).get(id);
+      rq.onsuccess = () => res(rq.result || null); rq.onerror = () => res(null);
+    }catch(e){ res(null); }
+  });
+}
+function idbDelS(store, id){
+  try{ if(IDB.db) IDB.db.transaction(store, "readwrite").objectStore(store).delete(id); }catch(e){}
 }
 /* Lo que se guarda en localStorage: la entrada sin la foto, salvo que IndexedDB no esté disponible */
 function lite(e){
@@ -845,8 +880,9 @@ function renderNotebook(){
         '<article class="entry">' +
           '<div class="hd"><span class="et">' + esc(e.title) + (e.idea ? '<span class="tag-idea">Idea</span>' : '') + (e.project ? '<span class="tag-proj">' + esc(e.project) + '</span>' : '') + '</span><span class="ed">' + fmt(e.ts) + '</span></div>' +
           (e.text ? '<p class="ex">' + esc(e.text) + '</p>'
-                  : '<p class="ex" style="color:var(--faint);font-style:italic;">Salió. No vino nada. Apuntado igual.</p>') +
+                  : (e.hasAudio ? '' : '<p class="ex" style="color:var(--faint);font-style:italic;">Salió. No vino nada. Apuntado igual.</p>')) +
           (e.photo ? '<img src="' + e.photo + '" alt="">' : '') +
+          (e.hasAudio ? '<div class="clip"><button class="nb-btn" data-label="Escuchar · ' + fmtDur(e.audioDur || 0) + '" onclick="playVoice(\'' + e.id + '\', this)">Escuchar · ' + fmtDur(e.audioDur || 0) + '</button></div>' : '') +
           (e.ganas0 && e.ganas1 ? '<p class="ganas">Ganas de coger el móvil: ' + GANAS[e.ganas0] + ' → ' + GANAS[e.ganas1] + '</p>' : '') +
           '<div class="tools">' +
             '<select class="projsel" onchange="setProject(\'' + e.id + '\', this)">' + projOptions(e.project) + '</select>' +
@@ -925,56 +961,89 @@ function go(name){
 document.querySelectorAll("nav button").forEach(b => { b.onclick = () => { stopTimer(); stopDictation(); go(b.dataset.go); }; });
 
 const HINT_BASE = "Deja la pantalla encendida y el móvil boca abajo. Si lo bloqueas, el tiempo sigue contando pero la campana no suena.";
-const HINT_AUDIO = "Puedes bloquear el móvil y guardarlo: la campana sonará al final. Si no la oyes, quita el modo silencio.";
+const HINT_AUDIO = "Puedes bloquear el móvil y guardarlo: la campana sonará al final. Si no la oyes, sube el volumen.";
 
 /* La campana va grabada dentro de un audio de la duración exacta (silencio + campana).
    Un audio en reproducción sigue sonando con la pantalla bloqueada; un temporizador
    de JavaScript, no. */
 const RATE = 8000;
-function bellInto(buf, startSample, gain, seconds){
-  const freqs = [432, 864, 1296];
-  const n = Math.min(buf.length - startSample, Math.floor(seconds * RATE));
-  for(let i = 0; i < n; i++){
+/* WAV de 16 bits, mono. Se usa el formato más universal a propósito: el de 8 bits
+   no lo reproducen bien todos los móviles. */
+function makeWav(seconds, tail, bellAt){
+  const total = Math.floor((seconds + tail) * RATE);
+  const buf = new ArrayBuffer(44 + total * 2), dv = new DataView(buf);
+  const str = (o, t) => { for(let i = 0; i < t.length; i++) dv.setUint8(o + i, t.charCodeAt(i)); };
+  str(0, "RIFF"); dv.setUint32(4, 36 + total * 2, true); str(8, "WAVE"); str(12, "fmt ");
+  dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
+  dv.setUint32(24, RATE, true); dv.setUint32(28, RATE * 2, true); dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
+  str(36, "data"); dv.setUint32(40, total * 2, true);
+  const pcm = new Int16Array(buf, 44, total);
+  const start = Math.floor(bellAt * RATE), freqs = [432, 864, 1296];
+  for(let i = 0; start + i < total; i++){
     const t = i / RATE; let v = 0;
     for(let k = 0; k < 3; k++) v += Math.sin(2 * Math.PI * freqs[k] * t) / (k + 1);
-    buf[startSample + i] = Math.max(0, Math.min(255, 128 + 127 * gain * v * 0.45 * Math.exp(-t * 1.5)));
+    pcm[start + i] = Math.round(32767 * 0.45 * v * Math.exp(-t * 1.5));
   }
-}
-function buildTimerWav(seconds){
-  const tail = 5, total = Math.floor((seconds + tail) * RATE);
-  const buf = new Uint8Array(44 + total); buf.fill(128, 44);
-  const dv = new DataView(buf.buffer);
-  const str = (o, t) => { for(let i = 0; i < t.length; i++) buf[o + i] = t.charCodeAt(i); };
-  str(0, "RIFF"); dv.setUint32(4, 36 + total, true); str(8, "WAVE"); str(12, "fmt ");
-  dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
-  dv.setUint32(24, RATE, true); dv.setUint32(28, RATE, true); dv.setUint16(32, 1, true); dv.setUint16(34, 8, true);
-  str(36, "data"); dv.setUint32(40, total, true);
-  bellInto(buf.subarray(44), Math.floor(seconds * RATE), 1, tail);
   return new Blob([buf], { type: "audio/wav" });
 }
+function buildTimerWav(seconds){ return makeWav(seconds, 5, seconds); }
+
+/* Campana suelta, por un elemento de audio: suena aunque el móvil esté en modo silencio
+   (la de Web Audio no) y funciona con la pantalla encendida. */
+const TB = new Audio(); TB.preload = "auto"; TB.setAttribute("playsinline", "");
+TB.src = URL.createObjectURL(makeWav(0, 5, 0));
+function primeBell(){
+  try{
+    TB.muted = true;
+    const pr = TB.play();
+    if(pr && pr.then) pr.then(() => { TB.pause(); TB.currentTime = 0; TB.muted = false; }).catch(() => { TB.muted = false; });
+  }catch(e){ TB.muted = false; }
+}
+function chimeNow(){
+  try{
+    TB.muted = false; TB.currentTime = 0;
+    const pr = TB.play();
+    if(pr && pr.catch) pr.catch(() => playChime());
+  }catch(e){ playChime(); }
+  try{ if(navigator.vibrate) navigator.vibrate([250, 150, 300]); }catch(e){}
+}
+
+/* Audio largo del temporizador: la campana va dentro, al final. Sigue sonando con la
+   pantalla bloqueada, que es lo que un temporizador de JavaScript no consigue. */
 const TA = new Audio(); TA.preload = "auto"; TA.setAttribute("playsinline", "");
 let taUrl = null;
 function stopAudio(){
+  clearTimeout(S.audioCheck);
   try{ TA.pause(); }catch(e){}
   if(taUrl){ URL.revokeObjectURL(taUrl); taUrl = null; }
   S.audioOn = false;
 }
 TA.addEventListener("ended", () => { if(taUrl){ URL.revokeObjectURL(taUrl); taUrl = null; } });
+function audioWillRing(){ return S.audioOn && (TA.ended || (!TA.paused && TA.currentTime > S.audioSecs - 2)); }
 function startAudio(seconds, title){
-  stopAudio();
+  stopAudio(); S.audioErr = ""; S.audioSecs = seconds;
+  const hintEl = document.getElementById("tHint");
   try{
     taUrl = URL.createObjectURL(buildTimerWav(seconds));
-    TA.src = taUrl; TA.volume = 1;
+    TA.src = taUrl;
     if("mediaSession" in navigator){
-      navigator.mediaSession.metadata = new MediaMetadata({ title: title, artist: "Deriva" });
-      ["play","pause","stop","seekbackward","seekforward","previoustrack","nexttrack"].forEach(a => { try{ navigator.mediaSession.setActionHandler(a, null); }catch(e){} });
+      try{
+        navigator.mediaSession.metadata = new MediaMetadata({ title: title, artist: "Deriva" });
+        ["play","stop","seekbackward","seekforward","previoustrack","nexttrack"].forEach(a => { try{ navigator.mediaSession.setActionHandler(a, null); }catch(e){} });
+        navigator.mediaSession.setActionHandler("pause", () => { try{ TA.play(); }catch(e){} });
+      }catch(e){}
     }
+    const ok = () => { S.audioOn = true; hintEl.textContent = hintEl.textContent.replace(HINT_BASE, HINT_AUDIO); };
     const pr = TA.play();
-    if(pr && pr.then){
-      pr.then(() => { S.audioOn = true; const h = document.getElementById("tHint"); h.textContent = h.textContent.replace(HINT_BASE, HINT_AUDIO); })
-        .catch(() => { S.audioOn = false; });
-    } else { S.audioOn = true; }
-  }catch(e){ S.audioOn = false; }
+    if(pr && pr.then) pr.then(ok).catch(err => { S.audioOn = false; S.audioErr = (err && err.name || "error") + (err && err.message ? ": " + err.message : ""); });
+    else ok();
+    S.audioCheck = setTimeout(() => {
+      if(S.audioOn && !TA.ended && TA.currentTime < 0.4){
+        S.audioOn = false; S.audioErr = "el audio no avanza (reproductor parado)";
+        hintEl.textContent = hintEl.textContent.replace(HINT_AUDIO, HINT_BASE);
+      }
+    }, 2000);
+  }catch(e){ S.audioOn = false; S.audioErr = (e && e.name || "error") + (e && e.message ? ": " + e.message : ""); }
 }
 const GANAS = ["", "ninguna", "pocas", "algunas", "bastantes", "muchísimas"];
 function buildScales(){
@@ -1015,6 +1084,7 @@ function beginCount(){
   pending = null;
   stopTimer();
   startAudio(dur, ttl);
+  primeBell();
   tick();
   S.timerId = setInterval(tick, 500);
   requestWake();
@@ -1064,7 +1134,7 @@ function tick(){
     document.getElementById("tRing").classList.add("show");
     clock.textContent = "00:00";
     document.getElementById("tHint").textContent = "Se acabó el tiempo. Vuelve cuando quieras: no hay prisa y no se acaba nada.";
-    if(!S.audioOn) playChime();
+    if(!audioWillRing()) chimeNow();
     stopTimer(true);
     return;
   }
@@ -1087,6 +1157,7 @@ function openCapture(){
   up.querySelectorAll("button").forEach(x => x.classList.remove("sel"));
   fillProj("cProj", S.seed && S.seed.project ? S.seed.project : "");
   clearPhoto();
+  if(typeof clearVoice === "function") clearVoice();
   go("capture");
   setTimeout(() => document.getElementById("cText").focus(), 80);
 }
@@ -1122,7 +1193,7 @@ document.getElementById("cPhoto").onchange = ev => {
 function saveEntry(text){
   const p = PRACTICES[S.practiceIdx];
   const pausa = S.kind === "pausa";
-  persist({
+  persistWithVoice({
     id: "e" + Date.now() + Math.random().toString(36).slice(2,7),
     ts: Date.now(),
     kind: S.kind,
@@ -1137,13 +1208,14 @@ function saveEntry(text){
     photo: S.photo || null
   });
   clearPhoto();
+  clearVoice();
   go("notebook");
 }
 document.getElementById("qSave").onclick = () => {
   stopDictation();
   const text = document.getElementById("qText").value.trim();
-  if(!text){ toast("Escribe algo primero"); return; }
-  persist({
+  if(!text && !S.voice){ toast("Escribe o graba algo primero"); return; }
+  persistWithVoice({
     id: "e" + Date.now() + Math.random().toString(36).slice(2,7),
     ts: Date.now(),
     kind: "nota",
@@ -1155,6 +1227,7 @@ document.getElementById("qSave").onclick = () => {
     photo: null
   });
   document.getElementById("qText").value = "";
+  clearVoice(); byId("qMicMsg").textContent = IOS ? "Para pasar tu voz a texto, usa el micrófono del teclado (abajo a la derecha)." : "";
   toast("Guardado");
   document.getElementById("qText").focus();
 };
@@ -1185,7 +1258,7 @@ const TIP_TECLADO = "Si no te deja, usa el micrófono del teclado (abajo a la de
 function setupMic(prefix, taId){
   const btn = document.getElementById(prefix + "Mic"), msg = document.getElementById(prefix + "MicMsg"), ta = document.getElementById(taId);
   let rec = null, on = false, base = "", heard = false, guard = null;
-  const ui = () => { btn.classList.toggle("rec", on); btn.querySelector("span").textContent = on ? "Parar" : "Hablar"; };
+  const ui = () => { btn.classList.toggle("rec", on); btn.querySelector("span").textContent = on ? "Parar" : "Dictar"; };
   const fail = (m) => { on = false; ui(); clearTimeout(guard); msg.textContent = m; };
   btn.onclick = () => {
     if(on){ try{ rec.stop(); }catch(e){} return; }
@@ -1212,11 +1285,124 @@ function setupMic(prefix, taId){
 }
 setupMic("c", "cText");
 setupMic("q", "qText");
+
+/* Notas de voz: se graban con el micrófono y se guardan como audio junto a la nota.
+   Es lo que sí funciona en iPhone; el dictado a texto lo hace el teclado. */
+const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+const byId = id => document.getElementById(id);
+const VOICE = { rec:null, stream:null, chunks:[], t0:0, timer:null, prefix:"" };
+function micError(err){
+  const n = (err && err.name) || "error", m = err && err.message ? ": " + err.message : "";
+  if(n === "NotAllowedError" || n === "SecurityError") return "El móvil no me deja usar el micrófono (" + n + "). Ajustes → Safari → Micrófono → Permitir, y abre la app otra vez.";
+  if(n === "NotFoundError") return "No encuentro micrófono en este móvil (" + n + ").";
+  return "No he podido usar el micrófono (" + n + m + ").";
+}
+function pickMime(){
+  if(!window.MediaRecorder || !MediaRecorder.isTypeSupported) return "";
+  return ["audio/mp4","audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus"].find(t => MediaRecorder.isTypeSupported(t)) || "";
+}
+function fmtDur(s){ s = Math.round(s); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+function clearVoice(){
+  S.voice = null;
+  ["c","q"].forEach(px => {
+    const clip = byId(px + "Clip"), au = clip.querySelector("audio");
+    if(au.dataset.url){ URL.revokeObjectURL(au.dataset.url); au.dataset.url = ""; }
+    au.removeAttribute("src"); clip.hidden = true;
+  });
+}
+function showClip(px, blob, secs){
+  const clip = byId(px + "Clip"), au = clip.querySelector("audio");
+  if(au.dataset.url) URL.revokeObjectURL(au.dataset.url);
+  au.dataset.url = URL.createObjectURL(blob); au.src = au.dataset.url; clip.hidden = false;
+  byId(px + "MicMsg").textContent = "Grabado · " + fmtDur(secs) + ". Se guarda con la nota.";
+}
+function recUI(px, on, secs){
+  const b = byId(px + "Rec");
+  b.classList.toggle("rec", on);
+  b.querySelector("span").textContent = on ? "Parar · " + fmtDur(secs || 0) : "Grabar voz";
+}
+function voiceStop(){ try{ if(VOICE.rec && VOICE.rec.state !== "inactive") VOICE.rec.stop(); }catch(e){} }
+async function voiceToggle(px){
+  const msg = byId(px + "MicMsg");
+  if(VOICE.rec){ voiceStop(); return; }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder){
+    msg.textContent = "Esta app no puede grabar en tu móvil. Usa el micrófono del teclado."; return;
+  }
+  let stream;
+  try{ stream = await navigator.mediaDevices.getUserMedia({ audio:true }); }catch(err){ msg.textContent = micError(err); return; }
+  let rec;
+  try{ const type = pickMime(); rec = type ? new MediaRecorder(stream, { mimeType:type }) : new MediaRecorder(stream); }
+  catch(err){ stream.getTracks().forEach(t => t.stop()); msg.textContent = micError(err); return; }
+  VOICE.rec = rec; VOICE.stream = stream; VOICE.chunks = []; VOICE.t0 = Date.now(); VOICE.prefix = px;
+  rec.ondataavailable = ev => { if(ev.data && ev.data.size) VOICE.chunks.push(ev.data); };
+  rec.onerror = ev => { msg.textContent = "La grabación ha fallado (" + ((ev.error && ev.error.name) || "error") + ")."; };
+  rec.onstop = async () => {
+    clearInterval(VOICE.timer);
+    const secs = (Date.now() - VOICE.t0) / 1000;
+    stream.getTracks().forEach(t => t.stop());
+    VOICE.rec = null; recUI(px, false);
+    const blob = new Blob(VOICE.chunks, { type: rec.mimeType || pickMime() || "audio/mp4" });
+    if(!blob.size){ msg.textContent = "No se ha grabado nada. Prueba otra vez."; return; }
+    try{ S.voice = { buf: await blob.arrayBuffer(), type: blob.type, dur: secs }; }catch(e){ msg.textContent = "No he podido guardar la grabación."; return; }
+    showClip(px, blob, secs);
+  };
+  try{ rec.start(); }catch(err){ stream.getTracks().forEach(t => t.stop()); VOICE.rec = null; msg.textContent = micError(err); return; }
+  msg.textContent = "Grabando… pulsa «Parar» cuando termines.";
+  recUI(px, true, 0);
+  VOICE.timer = setInterval(() => {
+    const secs = (Date.now() - VOICE.t0) / 1000; recUI(px, true, secs);
+    if(secs >= 300) voiceStop();
+  }, 500);
+}
+["c","q"].forEach(px => {
+  byId(px + "Rec").onclick = () => voiceToggle(px);
+  byId(px + "ClipX").onclick = () => { S.voice = null; clearVoice(); byId(px + "MicMsg").textContent = ""; };
+});
+if(IOS){
+  ["c","q"].forEach(px => {
+    byId(px + "Mic").hidden = true;
+    byId(px + "MicMsg").textContent = "Para pasar tu voz a texto, usa el micrófono del teclado (abajo a la derecha).";
+  });
+}
+
+function persistWithVoice(entry){
+  const v = S.voice;
+  if(!v){ persist(entry); return; }
+  entry.hasAudio = true; entry.audioDur = Math.round(v.dur);
+  idbSetS("audio", entry.id, { buf: v.buf, type: v.type }).then(ok => {
+    if(!ok){ entry.hasAudio = false; delete entry.audioDur; alert("No he podido guardar el audio en este móvil. La nota se guarda sin él."); }
+    persist(entry);
+  });
+}
+const VP = new Audio(); VP.setAttribute("playsinline", ""); let vpBtn = null, vpUrl = null;
+VP.addEventListener("ended", () => { if(vpBtn) vpBtn.textContent = vpBtn.dataset.label; });
+window.playVoice = async function(id, btn){
+  if(vpBtn === btn && !VP.paused){ VP.pause(); btn.textContent = btn.dataset.label; return; }
+  if(vpBtn) vpBtn.textContent = vpBtn.dataset.label;
+  const a = await idbGetS("audio", id);
+  if(!a){ toast("No encuentro ese audio"); return; }
+  if(vpUrl) URL.revokeObjectURL(vpUrl);
+  vpUrl = URL.createObjectURL(new Blob([a.buf], { type: a.type }));
+  VP.src = vpUrl; vpBtn = btn;
+  try{ await VP.play(); btn.textContent = "Parar"; }catch(err){ toast("No se puede reproducir (" + ((err && err.name) || "error") + ")"); }
+};
+async function exportEntriesFull(){
+  const out = [];
+  for(const e of S.entries){
+    const c = Object.assign({}, e); delete c._idb;
+    if(e.hasAudio){
+      const a = await idbGetS("audio", e.id);
+      if(a) c.audioData = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(new Blob([a.buf], { type: a.type })); });
+    }
+    out.push(c);
+  }
+  return out;
+}
 function stopDictation(){ document.querySelectorAll(".mic.rec").forEach(b => b.click()); }
 
 /* Exportación e importación de seguridad */
 async function backupJson(){
-  const blob = new Blob([JSON.stringify({ version: 2, entries: S.entries.map(e => { const c = Object.assign({}, e); delete c._idb; return c; }), profile: PROFILE }, null, 2)], { type:"application/json" });
+  const blob = new Blob([JSON.stringify({ version: 2, entries: await exportEntriesFull(), profile: PROFILE }, null, 2)], { type:"application/json" });
   if(await saveFile(`deriva-copia-${new Date().toISOString().slice(0,10)}.json`, blob)){ markBackup(); renderNotebook(); }
 }
 document.getElementById("btnExportJson").onclick = backupJson;
@@ -1246,7 +1432,7 @@ document.getElementById("importJsonFile").onchange = (ev) => {
       if(raw && raw.profile && !PROFILE.done){ PROFILE = Object.assign(loadProfile(), raw.profile); saveProfile(); }
       if(imported){
         const seen = new Set(S.entries.map(x => x.id));
-        imported.forEach(item => { if(item && item.id && !seen.has(item.id)){ S.entries.push(item); if(item.photo) idbPut(item.id, item.photo).then(ok => { if(ok) item._idb = true; }); } });
+        imported.forEach(item => { if(item && item.id && !seen.has(item.id)){ if(item.audioData){ const ad = item.audioData; delete item.audioData; item.hasAudio = true; fetch(ad).then(r => r.blob()).then(bl => bl.arrayBuffer().then(buf => idbSetS('audio', item.id, { buf, type: bl.type }))); } S.entries.push(item); if(item.photo) idbPut(item.id, item.photo).then(ok => { if(ok) item._idb = true; }); } });
         S.entries.sort((a,b) => b.ts - a.ts);
         writeLocal(S.entries);
         allProjects().forEach(n => { if(PROFILE.projects.indexOf(n) < 0) PROFILE.projects.push(n); });
@@ -1358,7 +1544,7 @@ document.getElementById("btnCtx").onclick = () => openWelcome(true);
 
 /* Recordatorio diario: una web instalada en iPhone no puede avisarte sola a una hora
    sin un servidor de notificaciones push, así que se delega en Atajos de iOS. */
-document.getElementById("btnReminder").onclick = () => go("help");
+document.getElementById("btnReminder").onclick = () => { go("help"); const di = document.getElementById("dgInfo"); if(di && typeof dgInfoText === "function") di.textContent = dgInfoText(); };
 document.getElementById("helpBack").onclick = () => go("notebook");
 const startSel = document.getElementById("startScreen");
 try{ startSel.value = localStorage.getItem("deriva.startScreen") || ""; }catch(e){}
@@ -1370,6 +1556,52 @@ document.addEventListener("visibilitychange", () => {
   const pref = startPref();
   if(pref && hiddenAt && Date.now() - hiddenAt > 120000 && ["today","quick","notebook","help"].indexOf(S.screen) >= 0) go(pref);
 });
+const dgOut = txt => { byId("dgOut").textContent = txt; };
+function dgInfoText(){
+  const tipos = window.MediaRecorder && MediaRecorder.isTypeSupported ? ["audio/mp4","audio/webm"].filter(t => MediaRecorder.isTypeSupported(t)).join(", ") || "ninguno" : "no";
+  const standalone = window.navigator.standalone === true || matchMedia("(display-mode: standalone)").matches;
+  return "Versión de la app: v8" + "\n" +
+         "Instalada en la pantalla de inicio: " + (standalone ? "sí" : "no") + "\n" +
+         "Grabar audio: " + (window.MediaRecorder ? "sí (" + tipos + ")" : "no") + "\n" +
+         "Dictado integrado: " + (getSR() ? "sí" : "no") + "\n" +
+         "Pantalla encendida (WakeLock): " + (navigator.wakeLock ? "sí" : "no") + "\n" +
+         "Almacén de fotos y audio: " + (IDB.db ? "sí" : "no");
+}
+byId("dgInfo").textContent = dgInfoText();
+byId("dgBell").onclick = async () => {
+  try{
+    TB.muted = false; TB.currentTime = 0; await TB.play();
+    dgOut("1 · Campana: el móvil dice que está sonando. Si no la oyes, sube el volumen con la app abierta.");
+  }catch(err){ dgOut("1 · Campana: ha fallado → " + (err && err.name) + (err && err.message ? ": " + err.message : "")); }
+};
+byId("dgLock").onclick = () => {
+  startAudio(12, "Prueba de campana");
+  dgOut("2 · Esperando a que arranque…");
+  setTimeout(() => {
+    if(S.audioOn && TA.currentTime > 0.4) dgOut("2 · El audio está en marcha. Bloquea el móvil AHORA con el botón lateral: en unos 10 segundos debería sonar la campana.");
+    else dgOut("2 · El audio no ha arrancado → " + (S.audioErr || "sin error (no avanza)"));
+  }, 2200);
+};
+byId("dgMic").onclick = async () => {
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder){ dgOut("3 · Micrófono: este móvil no ofrece grabación a la app."); return; }
+  let stream;
+  try{ stream = await navigator.mediaDevices.getUserMedia({ audio:true }); }
+  catch(err){ dgOut("3 · Micrófono: " + micError(err)); return; }
+  try{
+    const type = pickMime(); const rec = type ? new MediaRecorder(stream, { mimeType:type }) : new MediaRecorder(stream);
+    const chunks = []; rec.ondataavailable = ev => { if(ev.data && ev.data.size) chunks.push(ev.data); };
+    rec.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      const blob = new Blob(chunks, { type: rec.mimeType || type || "audio/mp4" });
+      if(!blob.size){ dgOut("3 · Micrófono: se ha abierto pero no ha grabado nada (0 bytes)."); return; }
+      dgOut("3 · Micrófono: grabados " + Math.round(blob.size / 1024) + " KB (" + blob.type + "). Ahora te lo reproduzco.");
+      try{ const au = new Audio(URL.createObjectURL(blob)); au.setAttribute("playsinline", ""); await au.play(); }
+      catch(err){ dgOut("3 · Micrófono: grabó " + Math.round(blob.size / 1024) + " KB pero no se puede reproducir → " + (err && err.name)); }
+    };
+    rec.start(); dgOut("3 · Micrófono: grabando 3 segundos. Di algo.");
+    setTimeout(() => { try{ rec.stop(); }catch(e){} }, 3000);
+  }catch(err){ stream.getTracks().forEach(t => t.stop()); dgOut("3 · Micrófono: " + micError(err)); }
+};
 window.shareEntry = async function(id){
   const e = S.entries.find(x => x.id === id); if(!e) return;
   const text = e.title + (e.project ? " · " + e.project : "") + "\n" + new Date(e.ts).toLocaleDateString("es-ES") + "\n\n" + (e.text || "(salió, no vino nada)");
@@ -1424,10 +1656,7 @@ if("serviceWorker" in navigator){
 }
 
 const btnTestChime = document.getElementById("btnTestChime");
-if(btnTestChime) btnTestChime.onclick = () => {
-  startAudio(0.2, "Probar campana");
-  toast("Suena así. Si no oyes nada, quita el modo silencio");
-};
+if(btnTestChime) btnTestChime.onclick = () => { chimeNow(); toast("Debería sonar la campana"); };
 
 const nbSearchInput = document.getElementById("nbSearch");
 if(nbSearchInput) nbSearchInput.oninput = renderNotebook;
@@ -1447,7 +1676,7 @@ window.toggleIdea = function(id){
 window.delEntry = function(id){
   if(!confirm("¿Borrar esta nota? No se puede deshacer.")) return;
   S.entries = S.entries.filter(x => x.id !== id);
-  idbDel(id);
+  idbDel(id); idbDelS("audio", id);
   writeLocal(S.entries); render();
 };
 window.exportEntryCard = function(id) {
