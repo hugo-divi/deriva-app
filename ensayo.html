@@ -1,0 +1,202 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="La dopamina no produce placer: produce ganas. Qué dice la investigación y por qué el detox de dopamina no existe.">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="es_ES">
+<meta property="og:title" content="Las ganas no son el gusto">
+<meta property="og:description" content="La dopamina no produce placer: produce ganas. Qué dice la investigación y por qué el detox de dopamina no existe.">
+<meta property="og:url" content="https://hugo-divi.github.io/deriva-app/ensayo.html">
+<meta property="og:image" content="https://hugo-divi.github.io/deriva-app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<title>Las ganas no son el gusto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Karla:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    color-scheme:dark;
+    --ground:#0C1020;--surface:#151B2E;--surface-2:#1C2340;
+    --ink:#E9E6DD;--muted:#9AA1B6;--faint:#5B6280;--line:#252D4A;
+    --amber:#E4AC3F;--amber-dim:#8A6B23;--moss:#7FA98D;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--ground);color:var(--ink);font-family:"Karla","Helvetica Neue",Arial,sans-serif;font-size:19px;line-height:1.74;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  h1,h2,h3{font-family:"Fraunces",Georgia,serif;margin:0;text-wrap:balance;}
+  p{margin:0;}
+  a{color:var(--amber);text-underline-offset:3px;}
+  a:focus-visible{outline:2px solid var(--amber);outline-offset:3px;}
+
+  .wrap{max-width:720px;margin:0 auto;padding-inline:20px;padding-block:0 90px;}
+  .eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.17em;text-transform:uppercase;color:var(--faint);}
+  .ganas{color:var(--amber);}
+  .gusto{color:var(--moss);}
+
+  .bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding-block:26px;}
+  .wordmark{font-family:"Fraunces",Georgia,serif;font-size:1.25rem;font-weight:900;letter-spacing:-.03em;}
+
+  header.h{padding-block:36px 46px;border-bottom:1px solid var(--line);margin-bottom:48px;}
+  h1{font-size:clamp(2.5rem,8.6vw,4.6rem);font-weight:900;line-height:.98;letter-spacing:-.04em;}
+  .standfirst{font-family:"Fraunces",Georgia,serif;font-weight:400;font-size:clamp(1.15rem,3vw,1.5rem);line-height:1.42;letter-spacing:-.012em;color:var(--muted);margin-top:26px;max-width:38ch;}
+  .byline{display:flex;gap:16px;flex-wrap:wrap;margin-top:30px;}
+
+  article{display:flex;flex-direction:column;gap:28px;}
+  article p{max-width:62ch;}
+  article h2{font-size:clamp(1.55rem,4vw,2.05rem);font-weight:600;line-height:1.14;letter-spacing:-.022em;margin-top:26px;}
+  .lead{font-size:1.16rem;line-height:1.66;}
+
+  blockquote{
+    margin:14px 0;padding:0 0 0 26px;border-left:2px solid var(--amber);
+    font-family:"Fraunces",Georgia,serif;font-size:clamp(1.3rem,3.4vw,1.72rem);
+    font-weight:600;line-height:1.3;letter-spacing:-.02em;color:var(--ink);max-width:27ch;
+  }
+
+  .aside{border:1px solid var(--line);background:var(--surface);padding:26px 24px;display:flex;flex-direction:column;gap:14px;}
+  .aside .lbl{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);}
+  .aside p{font-size:1rem;line-height:1.62;color:var(--muted);max-width:none;}
+  .aside p strong{color:var(--ink);}
+
+  .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);}
+  .two > div{background:var(--surface);padding:24px 22px;display:flex;flex-direction:column;gap:10px;}
+  .two .w{font-family:"Fraunces",Georgia,serif;font-size:1.75rem;font-weight:900;letter-spacing:-.03em;line-height:1;}
+  .two .d{font-size:.96rem;line-height:1.58;color:var(--muted);}
+  .two .t{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.63rem;letter-spacing:.15em;text-transform:uppercase;}
+
+  hr{border:none;border-top:1px solid var(--line);margin-block:18px;}
+
+  .end{margin-top:22px;padding-top:34px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:16px;}
+  .end p{color:var(--muted);font-size:1rem;line-height:1.65;}
+  .btn{
+    border:1px solid var(--amber);color:var(--amber);padding:14px 24px;display:inline-block;
+    text-align:center;text-decoration:none;width:fit-content;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+    transition:background .15s ease,color .15s ease;
+  }
+  .btn:hover{background:var(--amber);color:var(--ground);}
+
+  .refs{margin-top:40px;padding-top:26px;border-top:1px solid var(--line);}
+  .refs p{font-size:.84rem;line-height:1.85;color:var(--faint);max-width:none;}
+  .refs a{color:var(--faint);}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;}}
+</style>
+
+<div class="wrap">
+
+  <div class="bar"><span class="wordmark" data-wm></span><span class="eyebrow">Ensayo</span></div>
+
+  <header class="h">
+    <h1>Las ganas no son el gusto</h1>
+    <p class="standfirst">Te han contado una historia sobre la dopamina que es falsa de una forma interesante, y la corrección sirve más que la historia.</p>
+    <div class="byline"><span class="eyebrow">Unos 9 minutos</span><span class="eyebrow">Fuentes al final</span></div>
+  </header>
+
+  <article>
+    <p class="lead">Conoces los cuarenta minutos. Cogiste el móvil para algo concreto, o para nada en absoluto, y un rato después lo dejaste sin haber disfrutado prácticamente nada. No se te ha quedado un solo momento. No podrías nombrar una sola cosa que vieras. Y la parte rara, la que merece que te pares, es que durante todo ese rato querías seguir.</p>
+
+    <p>Esa combinación es lo bastante extraña como para habernos hecho sospechar hace años. Querer algo cuarenta minutos y disfrutarlo cero no es como funciona el apetito. Quieres cenar, cenas, se acaban las ganas. Aquí las ganas no se acabaron nunca y el disfrute no empezó nunca, y hemos decidido que eso es normal y que la solución es una app que guarda lo primero bajo llave.</p>
+
+    <p>La explicación habitual es la dopamina. Demasiada, desbordada, secuestrada por ingenieros de California, y el remedio es privarse: un detox de dopamina, un ayuno, un fin de semana de pantallas en gris y sin café. Es una historia ordenada. También es falsa, en sus dos mitades.</p>
+
+    <h2>La dopamina nunca fue la sustancia del placer</h2>
+
+    <p>Lo que desmonta esto sale del laboratorio de Kent Berridge y Terry Robinson en la Universidad de Michigan, y lleva acumulándose unos treinta años. Su hallazgo central es una distinción que durante diez segundos suena a matiz de académico y que después te reordena por completo lo que creías saber sobre tus propias noches.</p>
+
+    <p>El cerebro hace las <span class="ganas">ganas</span> y el <span class="gusto">gusto</span> con maquinarias separadas. Las ganas &mdash; lo que la literatura llama saliencia incentiva &mdash; las produce un sistema grande y robusto en el que la dopamina mesolímbica es central. El gusto, es decir el placer real de la cosa cuando la tienes, funciona con un sistema bastante más pequeño y más frágil, y &mdash; esto es lo importante &mdash; <strong>no depende de la dopamina en absoluto</strong>.</p>
+
+    <p>El español ya sabía esto, por cierto. Tenemos dos palabras distintas y nadie las confunde: tener ganas de algo no es que algo te guste. El inglés necesita dos términos técnicos para separar lo que aquí lleva separado siempre.</p>
+
+    <div class="two">
+      <div>
+        <span class="t ganas">Sistema uno</span>
+        <span class="w ganas">Ganas</span>
+        <span class="d">Grande, resistente, dopaminérgico. Lo disparan señales del entorno, a menudo antes de que hayas decidido nada. Es el sistema que abre la app mientras todavía te estás diciendo que no la vas a abrir.</span>
+      </div>
+      <div>
+        <span class="t gusto">Sistema dos</span>
+        <span class="w gusto">Gusto</span>
+        <span class="d">Pequeño, frágil, sin depender de la dopamina. La parte que de verdad disfruta. Responde a la atención, se adelgaza cuando no se usa, y la evidencia dice que se puede volver a entrenar.</span>
+      </div>
+    </div>
+
+    <p>Como son sistemas separados, se pueden desacoplar. Puedes querer enormemente y no disfrutar nada. Berridge y Robinson construyeron una teoría entera de la adicción justamente sobre esa disociación &mdash; la sensibilización incentiva &mdash; que sostiene que lo que se amplifica en una adicción son las ganas, específicamente, y a menudo sin ningún aumento correspondiente del gusto. El adicto no persigue un placer que va a mejor. Lo arrastra un querer que ha crecido más de lo que nada podría darle.</p>
+
+    <blockquote>No lo estabas pasando bien. Te estaban dando ganas.</blockquote>
+
+    <p>Tu móvil no es una adicción clínica y no voy a fingir lo contrario. Pero el mecanismo escala hacia abajo perfectamente y explica los cuarenta minutos con precisión. No estabas disfrutando. Te estaban dando ganas, sin parar, con una máquina construida para eso.</p>
+
+    <h2>Por qué nunca acaba de cumplir</h2>
+
+    <p>Añade un hallazgo más y el diseño de una industria entera sale solo. Wolfram Schultz estableció a qué responden realmente las neuronas de dopamina, y no es a la recompensa. Es al <em>error de predicción</em>: la diferencia entre lo que esperabas y lo que llegó. Una neurona dopaminérgica se dispara fuerte ante una recompensa no predicha, se queda callada ante una totalmente predicha, y cae por debajo de su línea base cuando una recompensa esperada no aparece.</p>
+
+    <p>Léelo otra vez como si fuera un pliego de condiciones, porque así es como se ha usado. Si una recompensa predecible no produce respuesta, un buen feed no puede ser nunca predecible. Si la inesperada produce un pico, lo bueno tiene que llegar a intervalos aleatorios. Un feed que entregara de forma fiable lo que quieres sería un feed que se puede terminar. Todo el oficio consiste en asegurarse de que nunca acaba de cumplir, que es lo mismo que asegurarse de que nunca acaba de parar.</p>
+
+    <p>Así que la máquina no te está sobredosificando de placer. Te está corriendo el sistema de predicción en bucle abierto y no le está dando casi nada que hacer al sistema del gusto. Cuarenta minutos de ganas, con la otra mitad de tu arquitectura de recompensa sentada a oscuras.</p>
+
+    <h2>Y por eso no te puedes desintoxicar</h2>
+
+    <p>Aquí es donde el remedio popular se cae, y conviene decirlo sin rodeos porque la frase está en todas partes: <strong>un detox de dopamina no existe</strong>. No es una simplificación ni una aproximación útil: describe algo que no puede ocurrir.</p>
+
+    <div class="aside">
+      <span class="lbl">Tres razones, en corto</span>
+      <p><strong>No se vacía por abstenerte.</strong> Tus neuronas siguen sintetizando dopamina hagas lo que hagas con tu fin de semana. No hay ningún depósito que baje.</p>
+      <p><strong>Nunca actúa sola.</strong> La actividad dopaminérgica está modulada por otras poblaciones neuronales, y buena parte de lo que se le atribuye popularmente implica opioides endógenos, orexina y serotonina. Aislarla no es algo que se pueda hacer con una conducta.</p>
+      <p><strong>Estuvo mal nombrado desde el principio.</strong> La técnica nació como una práctica cognitivo-conductual bastante corriente con un nombre desafortunado, y el nombre se escapó y se convirtió en teoría. La Cleveland Clinic, Psychology Today y The Scientist lo han desmontado por separado.</p>
+    </div>
+
+    <p>Lo dejaría correr como una abreviatura inofensiva de divulgación si no fuera porque el marco te manda activamente en la dirección contraria. Te dice que tu problema es un exceso que hay que purgar, así que el movimiento obvio es restar: bloquear más, borrar más, comprar el filtro de escala de grises, irse al retiro. Pero si la situación real es un sistema de ganas hipertrofiado al lado de uno de gusto sin usar, restar a secas te deja exactamente donde estabas, solo que con menos cosas que hacer. Que es más o menos lo que se siente después de una semana de abstinencia digital: virtuoso, bastante aburrido, y completamente deshecho el martes siguiente.</p>
+
+    <h2>Y por qué pierden los bloqueadores</h2>
+
+    <p>Hay un segundo motivo por el que restar rinde poco, y viene de la literatura sobre hábitos, no de la de recompensa. Wendy Wood y David Neal dedicaron años a establecer que el hábito tiene dos propiedades definitorias: es <strong>dependiente de la señal</strong> e <strong>independiente del objetivo</strong>. Un hábito fuerte lo dispara el contexto &mdash; un lugar, una postura, un momento, el final de otra tarea &mdash; y es notablemente indiferente a lo que tú pretendas en ese momento.</p>
+
+    <p>Peor: la señal es invisible para ti. La gente suele ser consciente del <em>resultado</em> de un hábito, porque ve lo que acaba de hacer. No suele ser consciente de la clave que lo disparó, ni del mecanismo que convirtió esa clave en la acción.</p>
+
+    <p>Ahora piensa en lo que hace un bloqueador. Interviene en el momento de la intención: ¿seguro?, llevas 46 minutos, esto está bloqueado hasta las cuatro. Discute con la parte de ti a la que ya han esquivado. El hábito no consultó tus intenciones al entrar y no le interesan al salir. No es un fallo del software: es un error de categoría, y es la razón de que el bloqueador que instalaste en enero ya no esté en tu móvil.</p>
+
+    <blockquote>El problema no es que te falte disciplina. Es que la disciplina nunca estuvo en la sala.</blockquote>
+
+    <h2>Qué sostiene la evidencia de verdad</h2>
+
+    <p>Quita el detox y quita el bloqueador y queda algo más interesante, en tres piezas.</p>
+
+    <p><strong>El aburrimiento hace algo.</strong> Las personas con más propensión al aburrimiento se inclinan más al pensamiento divergente, el modo asociativo y generativo del que salen las ideas raras. El aburrimiento no es una ausencia: es un estado con productos. Y lo hemos eliminado de la vida moderna de forma bastante sistemática con un aparato que cabe en un bolsillo.</p>
+
+    <p><strong>La atención ociosa hace más.</strong> La red neuronal por defecto &mdash; la que sube cuando baja la demanda externa &mdash; sostiene la divagación mental y la asociación remota, y está muy implicada en la incubación creativa. Pero el matiz útil es éste: la incubación funciona en condiciones <em>poco o moderadamente exigentes</em>, mediante la integración entre la red por defecto y la frontoparietal. Mirar una pared en blanco no es el óptimo. <strong>Andar sí.</strong> Y fregar, y ducharse, y el autobús. Éste es el mecanismo real detrás del tópico favorito de todo el mundo sobre las ideas que llegan en la ducha, y también explica por qué la ducha es de los últimos sitios donde casi nadie ha conseguido meter una pantalla.</p>
+
+    <p><strong>Y el gusto se entrena.</strong> Hay una intervención bien estudiada para esto que en inglés llaman <em>savoring</em> y que aquí es simplemente saborear: dirigir atención consciente a una experiencia placentera mientras está ocurriendo, en lugar de limitarse a tenerla. Una revisión sistemática reciente agrupó veinte ensayos controlados aleatorizados con casi cinco mil participantes y concluyó que funciona, y que incluso las versiones breves mueven el afecto. Con una advertencia que conviene llevarse puesta: vigilarse en exceso puede suprimir justamente el disfrute que se pretende aumentar. Puntuarte el bienestar del uno al diez no es saborear. Es vigilancia.</p>
+
+    <hr>
+
+    <p>Junta las tres y aparece la forma del problema real, que no es el que llevamos años discutiendo. Tu atención no está dañada. Tu cerebro no está roto y no necesita una limpieza. Lo que ha pasado es más estrecho y más arreglable: <strong>se han llenado todos los huecos.</strong></p>
+
+    <p>La cola del súper. Los cuatro minutos antes de dormir. El paseo hasta el metro. El ascensor. La sala de espera. El café solo. Cada uno de ésos era, hasta hace muy poco, tiempo de baja exigencia en el que tu red por defecto hacía lo que hace y de vez en cuando te entregaba algo. Ninguno lo es ya, y nadie tomó una decisión al respecto. Simplemente se fueron llenando, de uno en uno, con algo que se le da extraordinariamente bien darte ganas y que no tiene nada que ofrecerle a la otra mitad.</p>
+
+    <p>Lo cual quiere decir que el movimiento no es menos. Es otra cosa. No un detox, porque no hay nada de lo que desintoxicarse. No un bloqueador, porque el hábito nunca estuvo escuchando. Algo más soso y bastante más eficaz: recuperar los huecos, y meter en ellos algo que el sistema del gusto pueda usar de verdad.</p>
+
+    <p>No hace falta que sea gran cosa. Camina una ruta que te sepas de memoria y tuerce mal a propósito. Siéntate en una terraza y sigue una conversación ajena hasta el final. Coge un objeto tuyo que hayas dejado de ver y míralo hasta encontrar algo que habías olvidado que estaba ahí. Diez minutos, el móvil en el bolsillo, sin que haga falta ningún resultado.</p>
+
+    <p>Hazlo unas cuantas veces y pasa algo ligeramente vergonzoso, que es que funciona, y que funciona rápido, y que te quedas un poco molesto al descubrir que el arreglo de un problema que habías encuadrado como neuroquímico resulta ser salir a andar sin el teléfono. Ahí es más o menos donde acabé yo, y por eso ahora los escribo.</p>
+
+    <div class="end">
+      <span class="eyebrow">Si lo que quieres es la práctica y no el argumento</span>
+      <p>Una cosa pequeña cada día, sin pantalla, durante diez minutos. Sin cuenta, sin registro, sin avisos. Lo que apuntas se queda en tu móvil.</p>
+      <a class="btn" href="./">Probar la práctica de hoy</a>
+    </div>
+
+    <div class="refs">
+      <p class="eyebrow" style="margin-bottom:10px;">Fuentes</p>
+      <p>
+        Berridge y Robinson, <a href="https://sites.lsa.umich.edu/berridge-lab/research-overview/neuroscience-of-linking-and-wanting/">Neuroscience of Liking and Wanting</a>; <a href="https://www.annualreviews.org/content/journals/10.1146/annurev-psych-011624-024031">The Incentive-Sensitization Theory of Addiction 30 Years On</a>; <a href="https://pubmed.ncbi.nlm.nih.gov/17072591/">The debate over dopamine's role in reward</a>.<br>
+        Schultz, <a href="https://www.nature.com/articles/nrn.2015.26">Dopamine reward prediction-error signalling</a>; <a href="https://pubmed.ncbi.nlm.nih.gov/27069377">Dopamine reward prediction error coding</a>.<br>
+        Wood y Neal, <a href="https://dornsife.usc.edu/wendy-wood/wp-content/uploads/sites/183/2023/10/wood.neal_.2007psychrev_a_new_look_at_habits_and_the_interface_between_habits_and_goals.pdf">A New Look at Habits and the Habit–Goal Interface</a>; <a href="https://www.sciencedirect.com/science/article/abs/pii/S002210311100254X">Perceived and actual triggers of habits in daily life</a>.<br>
+        <a href="https://www.sciencedirect.com/science/article/pii/S1053811925000217">Dynamic reconfiguration of default and frontoparietal network supports creative incubation</a>; <a href="https://www.nature.com/articles/srep10964">Default and Executive Network Coupling Supports Creative Idea Production</a>.<br>
+        Chen et al., <a href="https://iaap-journals.onlinelibrary.wiley.com/doi/10.1111/aphw.70134">revisión sistemática y metaanálisis de intervenciones de savoring</a>.<br>
+        Sobre el detox: <a href="https://www.the-scientist.com/debunking-the-dopamine-detox-trend-72036">The Scientist</a>, <a href="https://www.psychologytoday.com/us/blog/sacramento-street-psychiatry/202002/debunking-dopamine-fasting">Psychology Today</a>, <a href="https://health.clevelandclinic.org/dopamine-detox">Cleveland Clinic</a>.
+      </p>
+    </div>
+  </article>
+</div>
+
+<script>
+const MARCA = "Deriva";
+document.querySelectorAll("[data-wm]").forEach(el => el.textContent = MARCA);
+</script>
