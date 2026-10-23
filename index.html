@@ -128,6 +128,10 @@
   .mic{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);color:var(--muted);padding:11px 16px;font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;background:var(--surface);flex:0 0 auto;}
   .mic svg{width:16px;height:16px;fill:currentColor;}
   .mic.rec{background:var(--amber);color:var(--ground);border-color:var(--amber);}
+  .rv{border-top:1px solid var(--line);padding:18px 0;display:flex;flex-direction:column;gap:6px;}
+  .rv .rd{font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
+  .rv .rx{font-size:1.02rem;line-height:1.55;white-space:pre-wrap;overflow-wrap:break-word;}
+  .rvq{font-family:"Fraunces",Georgia,serif;font-size:1.35rem;font-weight:600;line-height:1.25;letter-spacing:-.02em;}
   .microw{flex-wrap:wrap;}
   .microw .note{padding:0;text-align:left;flex:1 0 100%;font-size:.84rem;}
   .clip{display:flex;align-items:center;gap:12px;}
@@ -311,6 +315,20 @@
     <div class="pad"></div>
   </section>
 
+  <section class="screen" id="review">
+    <div class="top"><span class="wordmark" data-wm>Deriva</span><span class="daycount">Tu semana</span></div>
+    <div class="hd2"><h2>Lo que volvió esta semana</h2><p id="rvSub"></p></div>
+    <div id="rvList"></div>
+    <div id="rvAsk" style="display:flex;flex-direction:column;gap:14px;margin-top:22px;">
+      <p class="rvq">¿Qué se repite? ¿Qué te llevas a la semana que viene?</p>
+      <textarea id="rvText" placeholder="Una frase basta."></textarea>
+      <button class="btn solid" id="rvSave">Guardar el repaso</button>
+      <p class="note">No hay puntuación ni resumen de cifras: solo lo que escribiste, para que lo leas de seguido.</p>
+    </div>
+    <div class="stackv"><button class="btn ghost" id="rvBack">Volver al cuaderno</button></div>
+    <div class="pad"></div>
+  </section>
+
   <section class="screen" id="help">
     <div class="top"><span class="wordmark" data-wm>Deriva</span><span class="daycount">Atajos</span></div>
     <div class="hd2"><h2>Abrirla rápido</h2><p>Para apuntar una idea antes de que se vaya.</p></div>
@@ -340,6 +358,11 @@
       <h3>Qué pantalla ve al abrirse</h3>
       <p>Si la abres tras más de dos minutos, empieza aquí. «Apuntar» sirve si la usas sobre todo para no perder ideas.</p>
       <select id="startScreen"><option value="">Donde la dejé</option><option value="today">Hoy</option><option value="quick">Apuntar</option></select>
+    </div>
+    <div class="helpblk">
+      <h3>Por qué funciona</h3>
+      <p>Querer no es disfrutar, y la ciencia lo separa desde hace décadas. Es lo que hay detrás de la idea.</p>
+      <a class="nb-btn" href="ensayo.html" style="align-self:flex-start;text-decoration:none;">Leer el ensayo</a>
     </div>
     <div class="helpblk">
       <h3>Enviar Deriva a alguien</h3>
@@ -388,6 +411,7 @@
       <button class="nb-btn" id="btnExportJson">Copia .JSON</button>
       <label class="nb-btn" style="cursor:pointer;">Restaurar .JSON<input type="file" id="importJsonFile" accept=".json" style="display:none;"></label>
       <button class="nb-btn" id="btnIdeas">Solo ideas</button>
+      <button class="nb-btn" id="btnReview">Repaso de la semana</button>
       <button class="nb-btn" id="btnCtx">Tu contexto</button>
       <button class="nb-btn" id="btnReminder">Atajos</button>
       <button class="nb-btn" id="btnTestChime">Probar campana</button>
@@ -628,7 +652,7 @@ function persist(entry){
   } else done();
 }
 
-function practiceEntries(){ return S.entries.filter(e => e.kind !== "pausa" && e.kind !== "nota"); }
+function practiceEntries(){ return S.entries.filter(e => e.kind !== "pausa" && e.kind !== "nota" && e.kind !== "repaso"); }
 /* Orden de la práctica: cambia cada día y no repite hasta haber hecho las 60.
    Estas tres dependen de otras («igual que antes», «la más larga hasta ahora»,
    «vuelve a la segunda»), así que solo salen cuando no queda nada más. */
@@ -786,7 +810,8 @@ function render(){
         '<button class="btn ghost" id="againBtn">Hacer otra igualmente</button>' +
       '</div>' +
       '<div class="togrow" style="margin-top:2px;"><button class="linkbtn" id="shareApp">Mándasela a alguien</button></div>';
-    host.insertAdjacentHTML("beforeend", PAUSE_HTML + seedHTML());
+    host.insertAdjacentHTML("beforeend", reviewCardHTML() + PAUSE_HTML + seedHTML());
+    bindReview();
     bindSeed();
     document.getElementById("goNb").onclick = () => go("notebook");
     document.getElementById("againBtn").onclick = () => startPractice();
@@ -830,7 +855,8 @@ function render(){
       const chosen = sel ? parseInt(sel.value, 10) : stdMins;
       startPractice(chosen);
     };
-    host.insertAdjacentHTML("beforeend", PAUSE_HTML + seedHTML());
+    host.insertAdjacentHTML("beforeend", reviewCardHTML() + PAUSE_HTML + seedHTML());
+    bindReview();
     bindSeed();
     bindPause();
   }
@@ -1558,6 +1584,48 @@ function finishWelcome(){
   toast("Ajustado");
 }
 document.getElementById("btnCtx").onclick = () => openWelcome(true);
+
+/* Repaso semanal: lo escrito en los últimos siete días, seguido, con una sola pregunta */
+function weekEntries(){
+  const since = Date.now() - 7 * 86400000;
+  return S.entries.filter(e => e.ts >= since && e.kind !== "repaso" && (e.text || e.hasAudio)).sort((a, b) => a.ts - b.ts);
+}
+function reviewDue(){
+  const sixDays = Date.now() - 6 * 86400000;
+  return new Date().getDay() === 0 && weekEntries().length >= 3 && !S.entries.some(e => e.kind === "repaso" && e.ts >= sixDays);
+}
+function reviewCardHTML(){
+  if(!reviewDue()) return "";
+  return '<div class="seed"><span class="eyebrow" style="color:var(--amber);">Es domingo</span>' +
+         '<p class="sx">Léete la semana de seguido y apunta qué se repite.</p>' +
+         '<button class="btn ghost" id="rvOpen">Repasar la semana</button></div>';
+}
+function bindReview(){ const b = document.getElementById("rvOpen"); if(b) b.onclick = openReview; }
+function openReview(){
+  const list = weekEntries(), host = document.getElementById("rvList");
+  document.getElementById("rvSub").textContent = list.length ? "Lo de los últimos siete días, en orden." : "";
+  if(!list.length){
+    host.innerHTML = '<div class="empty"><span class="eh">Todavía no hay semana</span><p>Cuando tengas algunas notas de los últimos siete días, aquí podrás leerlas de seguido.</p></div>';
+    document.getElementById("rvAsk").hidden = true;
+  } else {
+    document.getElementById("rvAsk").hidden = false;
+    host.innerHTML = list.map(e =>
+      '<div class="rv"><span class="rd">' + new Date(e.ts).toLocaleDateString("es-ES", { weekday:"short", day:"numeric" }) +
+      ' · ' + esc(e.title) + (e.project ? ' · ' + esc(e.project) : '') + (e.idea ? ' · idea' : '') + '</span>' +
+      '<p class="rx">' + (e.text ? esc(e.text) : '(nota de voz)') + '</p></div>').join("");
+  }
+  document.getElementById("rvText").value = "";
+  go("review");
+}
+document.getElementById("btnReview").onclick = openReview;
+document.getElementById("rvBack").onclick = () => go("notebook");
+document.getElementById("rvSave").onclick = () => {
+  const t = document.getElementById("rvText").value.trim();
+  if(!t){ toast("Escribe una frase primero"); return; }
+  persist({ id: "e" + Date.now() + Math.random().toString(36).slice(2,7), ts: Date.now(), kind: "repaso",
+            title: "Repaso de la semana", category: "Repaso", text: t, idea: false, photo: null });
+  toast("Guardado"); go("notebook");
+};
 
 /* Recordatorio diario: una web instalada en iPhone no puede avisarte sola a una hora
    sin un servidor de notificaciones push, así que se delega en Atajos de iOS. */
