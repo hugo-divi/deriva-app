@@ -128,6 +128,9 @@
   .mic{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);color:var(--muted);padding:11px 16px;font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;background:var(--surface);flex:0 0 auto;}
   .mic svg{width:16px;height:16px;fill:currentColor;}
   .mic.rec{background:var(--amber);color:var(--ground);border-color:var(--amber);}
+  .upd{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);z-index:80;background:var(--amber);color:var(--ground);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.95rem;}
+  .upd button{border:1px solid var(--ground);padding:8px 14px;font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ground);}
+  .ex-edit{width:100%;min-height:130px;}
   .rv{border-top:1px solid var(--line);padding:18px 0;display:flex;flex-direction:column;gap:6px;}
   .rv .rd{font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
   .rv .rx{font-size:1.02rem;line-height:1.55;white-space:pre-wrap;overflow-wrap:break-word;}
@@ -434,6 +437,7 @@
   </nav>
 </div>
 <div class="toast" id="toast"></div>
+<div class="upd" id="updBar" hidden><span>Hay una versión nueva de Deriva.</span><button id="updBtn" type="button">Actualizar</button></div>
 
 <script>
 /* ============================================================
@@ -514,6 +518,7 @@ function minutesFor(n){
   return 22;
 }
 
+const APP_VERSION = "v11";
 const PK = "deriva.profile.v1";
 function loadProfile(){
   try{ const o = JSON.parse(localStorage.getItem(PK) || "null"); if(o && typeof o === "object") return Object.assign({ projects:[], mins:0, outdoor:"dia", goal:"", done:false }, o); }catch(e){}
@@ -922,7 +927,7 @@ function renderNotebook(){
       html +=
         '<article class="entry">' +
           '<div class="hd"><span class="et">' + esc(e.title) + (e.idea ? '<span class="tag-idea">Idea</span>' : '') + (e.project ? '<span class="tag-proj">' + esc(e.project) + '</span>' : '') + '</span><span class="ed">' + fmt(e.ts) + '</span></div>' +
-          (e.text ? '<p class="ex">' + esc(e.text) + '</p>'
+          (S.editing === e.id ? editHTML(e) : e.text ? '<p class="ex">' + esc(e.text) + '</p>'
                   : (e.hasAudio ? '' : '<p class="ex" style="color:var(--faint);font-style:italic;">Salió. No vino nada. Apuntado igual.</p>')) +
           (e.photo ? '<img src="' + e.photo + '" alt="">' : '') +
           (e.hasAudio ? '<div class="clip"><button class="nb-btn" data-label="Escuchar · ' + fmtDur(e.audioDur || 0) + '" onclick="playVoice(\'' + e.id + '\', this)">Escuchar · ' + fmtDur(e.audioDur || 0) + '</button></div>' : '') +
@@ -932,6 +937,7 @@ function renderNotebook(){
             '<button class="nb-btn" onclick="toggleIdea(\'' + e.id + '\')">' + (e.idea ? 'Quitar idea' : 'Marcar idea') + '</button>' +
             (e.text ? '<button class="nb-btn" onclick="shareEntry(\'' + e.id + '\')">Texto</button>' +
             '<button class="nb-btn" onclick="exportEntryCard(\'' + e.id + '\')">Tarjeta</button>' : '') +
+            '<button class="nb-btn" onclick="editEntry(\'' + e.id + '\')">Editar</button>' +
             '<button class="nb-btn" onclick="delEntry(\'' + e.id + '\')">Borrar</button>' +
           '</div>' +
         '</article>';
@@ -942,6 +948,24 @@ function renderNotebook(){
   if(again) again.onclick = renderNotebook;
 }
 
+function editHTML(e){
+  return '<textarea id="nbEdit" class="ex-edit" oninput="editDraft(this.value)">' + esc(S.editDraft) + '</textarea>' +
+         '<div class="row2"><button class="nb-btn" onclick="saveEdit(\'' + e.id + '\')">Guardar</button>' +
+         '<button class="nb-btn" onclick="cancelEdit()">Cancelar</button></div>';
+}
+window.editDraft = v => { S.editDraft = v; };
+window.editEntry = id => {
+  const e = S.entries.find(x => x.id === id); if(!e) return;
+  S.editing = id; S.editDraft = e.text || ""; renderNotebook();
+  setTimeout(() => { const t = document.getElementById("nbEdit"); if(t){ t.focus(); t.setSelectionRange(t.value.length, t.value.length); } }, 50);
+};
+window.cancelEdit = () => { S.editing = null; renderNotebook(); };
+window.saveEdit = id => {
+  const e = S.entries.find(x => x.id === id); if(!e) return;
+  const t = (S.editDraft || "").trim();
+  if(!t && !e.hasAudio && !e.photo){ toast("Queda vacía: usa Borrar si no la quieres"); return; }
+  e.text = t; S.editing = null; writeLocal(S.entries); renderNotebook(); render(); toast("Guardado");
+};
 function projOptions(cur){
   return '<option value="">Sin proyecto</option>' + allProjects().map(n => '<option value="' + esc(n) + '"' + (n === cur ? ' selected' : '') + '>' + esc(n) + '</option>').join("") + '<option value="__new">+ Nuevo…</option>';
 }
@@ -998,7 +1022,7 @@ function go(name){
   S.screen = name;
   if(name === "quick"){ fillProj("qProj", S.lastProject); setTimeout(() => document.getElementById("qText").focus(), 80); }
   document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === name));
-  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.go === name));
+  document.querySelectorAll("nav button").forEach(b => { b.classList.toggle("on", b.dataset.go === name); b.setAttribute("aria-current", b.dataset.go === name ? "page" : "false"); });
   window.scrollTo(0,0);
 }
 document.querySelectorAll("nav button").forEach(b => { b.onclick = () => { stopTimer(); stopDictation(); go(b.dataset.go); }; });
@@ -1645,7 +1669,7 @@ const dgOut = txt => { byId("dgOut").textContent = txt; };
 function dgInfoText(){
   const tipos = window.MediaRecorder && MediaRecorder.isTypeSupported ? ["audio/mp4","audio/webm"].filter(t => MediaRecorder.isTypeSupported(t)).join(", ") || "ninguno" : "no";
   const standalone = window.navigator.standalone === true || matchMedia("(display-mode: standalone)").matches;
-  return "Versión de la app: v8" + "\n" +
+  return "Versión de la app: " + APP_VERSION + "\n" +
          "Instalada en la pantalla de inicio: " + (standalone ? "sí" : "no") + "\n" +
          "Grabar audio: " + (window.MediaRecorder ? "sí (" + tipos + ")" : "no") + "\n" +
          "Dictado integrado: " + (getSR() ? "sí" : "no") + "\n" +
@@ -1735,10 +1759,20 @@ if(pwaInstallBtn){
 
 /* Service Worker Registration */
 if("serviceWorker" in navigator){
+  const hadController = !!navigator.serviceWorker.controller;
+  let swReg = null;
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+    navigator.serviceWorker.register("./sw.js").then(r => { swReg = r; }).catch(()=>{});
+  });
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if(hadController) document.getElementById("updBar").hidden = false;
+  });
+  /* una app instalada se queda abierta días: al volver a ella se busca versión nueva */
+  document.addEventListener("visibilitychange", () => {
+    if(document.visibilityState === "visible" && swReg){ try{ swReg.update(); }catch(e){} }
   });
 }
+document.getElementById("updBtn").onclick = () => location.reload();
 
 const btnTestChime = document.getElementById("btnTestChime");
 if(btnTestChime) btnTestChime.onclick = () => { chimeNow(); toast("Debería sonar la campana"); };
