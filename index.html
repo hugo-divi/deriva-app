@@ -220,6 +220,14 @@
   .photo-row{display:flex;gap:14px;align-items:center;}
   .thumb{width:64px;height:64px;object-fit:cover;border-radius:12px;border:1px solid var(--line);display:block;}
   .field{display:flex;flex-direction:column;gap:10px;}
+  .viewer{position:fixed;inset:0;z-index:99;background:#000;display:flex;align-items:center;justify-content:center;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);}
+  .viewer img{max-width:100%;max-height:100%;object-fit:contain;display:block;}
+  .viewer button{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:14px;background:rgba(20,26,45,.85);color:var(--ink);border-radius:999px;padding:9px 16px;font-weight:700;font-size:.92rem;}
+  .entry img{cursor:zoom-in;}
+  .undo{position:fixed;left:12px;right:12px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:95;max-width:536px;margin:0 auto;background:var(--ink);color:var(--ground);border-radius:16px;padding:10px 10px 10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.4);}
+  .undo button{color:#8A5A00;font-weight:800;padding:8px 12px;border-radius:999px;}
+  .seedtxt{font-family:"Fraunces",Georgia,serif;font-size:1.3rem;font-weight:600;line-height:1.35;letter-spacing:-.015em;white-space:pre-wrap;overflow-wrap:break-word;}
+  #timer.pre #tPeek{display:none;}
   .mini{border-top:1px solid var(--line);padding:12px 0;display:flex;flex-direction:column;gap:2px;}
   .mini span{font-size:.82rem;color:var(--faint);}
   .mini p{font-size:.97rem;line-height:1.5;overflow-wrap:break-word;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
@@ -368,6 +376,7 @@
       <span class="t-clock" id="tClock">00:00</span>
     </button>
     <p class="t-hint" id="tHint"></p>
+    <button class="linkbtn" id="tPeek" type="button" style="align-self:center;margin-top:10px;">Releer la práctica</button>
     <div class="t-actions">
       <button class="btn solid" id="tDone">Ya he vuelto</button>
       <div class="t-row">
@@ -411,12 +420,14 @@
     <h2 class="title">Antes de que se vaya</h2>
     <p class="lede">Una idea, una frase, algo que has visto. Sin tiempo y sin pregunta.</p>
     <div class="stack" style="margin-top:20px;">
-      <textarea id="qText" placeholder="Escribe aquí, o graba." enterkeyhint="done"></textarea>
+      <textarea id="qText" placeholder="Escribe aquí, graba o haz una foto." enterkeyhint="done"></textarea>
       <div class="attach">
         <button class="mic" id="qRec" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg><span>Grabar voz</span></button>
+        <label class="mic" tabindex="0"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg><span>Foto</span><input type="file" id="qPhoto" accept="image/*"></label>
         <button class="mic" id="qMic" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg><span>Dictar</span></button>
       </div>
       <p class="hintline" id="qMicMsg"></p>
+      <div class="photo-row" id="qPhotoRow" hidden><img class="thumb" id="qThumb" alt=""><button class="linkbtn" id="qRmPhoto" type="button">Quitar la foto</button></div>
       <div class="clip" id="qClip" hidden><audio controls playsinline></audio><button class="linkbtn" id="qClipX" type="button">Quitar</button></div>
       <div class="field"><span class="flabel">Proyecto</span><div class="chips" id="qProj"></div></div>
       <label class="toggle"><span>Es una idea para algo mío</span><span class="switch"><input type="checkbox" id="qIdea" checked><i></i></span></label>
@@ -544,6 +555,8 @@
 </div>
 <div class="sheet" id="sheet" hidden><div class="scrim" id="sheetScrim"></div><div class="panel" role="dialog" aria-modal="true"><div class="grab"></div><div class="sbody" id="sheetBody"></div></div></div>
 <div class="toast" id="toast" role="status"></div>
+<div class="undo" id="undoBar" hidden><span id="undoMsg">Nota borrada</span><button id="undoBtn" type="button">Deshacer</button></div>
+<div class="viewer" id="viewer" hidden><img id="viewerImg" alt=""><button type="button" id="viewerX">Cerrar</button></div>
 <div class="upd" id="updBar" hidden><span>Hay una versión nueva de Deriva.</span><button id="updBtn" type="button">Actualizar</button></div>
 
 <script>
@@ -625,7 +638,7 @@ function minutesFor(n){
   return 22;
 }
 
-const APP_VERSION = "v13";
+const APP_VERSION = "v14";
 const ICON = {"sun": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4\"/>", "pencil": "<path d=\"M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17v3z\"/><path d=\"m14.5 7.5 3 3\"/>", "notebook": "<path d=\"M6 3.5h11a2 2 0 0 1 2 2v15H7.5A2.5 2.5 0 0 1 5 18V4.5a1 1 0 0 1 1-1z\"/><path d=\"M5 18a2.5 2.5 0 0 1 2.5-2.5H19M9 8h6\"/>", "sliders": "<path d=\"M4 7h9M17 7h3M4 17h3M11 17h9\"/><circle cx=\"15\" cy=\"7\" r=\"2\"/><circle cx=\"9\" cy=\"17\" r=\"2\"/>", "chev": "<path d=\"m9 6 6 6-6 6\"/>", "back": "<path d=\"m15 6-6 6 6 6\"/>", "mic": "<rect x=\"9\" y=\"3\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21\"/>", "camera": "<path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.2\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6.5\"/><path d=\"m16 16 4 4\"/>", "user": "<circle cx=\"12\" cy=\"8.5\" r=\"3.5\"/><path d=\"M5 20a7 7 0 0 1 14 0\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M12 7.5V12l3 2\"/>", "home": "<path d=\"M4 11 12 4l8 7\"/><path d=\"M6 9.5V20h12V9.5\"/>", "pin": "<path d=\"M12 21s-6.5-5.8-6.5-11a6.5 6.5 0 0 1 13 0c0 5.2-6.5 11-6.5 11z\"/><circle cx=\"12\" cy=\"10\" r=\"2.3\"/>", "bell": "<path d=\"M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z\"/><path d=\"M10 21h4\"/>", "download": "<path d=\"M12 4v11M7.5 10.5 12 15l4.5-4.5M5 20h14\"/>", "upload": "<path d=\"M12 15V4M7.5 8.5 12 4l4.5 4.5M5 20h14\"/>", "doc": "<path d=\"M6.5 3.5h8l4 4v13h-12z\"/><path d=\"M14 3.5v4.5h4.5M9.5 13h5M9.5 16.5h5\"/>", "zap": "<path d=\"M13 3 5.5 13.5H11L10 21l7.5-10.5H12z\"/>", "book": "<path d=\"M12 6.5C10 5 7 4.5 3.5 5v13.5c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z\"/><path d=\"M12 6.5v13.5\"/>", "send": "<path d=\"M20.5 3.5 3.5 10.5l7 3 3 7z\"/><path d=\"m10.5 13.5 4-4\"/>", "pause": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M10 9v6M14 9v6\"/>", "bulb": "<path d=\"M9.5 17.5h5M10.5 20.5h3M12 3.5a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3.5z\"/>", "list": "<path d=\"M9 6.5h11M9 12h11M9 17.5h11\"/><circle cx=\"4.8\" cy=\"6.5\" r=\".9\"/><circle cx=\"4.8\" cy=\"12\" r=\".9\"/><circle cx=\"4.8\" cy=\"17.5\" r=\".9\"/>", "calendar": "<rect x=\"4\" y=\"5.5\" width=\"16\" height=\"14.5\" rx=\"2\"/><path d=\"M4 10h16M8.5 3.5v4M15.5 3.5v4\"/>", "shuffle": "<path d=\"M19.5 12a7.5 7.5 0 1 1-2.2-5.3\"/><path d=\"M19.5 4.5v4.5H15\"/>", "check": "<path d=\"m5 12.5 4.5 4.5L19 7.5\"/>", "dots": "<circle cx=\"5.5\" cy=\"12\" r=\"1.2\"/><circle cx=\"12\" cy=\"12\" r=\"1.2\"/><circle cx=\"18.5\" cy=\"12\" r=\"1.2\"/>", "share": "<path d=\"M12 15V4M8 8l4-4 4 4M6 12v8h12v-8\"/>", "image": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"14\" rx=\"2\"/><circle cx=\"9\" cy=\"10\" r=\"1.8\"/><path d=\"m20.5 16-5-5-8.5 8\"/>", "trash": "<path d=\"M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13\"/>", "folder": "<path d=\"M3.5 6.5h6l2 2h9v10.5h-17z\"/>"};
 function ic(n){ return '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[n] + '</svg>'; }
 function cap(t){ return t ? t.charAt(0).toUpperCase() + t.slice(1) : t; }
@@ -866,11 +879,26 @@ function playChime(){
   }catch(e){}
 }
 
+function seedPool(){ return S.entries.filter(e => e.idea && e.text && Date.now() - e.ts > 2 * 86400000); }
 function pickSeed(){
-  const old = S.entries.filter(e => e.idea && e.text && Date.now() - e.ts > 2 * 86400000);
+  const old = seedPool();
   if(!old.length) return null;
   const d = new Date(); const day = d.getFullYear() * 400 + d.getMonth() * 32 + d.getDate();
-  return old[day % old.length];
+  return old[(day + (S.seedOff || 0)) % old.length];
+}
+function daysAgo(ts){ const d = Math.round((Date.now() - ts) / 86400000); return d <= 0 ? "hoy" : d === 1 ? "ayer" : "hace " + d + " días"; }
+function seedSheet(e, fromToday){
+  if(!e) return;
+  openSheet('<span class="cat">Una idea tuya · ' + daysAgo(e.ts) + '</span>' +
+    '<p class="seedtxt">' + esc(e.text) + '</p>' +
+    (e.project ? '<div class="etags"><span class="pill proj">' + esc(e.project) + '</span></div>' : '') +
+    '<p class="sub">Diez minutos dándole vueltas, sin el móvil y sin buscar nada. Al volver, apuntas lo que salga.</p>' +
+    '<button class="btn solid" id="sdGo">Darle 10 minutos</button>' +
+    (fromToday && seedPool().length > 1 ? '<button class="btn quiet" id="sdOther">Otra idea</button>' : ''), b => {
+      b.querySelector("#sdGo").onclick = () => { closeSheet(); startSeed(e); };
+      const o = b.querySelector("#sdOther");
+      if(o) o.onclick = () => { S.seedOff = (S.seedOff || 0) + 1; render(); seedSheet(pickSeed(), true); };
+    });
 }
 function startSeed(e){
   if(!e) return;
@@ -886,6 +914,13 @@ function rowHTML(id, icon, title, sub, end, hl){
   return '<button class="item' + (hl ? ' hl' : '') + '" id="' + id + '"><span class="ic">' + ic(icon) + '</span>' +
          '<span class="tx"><b>' + title + '</b>' + (sub ? '<span>' + sub + '</span>' : '') + '</span>' +
          '<span class="end">' + (end || '') + ic("chev") + '</span></button>';
+}
+function timingNote(p){
+  const h = new Date().getHours();
+  if(p.t === "Antes de que abran" && h >= 10) return "Esta pide salir muy temprano. Si hoy ya no es momento, pulsa «Otra».";
+  if(p.t === "Antes de dormir" && h < 19) return "Esta es para esta noche, al meterte en la cama. Puedes volver luego.";
+  if(isOut(p) && !insideToday() && (h >= 22 || h < 6)) return "Es tarde para salir. «Hoy no salgo» te da una que se hace en casa.";
+  return "";
 }
 function todayMins(){ return S.minsPick || PROFILE.mins || minutesFor(practiceNumber()); }
 
@@ -921,7 +956,7 @@ function render(){
            (canSwap() ? '<button class="tweak" id="swapBtn">' + ic("shuffle") + 'Otra</button>' : '') +
            '<button class="tweak" id="inBtn">' + ic("home") + (insideToday() ? 'Hoy sí salgo' : 'Hoy no salgo') + '</button>' +
          '</div>' +
-         '<p class="note">' + (insideToday() ? 'Léela una vez y hazla sin salir de casa.' : isOut(p) ? 'Léela una vez, guarda el móvil y sal.' : 'Léela una vez y guarda el móvil.') + '</p>';
+         '<p class="note">' + (timingNote(p) || (insideToday() ? 'Léela una vez y hazla sin salir de casa.' : isOut(p) ? 'Léela una vez, guarda el móvil y sal.' : 'Léela una vez y guarda el móvil.')) + '</p>';
   }
   const seed = pickSeed();
   h += '<p class="sec">Otras formas de parar</p><div class="group">' +
@@ -940,7 +975,7 @@ function render(){
   on("shareApp", () => shareApp());
   on("rvOpen", openReview);
   on("pauseRow", pauseSheet);
-  on("seedRow", () => startSeed(seed));
+  on("seedRow", () => seedSheet(seed, true));
   on("libRow", () => go("library"));
   on("beginBtn", () => startPractice(todayMins()));
   on("swapBtn", swapPractice);
@@ -1106,7 +1141,7 @@ function entryHTML(e){
   const editing = S.editing === e.id;
   const content = editing ? editHTML(e)
     : e.text ? '<p class="ex">' + esc(e.text) + '</p>'
-    : e.hasAudio ? '' : '<p class="ex none">No vino nada, y también vale.</p>';
+    : e.hasAudio || e.photo ? '' : '<p class="ex none">No vino nada, y también vale.</p>';
   const tags = (e.idea ? '<span class="pill idea">Idea</span>' : '') + (e.project ? '<span class="pill proj">' + esc(e.project) + '</span>' : '') +
                (e.ganas0 && e.ganas1 ? '<span class="ganas">Ganas de móvil: ' + GANAS[e.ganas0] + ' → ' + GANAS[e.ganas1] + '</span>' : '');
   return '<article class="entry">' +
@@ -1114,7 +1149,7 @@ function entryHTML(e){
       (editing ? '' : '<button class="dots" aria-label="Opciones de la nota" onclick="entrySheet(\'' + e.id + '\')">' + ic("dots") + '</button>') + '</div>' +
     (e.kind === "nota" ? '' : '<h3 class="et">' + esc(e.title) + '</h3>') +
     content +
-    (e.photo ? '<img src="' + e.photo + '" alt="">' : '') +
+    (e.photo ? '<img src="' + e.photo + '" alt="Foto de la nota" onclick="viewPhoto(this.src)">' : '') +
     (e.hasAudio ? '<button class="play" data-label="▶︎ Escuchar · ' + fmtDur(e.audioDur || 0) + '" onclick="playVoice(\'' + e.id + '\', this)">▶︎ Escuchar · ' + fmtDur(e.audioDur || 0) + '</button>' : '') +
     (tags ? '<div class="etags">' + tags + '</div>' : '') +
   '</article>';
@@ -1122,6 +1157,7 @@ function entryHTML(e){
 window.entrySheet = function(id){
   const e = S.entries.find(x => x.id === id); if(!e) return;
   const acts = [["edit", "pencil", e.text ? "Editar el texto" : "Añadir texto"], ["idea", "bulb", e.idea ? "Ya no es una idea" : "Marcar como idea"]];
+  if(e.idea && e.text) acts.unshift(["seed", "clock", "Darle 10 minutos a esta idea"]);
   if(e.text) acts.push(["share", "share", "Compartir el texto"], ["card", "image", "Hacer una imagen para compartir"]);
   acts.push(["del", "trash", "Borrar la nota"]);
   openSheet(
@@ -1132,11 +1168,12 @@ window.entrySheet = function(id){
       projChips("esProj", e.project || "", v => { e.project = v || undefined; writeLocal(S.entries); renderNotebook(); });
       b.querySelectorAll("[data-a]").forEach(x => x.onclick = () => {
         const a = x.dataset.a; closeSheet();
-        if(a === "edit") editEntry(id);
+        if(a === "seed") startSeed(e);
+        else if(a === "edit") editEntry(id);
         else if(a === "idea") toggleIdea(id);
         else if(a === "share") shareEntry(id);
         else if(a === "card") exportEntryCard(id);
-        else if(a === "del") setTimeout(() => delEntry(id), 60);
+        else if(a === "del") delEntry(id);
       });
     });
 };
@@ -1212,7 +1249,7 @@ function renderRecent(){
   const list = S.entries.filter(e => e.kind === "nota").slice(0, 3);
   document.getElementById("qRecent").innerHTML = list.length
     ? '<p class="sec">Lo último que apuntaste</p>' + list.map(e =>
-        '<div class="mini"><span>' + fmt(e.ts) + (e.project ? ' · ' + esc(e.project) : '') + '</span><p>' + (e.text ? esc(e.text) : 'Nota de voz') + '</p></div>').join("")
+        '<div class="mini"><span>' + fmt(e.ts) + (e.project ? ' · ' + esc(e.project) : '') + '</span><p>' + (e.text ? esc(e.text) : e.hasAudio ? 'Nota de voz' : 'Foto') + '</p></div>').join("")
     : "";
 }
 let toastT = null;
@@ -1226,6 +1263,7 @@ function go(name){
   S.screen = name;
   document.body.dataset.screen = name;
   closeSheet();
+  if(S.undo && name !== "notebook" && name !== "today") finishDelete();
   if(name === "quick"){ projChips("qProj", S.lastProject, v => { S.lastProject = v; }); renderRecent(); }
   if(name === "settings") renderSettings();
   if(name === "library") renderLibrary();
@@ -1348,6 +1386,7 @@ function startTimer(label, mins, hint){
   document.getElementById("tHint").textContent = hint;
   document.getElementById("tClock").textContent = String(mins).padStart(2, "0") + ":00";
   document.getElementById("timer").classList.add("pre");
+  document.getElementById("tPeek").hidden = S.kind !== "practica";
   tArc.style.strokeDashoffset = RING_C; document.getElementById("tRing").classList.remove("show");
   go("timer");
 }
@@ -1421,6 +1460,12 @@ function tick(){
 function stopTimer(keepAudio){ if(S.timerId){ clearInterval(S.timerId); S.timerId = null; } try{ if(wake){ wake.release(); wake = null; } }catch(e){} if(!keepAudio) stopAudio(); }
 
 document.getElementById("tDone").onclick = () => { stopTimer(); openCapture(); };
+document.getElementById("tPeek").onclick = ev => {
+  ev.stopPropagation();
+  const p = PRACTICES[S.practiceIdx];
+  openSheet('<span class="cat">' + esc(p.c) + '</span><h3 class="ptitle sm">' + esc(p.t) + '</h3><p class="pbody">' + esc(p.b) + '</p>' +
+    '<button class="btn ghost" id="pkOk">Seguir</button>', b => { b.querySelector("#pkOk").onclick = closeSheet; });
+};
 document.getElementById("tCancel").onclick = () => { stopTimer(); go("today"); };
 
 function openCapture(){
@@ -1439,32 +1484,39 @@ function openCapture(){
   go("capture");
   setTimeout(() => document.getElementById("cText").focus(), 80);
 }
-function clearPhoto(){
-  S.photo = null;
-  document.getElementById("cThumb").removeAttribute("src");
-  document.getElementById("cPhotoRow").hidden = true;
-  document.getElementById("cPhoto").value = "";
+/* Fotos: se reducen antes de guardarlas. Sirven igual para el boceto de una idea que para lo que viste fuera. */
+const PHOTO_KEY = { c:"photo", q:"qphoto" };
+function setPhoto(px, data){
+  S[PHOTO_KEY[px]] = data || null;
+  const t = document.getElementById(px + "Thumb");
+  if(data) t.src = data; else t.removeAttribute("src");
+  document.getElementById(px + "PhotoRow").hidden = !data;
+  if(!data) document.getElementById(px + "Photo").value = "";
 }
-document.getElementById("cRmPhoto").onclick = clearPhoto;
-document.getElementById("cPhoto").onchange = ev => {
-  const f = ev.target.files && ev.target.files[0];
-  if(!f) return;
+function clearPhoto(){ setPhoto("c", null); }
+function readPhoto(file, done){
   const img = new Image(), rd = new FileReader();
   rd.onload = () => {
     img.onload = () => {
-      const max = 800, sc = Math.min(1, max / Math.max(img.width, img.height));
+      const max = 1200, sc = Math.min(1, max / Math.max(img.width, img.height));
       const cv = document.createElement("canvas");
       cv.width = Math.round(img.width * sc);
       cv.height = Math.round(img.height * sc);
       cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
-      S.photo = cv.toDataURL("image/jpeg", 0.65);
-      document.getElementById("cThumb").src = S.photo;
-      document.getElementById("cPhotoRow").hidden = false;
+      done(cv.toDataURL("image/jpeg", 0.72));
     };
+    img.onerror = () => toast("No he podido abrir esa foto");
     img.src = rd.result;
   };
-  rd.readAsDataURL(f);
-};
+  rd.readAsDataURL(file);
+}
+["c","q"].forEach(px => {
+  document.getElementById(px + "RmPhoto").onclick = () => setPhoto(px, null);
+  document.getElementById(px + "Photo").onchange = ev => {
+    const f = ev.target.files && ev.target.files[0];
+    if(f) readPhoto(f, data => setPhoto(px, data));
+  };
+});
 
 function saveEntry(text){
   const p = PRACTICES[S.practiceIdx];
@@ -1491,7 +1543,7 @@ function saveEntry(text){
 document.getElementById("qSave").onclick = () => {
   stopDictation();
   const text = document.getElementById("qText").value.trim();
-  if(!text && !S.voice){ toast("Escribe o graba algo primero"); return; }
+  if(!text && !S.voice && !S.qphoto){ toast("Escribe, graba o haz una foto primero"); return; }
   persistWithVoice({
     id: "e" + Date.now() + Math.random().toString(36).slice(2,7),
     ts: Date.now(),
@@ -1501,9 +1553,10 @@ document.getElementById("qSave").onclick = () => {
     text,
     idea: document.getElementById("qIdea").checked,
     project: document.getElementById("qProj").dataset.v || undefined,
-    photo: null
+    photo: S.qphoto || null
   });
   document.getElementById("qText").value = "";
+  setPhoto("q", null);
   clearVoice(); byId("qMicMsg").textContent = IOS ? "Para pasar tu voz a texto, usa el micrófono del teclado (abajo a la derecha)." : "";
   toast("Guardado en el cuaderno");
   renderRecent();
@@ -2001,7 +2054,9 @@ const nbSearchInput = document.getElementById("nbSearch");
 if(nbSearchInput) nbSearchInput.oninput = renderNotebook;
 
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !document.getElementById("sheet").hidden) {
+  if (e.key === "Escape" && !document.getElementById("viewer").hidden) {
+    document.getElementById("viewer").click();
+  } else if (e.key === "Escape" && !document.getElementById("sheet").hidden) {
     closeSheet();
   } else if (e.key === "Escape" && S.screen === "timer") {
     stopTimer(); go("today");
@@ -2014,11 +2069,39 @@ window.toggleIdea = function(id){
   const e = S.entries.find(x => x.id === id); if(!e) return;
   e.idea = !e.idea; writeLocal(S.entries); renderNotebook(); render();
 };
+/* Borrar no pregunta: se puede deshacer durante unos segundos. La foto y el audio
+   solo se borran de verdad cuando pasa ese tiempo. */
+function finishDelete(){
+  if(!S.undo) return;
+  clearTimeout(S.undo.t);
+  idbDel(S.undo.e.id); idbDelS("audio", S.undo.e.id);
+  S.undo = null;
+  document.getElementById("undoBar").hidden = true;
+}
 window.delEntry = function(id){
-  if(!confirm("¿Borrar esta nota? No se puede deshacer.")) return;
-  S.entries = S.entries.filter(x => x.id !== id);
-  idbDel(id); idbDelS("audio", id);
-  writeLocal(S.entries); render(); toast("Borrada");
+  const i = S.entries.findIndex(x => x.id === id); if(i < 0) return;
+  finishDelete();
+  const e = S.entries[i];
+  S.entries.splice(i, 1);
+  if(S.editing === id) S.editing = null;
+  writeLocal(S.entries); render();
+  S.undo = { e, i, t: setTimeout(finishDelete, 7000) };
+  document.getElementById("undoBar").hidden = false;
+};
+document.getElementById("undoBtn").onclick = () => {
+  const u = S.undo; if(!u) return;
+  clearTimeout(u.t); S.undo = null;
+  document.getElementById("undoBar").hidden = true;
+  S.entries.splice(Math.min(u.i, S.entries.length), 0, u.e);
+  writeLocal(S.entries); render(); toast("Recuperada");
+};
+window.viewPhoto = function(src){
+  document.getElementById("viewerImg").src = src;
+  document.getElementById("viewer").hidden = false;
+};
+document.getElementById("viewer").onclick = () => {
+  document.getElementById("viewer").hidden = true;
+  document.getElementById("viewerImg").removeAttribute("src");
 };
 window.exportEntryCard = async function(id) {
   const e = S.entries.find(x => x.id === id);
