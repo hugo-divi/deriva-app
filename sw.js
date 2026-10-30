@@ -2,9 +2,10 @@
    Deriva · Service Worker
    Caché fuera de línea para app-mvp.html y fuentes
    ============================================================ */
-const CACHE_NAME = "deriva-cache-v12";
+const CACHE_NAME = "deriva-cache-v13";
 const ASSETS_TO_CACHE = [
   "./index.html",
+  "./ensayo.html",
   "./manifest.webmanifest",
   "./icon-180.png",
   "./icon-192.png",

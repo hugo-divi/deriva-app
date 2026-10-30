@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="La dopamina no produce placer: produce ganas. Qué dice la investigación y por qué el detox de dopamina no existe.">
 <meta property="og:type" content="article">
 <meta property="og:locale" content="es_ES">
@@ -16,18 +16,18 @@
   :root{
     color-scheme:dark;
     --ground:#0C1020;--surface:#151B2E;--surface-2:#1C2340;
-    --ink:#E9E6DD;--muted:#9AA1B6;--faint:#5B6280;--line:#252D4A;
+    --ink:#ECE8DE;--muted:#A7ADC2;--faint:#878EA9;--line:#252D4A;
     --amber:#E4AC3F;--amber-dim:#8A6B23;--moss:#7FA98D;
   }
   *{box-sizing:border-box;}
-  body{background:var(--ground);color:var(--ink);font-family:"Karla","Helvetica Neue",Arial,sans-serif;font-size:19px;line-height:1.74;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  body{margin:0;padding-top:env(safe-area-inset-top,0px);background:var(--ground);color:var(--ink);font-family:"Karla","Helvetica Neue",Arial,sans-serif;font-size:19px;line-height:1.74;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
   h1,h2,h3{font-family:"Fraunces",Georgia,serif;margin:0;text-wrap:balance;}
   p{margin:0;}
   a{color:var(--amber);text-underline-offset:3px;}
   a:focus-visible{outline:2px solid var(--amber);outline-offset:3px;}
 
   .wrap{max-width:720px;margin:0 auto;padding-inline:20px;padding-block:0 90px;}
-  .eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.17em;text-transform:uppercase;color:var(--faint);}
+  .eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.17em;text-transform:uppercase;color:var(--faint);}
   .ganas{color:var(--amber);}
   .gusto{color:var(--moss);}
 
@@ -50,28 +50,30 @@
     font-weight:600;line-height:1.3;letter-spacing:-.02em;color:var(--ink);max-width:27ch;
   }
 
-  .aside{border:1px solid var(--line);background:var(--surface);padding:26px 24px;display:flex;flex-direction:column;gap:14px;}
-  .aside .lbl{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);}
+  .aside{border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:26px 24px;display:flex;flex-direction:column;gap:14px;}
+  .aside .lbl{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);}
   .aside p{font-size:1rem;line-height:1.62;color:var(--muted);max-width:none;}
   .aside p strong{color:var(--ink);}
 
-  .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);}
+  .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;}
   .two > div{background:var(--surface);padding:24px 22px;display:flex;flex-direction:column;gap:10px;}
   .two .w{font-family:"Fraunces",Georgia,serif;font-size:1.75rem;font-weight:900;letter-spacing:-.03em;line-height:1;}
   .two .d{font-size:.96rem;line-height:1.58;color:var(--muted);}
-  .two .t{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.63rem;letter-spacing:.15em;text-transform:uppercase;}
+  .two .t{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;}
 
   hr{border:none;border-top:1px solid var(--line);margin-block:18px;}
 
   .end{margin-top:22px;padding-top:34px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:16px;}
   .end p{color:var(--muted);font-size:1rem;line-height:1.65;}
   .btn{
-    border:1px solid var(--amber);color:var(--amber);padding:14px 24px;display:inline-block;
+    background:var(--amber);color:#17120A;padding:16px 26px;display:inline-block;border-radius:14px;
     text-align:center;text-decoration:none;width:fit-content;
-    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
-    transition:background .15s ease,color .15s ease;
+    font-weight:700;font-size:1.03rem;
+    transition:background .15s ease;
   }
-  .btn:hover{background:var(--amber);color:var(--ground);}
+  .btn:hover{background:#EDBB55;}
+  .toapp{color:var(--muted);font-weight:600;font-size:.95rem;text-decoration:none;padding:8px 0;}
+  .toapp:hover{color:var(--amber);}
 
   .refs{margin-top:40px;padding-top:26px;border-top:1px solid var(--line);}
   .refs p{font-size:.84rem;line-height:1.85;color:var(--faint);max-width:none;}
@@ -81,12 +83,12 @@
 
 <div class="wrap">
 
-  <div class="bar"><span class="wordmark" data-wm></span><span class="eyebrow">Ensayo</span></div>
+  <div class="bar"><span class="wordmark" data-wm></span><a class="toapp" href="./">Abrir Deriva ›</a></div>
 
   <header class="h">
     <h1>Las ganas no son el gusto</h1>
     <p class="standfirst">Te han contado una historia sobre la dopamina que es falsa de una forma interesante, y la corrección sirve más que la historia.</p>
-    <div class="byline"><span class="eyebrow">Unos 9 minutos</span><span class="eyebrow">Fuentes al final</span></div>
+    <div class="byline"><span class="eyebrow">Ensayo</span><span class="eyebrow">Unos 9 minutos</span><span class="eyebrow">Fuentes al final</span></div>
   </header>
 
   <article>
