@@ -226,6 +226,8 @@
   .entry img{cursor:zoom-in;}
   .undo{position:fixed;left:12px;right:12px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:95;max-width:536px;margin:0 auto;background:var(--ink);color:var(--ground);border-radius:16px;padding:10px 10px 10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.4);}
   .undo button{color:#8A5A00;font-weight:800;padding:8px 12px;border-radius:999px;}
+  .cardprev{width:100%;max-width:300px;align-self:center;border-radius:14px;border:1px solid var(--line-2);display:block;background:var(--ground);}
+  .cardprev.story{max-width:220px;}
   .seedtxt{font-family:"Fraunces",Georgia,serif;font-size:1.3rem;font-weight:600;line-height:1.35;letter-spacing:-.015em;white-space:pre-wrap;overflow-wrap:break-word;}
   #timer.pre #tPeek{display:none;}
   .mini{border-top:1px solid var(--line);padding:12px 0;display:flex;flex-direction:column;gap:2px;}
@@ -645,7 +647,7 @@ function minutesFor(n){
   return 22;
 }
 
-const APP_VERSION = "v15";
+const APP_VERSION = "v16";
 const ICON = {"sun": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4\"/>", "pencil": "<path d=\"M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17v3z\"/><path d=\"m14.5 7.5 3 3\"/>", "notebook": "<path d=\"M6 3.5h11a2 2 0 0 1 2 2v15H7.5A2.5 2.5 0 0 1 5 18V4.5a1 1 0 0 1 1-1z\"/><path d=\"M5 18a2.5 2.5 0 0 1 2.5-2.5H19M9 8h6\"/>", "sliders": "<path d=\"M4 7h9M17 7h3M4 17h3M11 17h9\"/><circle cx=\"15\" cy=\"7\" r=\"2\"/><circle cx=\"9\" cy=\"17\" r=\"2\"/>", "chev": "<path d=\"m9 6 6 6-6 6\"/>", "back": "<path d=\"m15 6-6 6 6 6\"/>", "mic": "<rect x=\"9\" y=\"3\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21\"/>", "camera": "<path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.2\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6.5\"/><path d=\"m16 16 4 4\"/>", "user": "<circle cx=\"12\" cy=\"8.5\" r=\"3.5\"/><path d=\"M5 20a7 7 0 0 1 14 0\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M12 7.5V12l3 2\"/>", "home": "<path d=\"M4 11 12 4l8 7\"/><path d=\"M6 9.5V20h12V9.5\"/>", "pin": "<path d=\"M12 21s-6.5-5.8-6.5-11a6.5 6.5 0 0 1 13 0c0 5.2-6.5 11-6.5 11z\"/><circle cx=\"12\" cy=\"10\" r=\"2.3\"/>", "bell": "<path d=\"M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z\"/><path d=\"M10 21h4\"/>", "download": "<path d=\"M12 4v11M7.5 10.5 12 15l4.5-4.5M5 20h14\"/>", "upload": "<path d=\"M12 15V4M7.5 8.5 12 4l4.5 4.5M5 20h14\"/>", "doc": "<path d=\"M6.5 3.5h8l4 4v13h-12z\"/><path d=\"M14 3.5v4.5h4.5M9.5 13h5M9.5 16.5h5\"/>", "zap": "<path d=\"M13 3 5.5 13.5H11L10 21l7.5-10.5H12z\"/>", "book": "<path d=\"M12 6.5C10 5 7 4.5 3.5 5v13.5c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z\"/><path d=\"M12 6.5v13.5\"/>", "send": "<path d=\"M20.5 3.5 3.5 10.5l7 3 3 7z\"/><path d=\"m10.5 13.5 4-4\"/>", "pause": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M10 9v6M14 9v6\"/>", "bulb": "<path d=\"M9.5 17.5h5M10.5 20.5h3M12 3.5a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3.5z\"/>", "list": "<path d=\"M9 6.5h11M9 12h11M9 17.5h11\"/><circle cx=\"4.8\" cy=\"6.5\" r=\".9\"/><circle cx=\"4.8\" cy=\"12\" r=\".9\"/><circle cx=\"4.8\" cy=\"17.5\" r=\".9\"/>", "calendar": "<rect x=\"4\" y=\"5.5\" width=\"16\" height=\"14.5\" rx=\"2\"/><path d=\"M4 10h16M8.5 3.5v4M15.5 3.5v4\"/>", "shuffle": "<path d=\"M19.5 12a7.5 7.5 0 1 1-2.2-5.3\"/><path d=\"M19.5 4.5v4.5H15\"/>", "check": "<path d=\"m5 12.5 4.5 4.5L19 7.5\"/>", "dots": "<circle cx=\"5.5\" cy=\"12\" r=\"1.2\"/><circle cx=\"12\" cy=\"12\" r=\"1.2\"/><circle cx=\"18.5\" cy=\"12\" r=\"1.2\"/>", "share": "<path d=\"M12 15V4M8 8l4-4 4 4M6 12v8h12v-8\"/>", "image": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"14\" rx=\"2\"/><circle cx=\"9\" cy=\"10\" r=\"1.8\"/><path d=\"m20.5 16-5-5-8.5 8\"/>", "trash": "<path d=\"M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13\"/>", "plus": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"4\"/><path d=\"M12 8.5v7M8.5 12h7\"/>", "folder": "<path d=\"M3.5 6.5h6l2 2h9v10.5h-17z\"/>"};
 function ic(n){ return '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[n] + '</svg>'; }
 function cap(t){ return t ? t.charAt(0).toUpperCase() + t.slice(1) : t; }
@@ -979,14 +981,14 @@ function render(){
        (seed ? rowHTML("seedRow", "bulb", "Volver a una idea tuya", "«" + esc(trim(seed.text).slice(0, 80)) + (seed.text.length > 80 ? "…" : "") + "»") : '') +
        rowHTML("libRow", "list", "Todas las prácticas", "Elige una en concreto.") +
        '</div>';
-  if(done) h += '<div class="actions" style="margin-top:22px;"><button class="btn quiet" id="shareApp">' + ic("send") + 'Mándasela a alguien</button></div>';
+  if(done) h += '<div class="actions" style="margin-top:22px;"><button class="btn quiet" id="shareApp">' + ic("send") + 'Pásale esta práctica a alguien</button></div>';
   host.innerHTML = h;
 
   const on = (id, fn) => { const b = document.getElementById(id); if(b) b.onclick = fn; };
   on("goNb", () => go("notebook"));
   on("firstHelp", () => go("help"));
   on("againBtn", () => startPractice());
-  on("shareApp", () => shareApp());
+  on("shareApp", () => { const k = done ? PRACTICES.findIndex(q => q.t === practiceEntries()[0].title) : -1; if(k >= 0) sharePractice(k); else shareApp(); });
   on("rvOpen", openReview);
   on("pauseRow", pauseSheet);
   on("seedRow", () => seedSheet(seed, true));
@@ -1062,7 +1064,9 @@ function practiceSheet(i){
     '<h3 class="ptitle sm">' + esc(p.t) + '</h3><p class="pbody">' + esc(p.b) + '</p>' +
     (d ? '<p class="sub">La hiciste el ' + new Date(d.ts).toLocaleDateString("es-ES", { day:"numeric", month:"long" }) + '.</p>' : '') +
     '<button class="btn solid" id="psGo">' + (d ? 'Hacerla otra vez' : 'Hacer esta') + ' · ' + mins + ' min</button>' +
-    (d ? '<button class="btn quiet" id="psSee">Ver lo que apuntaste</button>' : ''), b => {
+    (d ? '<button class="btn quiet" id="psSee">Ver lo que apuntaste</button>' : '') +
+    '<button class="btn quiet" id="psShare">' + ic("send") + 'Mandársela a alguien</button>', b => {
+      b.querySelector("#psShare").onclick = () => sharePractice(i);
       b.querySelector("#psGo").onclick = () => { closeSheet(); startPractice(mins, i); };
       const see = b.querySelector("#psSee");
       if(see) see.onclick = () => { closeSheet(); S.onlyIdeas = false; S.proj = ""; document.getElementById("nbSearch").value = p.t; go("notebook"); renderNotebook(); };
@@ -1186,7 +1190,7 @@ window.entrySheet = function(id){
         else if(a === "edit") editEntry(id);
         else if(a === "idea") toggleIdea(id);
         else if(a === "share") shareEntry(id);
-        else if(a === "card") exportEntryCard(id);
+        else if(a === "card") setTimeout(() => cardSheet(id), 240);
         else if(a === "del") delEntry(id);
       });
     });
@@ -2131,36 +2135,27 @@ document.getElementById("viewer").onclick = () => {
   document.getElementById("viewer").hidden = true;
   document.getElementById("viewerImg").removeAttribute("src");
 };
-window.exportEntryCard = async function(id) {
-  const e = S.entries.find(x => x.id === id);
-  if (!e || !e.text) return;
+/* La imagen lleva la pregunta de la práctica encima de la respuesta: así quien la ve
+   entiende de qué va sin explicación, y el pie dice dónde encontrar la app. */
+function questionFor(e){
+  if(e.kind === "practica"){ const q = PRACTICES.find(x => x.t === e.title); return q ? q.q : ""; }
+  if(e.kind === "pausa") return e.from ? "Diez minutos con una idea mía" : "Diez minutos sin hacer nada";
+  return "";
+}
+async function drawCard(e, story){
   try{
-    await Promise.all([document.fonts.load('600 60px Fraunces'), document.fonts.load('900 44px Fraunces'), document.fonts.load('500 24px "IBM Plex Mono"')]);
+    await Promise.all([document.fonts.load('600 60px Fraunces'), document.fonts.load('900 120px Fraunces'), document.fonts.load('500 24px "IBM Plex Mono"')]);
   }catch(err){}
-  const W = 1080, H = 1350, M = 96;
+  const W = 1080, H = story ? 1920 : 1350, M = 100, T = story ? 250 : 0, B = story ? 300 : 0;
   const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
   const ctx = cv.getContext("2d");
   ctx.fillStyle = "#0C1020"; ctx.fillRect(0, 0, W, H);
-  ctx.strokeStyle = "#252D4A"; ctx.lineWidth = 3; ctx.strokeRect(48, 48, W - 96, H - 96);
+  ctx.strokeStyle = "#252D4A"; ctx.lineWidth = 3;
+  ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(44, 44, W - 88, H - 88, 40); else ctx.rect(44, 44, W - 88, H - 88); ctx.stroke();
 
-  // cabecera: nombre y etiqueta
-  ctx.textBaseline = "alphabetic"; ctx.textAlign = "left";
-  ctx.fillStyle = "#E9E6DD"; ctx.font = "900 46px Fraunces, Georgia, serif";
-  ctx.fillText(MARCA, M, 150);
-  const tag = [(e.category || "").toUpperCase(), e.project ? e.project.toUpperCase() : "", e.idea ? "IDEA" : ""].filter(Boolean).join("  ·  ");
-  ctx.fillStyle = "#E4AC3F"; ctx.font = "500 24px 'IBM Plex Mono', monospace";
-  ctx.fillText(tag.slice(0, 48), M, 210);
-
-  // título pequeño
-  ctx.fillStyle = "#A3A9BF"; ctx.font = "500 26px 'IBM Plex Mono', monospace";
-  ctx.fillText((e.title || "").toUpperCase().slice(0, 44), M, 262);
-
-  // texto: se ajusta el tamaño para que quepa entero, respetando saltos de línea
-  const maxW = W - 2 * M, top = 360, bottom = H - 230;
-  function layout(size){
-    ctx.font = "600 " + size + "px Fraunces, Georgia, serif";
-    const lh = Math.round(size * 1.3), lines = [];
-    String(e.text).split("\n").forEach(par => {
+  const wrap = (text, font, maxW) => {
+    ctx.font = font; const lines = [];
+    String(text).split("\n").forEach(par => {
       if(!par.trim()){ lines.push(""); return; }
       let line = "";
       par.split(/\s+/).forEach(w => {
@@ -2169,24 +2164,94 @@ window.exportEntryCard = async function(id) {
       });
       lines.push(line);
     });
-    return { lines, lh };
+    return lines;
+  };
+  const maxW = W - 2 * M;
+
+  // cabecera: la d y la fecha
+  ctx.textBaseline = "alphabetic";
+  ctx.textAlign = "left"; ctx.fillStyle = "#E4AC3F"; ctx.font = "900 128px Fraunces, Georgia, serif";
+  ctx.fillText("d", M - 6, T + 215);
+  ctx.textAlign = "right"; ctx.fillStyle = "#878EA9"; ctx.font = "500 26px 'IBM Plex Mono', monospace";
+  ctx.fillText(new Date(e.ts).toLocaleDateString("es-ES", { day:"numeric", month:"long", year:"numeric" }).toUpperCase(), W - M, T + 200);
+
+  // etiqueta y pregunta
+  ctx.textAlign = "left";
+  let y = T + 320;
+  const tag = [e.kind === "practica" ? e.title : kindLabel(e), e.project || "", e.idea ? "idea" : ""].filter(Boolean).join("  ·  ").toUpperCase();
+  ctx.fillStyle = "#E4AC3F"; ctx.font = "500 26px 'IBM Plex Mono', monospace";
+  ctx.fillText(tag.length > 46 ? tag.slice(0, 45) + "…" : tag, M, y);
+  const q = questionFor(e);
+  if(q){
+    let ql = wrap(q, "600 40px Fraunces, Georgia, serif", maxW);
+    if(ql.length > 3){ ql = ql.slice(0, 3); ql[2] = ql[2].replace(/\s*\S*$/, "") + "…"; }
+    ctx.fillStyle = "#A7ADC2"; ctx.font = "600 40px Fraunces, Georgia, serif";
+    ql.forEach((ln, i) => ctx.fillText(ln, M, y + 66 + i * 52));
+    y += 66 + (ql.length - 1) * 52;
   }
-  let size = 66, L = layout(size);
-  while(L.lines.length * L.lh > bottom - top && size > 30){ size -= 2; L = layout(size); }
-  let maxLines = Math.floor((bottom - top) / L.lh), lines = L.lines;
+
+  // respuesta: el tamaño se ajusta para que quepa entera
+  const top = y + 60, bottom = H - B - 230;
+  let size = story ? 80 : 68, lh, lines;
+  for(;;){
+    lh = Math.round(size * 1.28);
+    lines = wrap(e.text, "600 " + size + "px Fraunces, Georgia, serif", maxW);
+    if(lines.length * lh <= bottom - top || size <= 30) break;
+    size -= 2;
+  }
+  const maxLines = Math.floor((bottom - top) / lh);
   if(lines.length > maxLines){ lines = lines.slice(0, maxLines); lines[maxLines - 1] = lines[maxLines - 1].replace(/\s*\S*$/, "") + "…"; }
-  ctx.fillStyle = "#E9E6DD"; ctx.font = "600 " + size + "px Fraunces, Georgia, serif";
-  lines.forEach((ln, i) => ctx.fillText(ln, M, top + (i + 1) * L.lh - 12));
+  ctx.fillStyle = "#ECE8DE"; ctx.font = "600 " + size + "px Fraunces, Georgia, serif";
+  lines.forEach((ln, i) => ctx.fillText(ln, M, top + (i + 1) * lh - Math.round(lh * .22)));
 
-  // pie
+  // pie: qué es y dónde está
+  const fy = H - B - 170;
   ctx.strokeStyle = "#E4AC3F"; ctx.lineWidth = 3;
-  ctx.beginPath(); ctx.moveTo(M, H - 190); ctx.lineTo(M + 90, H - 190); ctx.stroke();
-  ctx.fillStyle = "#A3A9BF"; ctx.font = "500 24px 'IBM Plex Mono', monospace";
-  ctx.fillText(new Date(e.ts).toLocaleDateString("es-ES", { day:"numeric", month:"long", year:"numeric" }).toUpperCase(), M, H - 130);
-  ctx.textAlign = "right"; ctx.fillStyle = "#838AA6";
-  ctx.fillText("DIEZ MINUTOS SIN EL MÓVIL", W - M, H - 130);
+  ctx.beginPath(); ctx.moveTo(M, fy); ctx.lineTo(M + 90, fy); ctx.stroke();
+  ctx.fillStyle = "#ECE8DE"; ctx.font = "900 40px Fraunces, Georgia, serif";
+  ctx.fillText(MARCA, M, fy + 72);
+  ctx.textAlign = "right"; ctx.fillStyle = "#A7ADC2"; ctx.font = "500 24px 'IBM Plex Mono', monospace";
+  ctx.fillText("DIEZ MINUTOS SIN EL MÓVIL", W - M, fy + 44);
+  ctx.fillStyle = "#878EA9";
+  ctx.fillText(APP_URL.replace(/^https?:\/\//, "").replace(/\/$/, ""), W - M, fy + 82);
+  return cv;
+}
+window.exportEntryCard = async function(id, story){
+  const e = S.entries.find(x => x.id === id);
+  if(!e || !e.text) return;
+  const cv = await drawCard(e, story);
+  cv.toBlob(blob => saveFile("deriva-" + new Date(e.ts).toISOString().slice(0, 10) + (story ? "-historia" : "") + ".png", blob));
+};
+async function cardSheet(id){
+  const e = S.entries.find(x => x.id === id); if(!e || !e.text) return;
+  let story = false;
+  openSheet('<h3>Imagen para compartir</h3>' +
+    '<div class="chips"><button class="chip on" data-f="post">Publicación</button><button class="chip" data-f="story">Historia</button></div>' +
+    '<img class="cardprev" id="cardPrev" alt="Vista previa de la imagen">' +
+    '<button class="btn solid" id="cardGo">' + ic("share") + 'Compartir o guardar</button>', async b => {
+      const draw = async () => {
+        const cv = await drawCard(e, story);
+        const img = b.querySelector("#cardPrev"); if(!img) return;
+        img.src = cv.toDataURL("image/jpeg", .8); img.classList.toggle("story", story);
+      };
+      b.querySelectorAll("[data-f]").forEach(x => x.onclick = () => {
+        story = x.dataset.f === "story";
+        b.querySelectorAll("[data-f]").forEach(y => y.classList.toggle("on", y === x));
+        draw();
+      });
+      b.querySelector("#cardGo").onclick = () => exportEntryCard(id, story);
+      draw();
+    });
+}
 
-  cv.toBlob(blob => saveFile("deriva-" + new Date(e.ts).toISOString().slice(0, 10) + ".png", blob));
+/* Pasarle a alguien la práctica, no solo el enlace: es una invitación concreta */
+window.sharePractice = async function(i){
+  const p = PRACTICES[i]; if(!p) return;
+  const text = "Hoy he hecho esta, diez minutos sin el móvil:\n\n" + p.t + "\n" + p.b + "\n\nSi te apetece, hazla tú también. Es de Deriva:";
+  try{
+    if(navigator.share){ await navigator.share({ text, url: APP_URL }); return; }
+    await navigator.clipboard.writeText(text + " " + APP_URL); toast("Copiada");
+  }catch(err){ if(!err || err.name !== "AbortError") toast("No se pudo compartir"); }
 };
 
 const APP_URL = "https://hugo-divi.github.io/deriva-app/";
