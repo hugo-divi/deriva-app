@@ -304,6 +304,13 @@
   .opt b{font-weight:700;font-size:1.05rem;}
   .opt span{font-size:.9rem;color:var(--muted);line-height:1.4;}
   .opt.sel{border-color:var(--amber);background:var(--amber-soft);}
+  .installcard{background:var(--amber-soft);border:1px solid var(--amber-dim);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px;margin-top:22px;}
+  .installcard p{color:var(--ink);font-size:.97rem;line-height:1.5;}
+  .installcard .small{color:var(--muted);font-size:.9rem;}
+  .isteps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  .isteps li{display:flex;align-items:center;gap:12px;font-size:.97rem;line-height:1.4;}
+  .isteps .ic{flex:0 0 34px;height:34px;border-radius:10px;background:var(--surface-2);display:grid;place-items:center;color:var(--amber);font-family:"Fraunces",Georgia,serif;font-weight:900;font-size:1.2rem;}
+  .isteps .ic svg{width:18px;height:18px;}
   .wnav{display:flex;justify-content:space-between;align-items:center;margin-top:18px;}
 
   /* ---------- hoja inferior ---------- */
@@ -638,8 +645,8 @@ function minutesFor(n){
   return 22;
 }
 
-const APP_VERSION = "v14";
-const ICON = {"sun": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4\"/>", "pencil": "<path d=\"M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17v3z\"/><path d=\"m14.5 7.5 3 3\"/>", "notebook": "<path d=\"M6 3.5h11a2 2 0 0 1 2 2v15H7.5A2.5 2.5 0 0 1 5 18V4.5a1 1 0 0 1 1-1z\"/><path d=\"M5 18a2.5 2.5 0 0 1 2.5-2.5H19M9 8h6\"/>", "sliders": "<path d=\"M4 7h9M17 7h3M4 17h3M11 17h9\"/><circle cx=\"15\" cy=\"7\" r=\"2\"/><circle cx=\"9\" cy=\"17\" r=\"2\"/>", "chev": "<path d=\"m9 6 6 6-6 6\"/>", "back": "<path d=\"m15 6-6 6 6 6\"/>", "mic": "<rect x=\"9\" y=\"3\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21\"/>", "camera": "<path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.2\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6.5\"/><path d=\"m16 16 4 4\"/>", "user": "<circle cx=\"12\" cy=\"8.5\" r=\"3.5\"/><path d=\"M5 20a7 7 0 0 1 14 0\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M12 7.5V12l3 2\"/>", "home": "<path d=\"M4 11 12 4l8 7\"/><path d=\"M6 9.5V20h12V9.5\"/>", "pin": "<path d=\"M12 21s-6.5-5.8-6.5-11a6.5 6.5 0 0 1 13 0c0 5.2-6.5 11-6.5 11z\"/><circle cx=\"12\" cy=\"10\" r=\"2.3\"/>", "bell": "<path d=\"M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z\"/><path d=\"M10 21h4\"/>", "download": "<path d=\"M12 4v11M7.5 10.5 12 15l4.5-4.5M5 20h14\"/>", "upload": "<path d=\"M12 15V4M7.5 8.5 12 4l4.5 4.5M5 20h14\"/>", "doc": "<path d=\"M6.5 3.5h8l4 4v13h-12z\"/><path d=\"M14 3.5v4.5h4.5M9.5 13h5M9.5 16.5h5\"/>", "zap": "<path d=\"M13 3 5.5 13.5H11L10 21l7.5-10.5H12z\"/>", "book": "<path d=\"M12 6.5C10 5 7 4.5 3.5 5v13.5c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z\"/><path d=\"M12 6.5v13.5\"/>", "send": "<path d=\"M20.5 3.5 3.5 10.5l7 3 3 7z\"/><path d=\"m10.5 13.5 4-4\"/>", "pause": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M10 9v6M14 9v6\"/>", "bulb": "<path d=\"M9.5 17.5h5M10.5 20.5h3M12 3.5a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3.5z\"/>", "list": "<path d=\"M9 6.5h11M9 12h11M9 17.5h11\"/><circle cx=\"4.8\" cy=\"6.5\" r=\".9\"/><circle cx=\"4.8\" cy=\"12\" r=\".9\"/><circle cx=\"4.8\" cy=\"17.5\" r=\".9\"/>", "calendar": "<rect x=\"4\" y=\"5.5\" width=\"16\" height=\"14.5\" rx=\"2\"/><path d=\"M4 10h16M8.5 3.5v4M15.5 3.5v4\"/>", "shuffle": "<path d=\"M19.5 12a7.5 7.5 0 1 1-2.2-5.3\"/><path d=\"M19.5 4.5v4.5H15\"/>", "check": "<path d=\"m5 12.5 4.5 4.5L19 7.5\"/>", "dots": "<circle cx=\"5.5\" cy=\"12\" r=\"1.2\"/><circle cx=\"12\" cy=\"12\" r=\"1.2\"/><circle cx=\"18.5\" cy=\"12\" r=\"1.2\"/>", "share": "<path d=\"M12 15V4M8 8l4-4 4 4M6 12v8h12v-8\"/>", "image": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"14\" rx=\"2\"/><circle cx=\"9\" cy=\"10\" r=\"1.8\"/><path d=\"m20.5 16-5-5-8.5 8\"/>", "trash": "<path d=\"M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13\"/>", "folder": "<path d=\"M3.5 6.5h6l2 2h9v10.5h-17z\"/>"};
+const APP_VERSION = "v15";
+const ICON = {"sun": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4\"/>", "pencil": "<path d=\"M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17v3z\"/><path d=\"m14.5 7.5 3 3\"/>", "notebook": "<path d=\"M6 3.5h11a2 2 0 0 1 2 2v15H7.5A2.5 2.5 0 0 1 5 18V4.5a1 1 0 0 1 1-1z\"/><path d=\"M5 18a2.5 2.5 0 0 1 2.5-2.5H19M9 8h6\"/>", "sliders": "<path d=\"M4 7h9M17 7h3M4 17h3M11 17h9\"/><circle cx=\"15\" cy=\"7\" r=\"2\"/><circle cx=\"9\" cy=\"17\" r=\"2\"/>", "chev": "<path d=\"m9 6 6 6-6 6\"/>", "back": "<path d=\"m15 6-6 6 6 6\"/>", "mic": "<rect x=\"9\" y=\"3\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21\"/>", "camera": "<path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.2\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6.5\"/><path d=\"m16 16 4 4\"/>", "user": "<circle cx=\"12\" cy=\"8.5\" r=\"3.5\"/><path d=\"M5 20a7 7 0 0 1 14 0\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M12 7.5V12l3 2\"/>", "home": "<path d=\"M4 11 12 4l8 7\"/><path d=\"M6 9.5V20h12V9.5\"/>", "pin": "<path d=\"M12 21s-6.5-5.8-6.5-11a6.5 6.5 0 0 1 13 0c0 5.2-6.5 11-6.5 11z\"/><circle cx=\"12\" cy=\"10\" r=\"2.3\"/>", "bell": "<path d=\"M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z\"/><path d=\"M10 21h4\"/>", "download": "<path d=\"M12 4v11M7.5 10.5 12 15l4.5-4.5M5 20h14\"/>", "upload": "<path d=\"M12 15V4M7.5 8.5 12 4l4.5 4.5M5 20h14\"/>", "doc": "<path d=\"M6.5 3.5h8l4 4v13h-12z\"/><path d=\"M14 3.5v4.5h4.5M9.5 13h5M9.5 16.5h5\"/>", "zap": "<path d=\"M13 3 5.5 13.5H11L10 21l7.5-10.5H12z\"/>", "book": "<path d=\"M12 6.5C10 5 7 4.5 3.5 5v13.5c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z\"/><path d=\"M12 6.5v13.5\"/>", "send": "<path d=\"M20.5 3.5 3.5 10.5l7 3 3 7z\"/><path d=\"m10.5 13.5 4-4\"/>", "pause": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M10 9v6M14 9v6\"/>", "bulb": "<path d=\"M9.5 17.5h5M10.5 20.5h3M12 3.5a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3.5z\"/>", "list": "<path d=\"M9 6.5h11M9 12h11M9 17.5h11\"/><circle cx=\"4.8\" cy=\"6.5\" r=\".9\"/><circle cx=\"4.8\" cy=\"12\" r=\".9\"/><circle cx=\"4.8\" cy=\"17.5\" r=\".9\"/>", "calendar": "<rect x=\"4\" y=\"5.5\" width=\"16\" height=\"14.5\" rx=\"2\"/><path d=\"M4 10h16M8.5 3.5v4M15.5 3.5v4\"/>", "shuffle": "<path d=\"M19.5 12a7.5 7.5 0 1 1-2.2-5.3\"/><path d=\"M19.5 4.5v4.5H15\"/>", "check": "<path d=\"m5 12.5 4.5 4.5L19 7.5\"/>", "dots": "<circle cx=\"5.5\" cy=\"12\" r=\"1.2\"/><circle cx=\"12\" cy=\"12\" r=\"1.2\"/><circle cx=\"18.5\" cy=\"12\" r=\"1.2\"/>", "share": "<path d=\"M12 15V4M8 8l4-4 4 4M6 12v8h12v-8\"/>", "image": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"14\" rx=\"2\"/><circle cx=\"9\" cy=\"10\" r=\"1.8\"/><path d=\"m20.5 16-5-5-8.5 8\"/>", "trash": "<path d=\"M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13\"/>", "plus": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"4\"/><path d=\"M12 8.5v7M8.5 12h7\"/>", "folder": "<path d=\"M3.5 6.5h6l2 2h9v10.5h-17z\"/>"};
 function ic(n){ return '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[n] + '</svg>'; }
 function cap(t){ return t ? t.charAt(0).toUpperCase() + t.slice(1) : t; }
 const PK = "deriva.profile.v1";
@@ -819,7 +826,9 @@ function practicePool(){
   }
   return open.length ? { list: open, ordered: false } : { list: free, ordered: true };
 }
+const FIRST = "Capas";   // cerrar los ojos y contar sonidos: vale dentro, fuera, de día o de noche
 function currentIndex(){
+  if(!practiceEntries().length && !swapN()){ const k = PRACTICES.findIndex(q => q.t === FIRST); if(k >= 0) return k; }
   const pool = practicePool();
   if(pool.ordered) return pool.list[0];
   // mezcla de bits: días seguidos dan prácticas sin relación entre sí
@@ -939,6 +948,10 @@ function render(){
     h += '<div class="done"><span class="mk">' + ic("check") + 'Hecho por hoy</span>' +
          '<h1>' + esc(e.title) + '</h1>' + said +
          '<p>Mañana, otra distinta.</p></div>' +
+         (practiceEntries().length === 1
+           ? '<div class="nudge"><span class="flabel">Tu primera</span><span>Deriva no te va a avisar nunca. Si quieres que la práctica te encuentre cada día a una hora, ponte tú un recordatorio: son dos minutos.</span>' +
+             '<button class="nb-btn" id="firstHelp">' + ic("zap") + 'Cómo ponerlo</button></div>'
+           : '') +
          '<div class="actions"><button class="btn ghost" id="goNb">Abrir el cuaderno</button></div>';
   } else {
     const mins = todayMins();
@@ -971,6 +984,7 @@ function render(){
 
   const on = (id, fn) => { const b = document.getElementById(id); if(b) b.onclick = fn; };
   on("goNb", () => go("notebook"));
+  on("firstHelp", () => go("help"));
   on("againBtn", () => startPractice());
   on("shareApp", () => shareApp());
   on("rvOpen", openReview);
@@ -1795,6 +1809,10 @@ const STEPS = [
   { k:"goal", q:"¿Qué quieres que te dé esto?", sub:"Cambia qué tipo de prácticas salen más a menudo. Todas acaban saliendo.",
     opts:[["ideas","Más ideas","Más prácticas de hacer y de recordar."],["ruido","Parar el ruido","Más prácticas de notar y escuchar."],["rutina","Salir de la rutina","Más prácticas de derivar y de hablar con gente."]] }
 ];
+function needsInstall(){
+  const standalone = window.navigator.standalone === true || matchMedia("(display-mode: standalone)").matches;
+  return /iPhone|iPad|iPod/.test(navigator.userAgent) && !standalone;
+}
 function openWelcome(editing){
   W.editing = !!editing; W.i = editing ? 1 : 0; W.min = W.i;
   W.d = { projects: PROFILE.projects.map(n => ({ orig: n, v: n })), mins: PROFILE.mins || 0, outdoor: PROFILE.outdoor || "dia", goal: PROFILE.goal || "" };
@@ -1815,8 +1833,18 @@ function renderWelcome(){
            '<li>' + ic("check") + '<span>Tu cuaderno se queda en este móvil. No hay cuenta.</span></li>' +
            '<li>' + ic("check") + '<span>Si un día solo quieres parar, sin tarea, también se puede.</span></li>' +
          '</ul>' +
-         '<div class="actions" style="margin-top:26px;"><button class="btn solid" id="wStart">Empezar</button></div>' +
-         '<p class="note">Antes, cuatro preguntas rápidas para ajustarla a ti.</p>';
+         (needsInstall()
+           ? '<div class="installcard"><span class="flabel" style="color:var(--amber);">Antes de empezar</span>' +
+               '<p>Instálala en tu pantalla de inicio: se abre como una app, funciona sin conexión y está a un toque.</p>' +
+               '<ol class="isteps">' +
+                 '<li><span class="ic">' + ic("share") + '</span><span>Toca <b>Compartir</b>, en la barra de Safari.</span></li>' +
+                 '<li><span class="ic">' + ic("plus") + '</span><span>Elige <b>«Añadir a pantalla de inicio»</b>.</span></li>' +
+                 '<li><span class="ic">d</span><span>Abre Deriva desde su icono y empieza allí.</span></li>' +
+               '</ol>' +
+               '<p class="small">Hazlo antes de apuntar nada: lo que guardes aquí, en Safari, no pasa a la app instalada.</p></div>' +
+             '<div class="actions"><button class="btn quiet" id="wStart">Empezar en el navegador</button></div>'
+           : '<div class="actions" style="margin-top:26px;"><button class="btn solid" id="wStart">Empezar</button></div>' +
+             '<p class="note">Antes, cuatro preguntas rápidas para ajustarla a ti.</p>');
   } else if(st.k === "projects"){
     const n = Math.max(3, W.d.projects.length + 1);
     h += '<h2 class="wq">¿En qué estás trabajando?</h2>' +
@@ -2011,7 +2039,7 @@ window.addEventListener("beforeinstallprompt", (e) => {
   const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
   const standalone = window.navigator.standalone === true || matchMedia("(display-mode: standalone)").matches;
   if(ios && !standalone){
-    document.getElementById("pwaMsg").textContent = "Para instalarla: botón Compartir → «Añadir a pantalla de inicio»";
+    document.getElementById("pwaMsg").textContent = "Mejor instalada: Compartir → «Añadir a pantalla de inicio». Lo que apuntes en Safari no pasa a la app.";
     document.getElementById("pwaInstallBtn").style.display = "none";
     document.getElementById("pwaBanner").classList.add("show");
   }
